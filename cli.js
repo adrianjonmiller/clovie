@@ -1,23 +1,31 @@
 #!/usr/bin/env node
 
-const optionDefinitions = [
-  { name: 'config', alias: 'c', type: String, defaultValue: 'app.config.js'}
-];
-
-const root = process.cwd();
+// NPM
 const path = require("path");
 const commandLineArgs = require('command-line-args');
+
+// Local
+const ATX = require('./lib');
+const optionDefinitions = require('./optionDefinitions');
 const options = commandLineArgs(optionDefinitions);
-const configPath = path.resolve(root, options.config);
+
+// Config path
+const configPath = path.resolve(process.cwd(), options.config);
+
+// Config file
 const config = require(configPath);
-const Atix = require('./lib');
-const site = new Atix(config);
+
+// New ATX instance
+const site = new ATX(config);
 
 site.error(err => {
   console.log(err)
-})
-site.build();
+});
 
-site.build().then(() => {
-  site.watch();
-})
+if (options.watch) {
+  site.build().then(() => {
+    site.watch();
+  })
+} else {
+  site.build();
+}
