@@ -1,12 +1,9 @@
 {
-  "name": "statix",
+  "name": "atx",
   "version": "0.0.1",
   "description": "Node based static site generator",
   "main": "lib/index.js",
   "license": "MIT",
-  "scripts": {
-    "build": "babel lib/index.js --out-file dist/index.js"
-  },
   "dependencies": {
     "@babel/cli": "7.5.0",
     "@babel/core": "7.5.0",
