@@ -1,3 +1,3 @@
 (msg => {
   console.log(msg);
-})('success');
+})('new');
