@@ -1,0 +1,31 @@
+{
+  "name": "statix",
+  "version": "0.0.1",
+  "description": "Node based static site generator",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel lib/index.js --out-file dist/index.js"
+  },
+  "dependencies": {
+    "@babel/cli": "7.5.0",
+    "@babel/core": "7.5.0",
+    "browser-sync": "2.26.7",
+    "command-line-args": "5.1.1",
+    "handlebars": "4.1.2",
+    "html-webpack-plugin": "3.2.0",
+    "liquid": "4.0.0",
+    "markdown-it": "8.4.2",
+    "mini-css-extract-plugin": "0.7.0",
+    "node-fetch": "2.6.0",
+    "node-watch": "0.6.2",
+    "nodemon": "1.19.1",
+    "nunjucks": "3.2.0",
+    "path": "0.12.7",
+    "sass": "1.22.3",
+    "webpack": "4.35.2"
+  },
+  "bin": {
+    "atix": "./cli.js"
+  }
+}

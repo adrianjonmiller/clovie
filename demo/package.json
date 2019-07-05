@@ -1,0 +1,11 @@
+{
+  "name": "atix-demo",
+  "version": "0.0.1",
+  "description": "Demo projects for Atix",
+  "main": "app.config.js",
+  "license": "MIT",
+  "scripts": {
+    "watch": "atix"
+  },
+  "dependencies": {}
+}
