@@ -1,7 +1,9 @@
-const Symbiotic = require('symbiotic');
+const Symbiotic = require("symbiotic");
 
 let symbiote = new Symbiotic({
-  '.js-body': function () {
-    console.log('success')
+  methods: {
+    ".js-body": function() {
+      console.log("jest");
+    }
   }
-}).attach('.js-body')
+}).attach();

@@ -5,11 +5,15 @@
   "main": "app.config.js",
   "license": "MIT",
   "scripts": {
-    "build": "../cli.js",
-    "watch": "../cli.js -w"
+    "build": "../bin/cli.js",
+    "watch": "../bin/cli.js -w"
   },
   "dependencies": {
     "parcel-bundler": "1.12.3",
     "symbiotic": "0.1.45"
+  },
+  "devDependencies": {
+    "babel-core": "6.26.3",
+    "babel-preset-env": "1.7.0"
   }
 }
