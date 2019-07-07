@@ -3,7 +3,9 @@ const fetch = require('node-fetch');
 const token = '65bd73f5a93d46397f2b027a16d8b1';
 const path = require('path');
 
-nunjucks.configure('./views');
+nunjucks.configure('./views', {
+  watch: true
+});
 
 module.exports = {
   scripts: path.join('./scripts/index.js'),
