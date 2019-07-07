@@ -8,10 +8,6 @@ nunjucks.configure('./views', {
 });
 
 module.exports = {
-  scripts: path.join('./scripts/index.js'),
-  styles: path.join('./styles/main.scss'),
-  views: path.join('./views'),
-  outputDir: path.resolve('./dist/'),
   data: () => ({
     title: 'Attics'
   }),
