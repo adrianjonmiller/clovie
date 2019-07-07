@@ -6,7 +6,7 @@ const commandLineArgs = require("command-line-args");
 
 // Local
 const ATX = require("../lib");
-const optionDefinitions = require("../optionDefinitions");
+const optionDefinitions = require("./optionDefinitions");
 const options = commandLineArgs(optionDefinitions);
 
 // Config path
