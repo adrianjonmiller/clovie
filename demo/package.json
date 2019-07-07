@@ -9,6 +9,8 @@
     "watch": "../bin/cli.js -w"
   },
   "dependencies": {
+    "node-fetch": "2.6.0",
+    "nunjucks": "3.2.0",
     "parcel-bundler": "1.12.3",
     "symbiotic": "0.1.45"
   },
