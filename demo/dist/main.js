@@ -127,6 +127,7 @@ var symbiote = new Symbiotic({
   methods: {
     ".js-body": function jsBody() {
       console.log("jest");
+      console.log('test');
     }
   }
 }).attach();

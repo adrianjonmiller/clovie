@@ -6,4 +6,8 @@ module.exports = [{ name: 'config',
   name: 'watch',
   alias: 'w',
   type: Boolean
+},{
+  name: 'timeout',
+  alias: 't',
+  type: Number
 }];

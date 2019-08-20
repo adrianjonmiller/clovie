@@ -9,6 +9,7 @@
     "watch": "../bin/cli.js -w"
   },
   "dependencies": {
+    "@babel/core": "7.5.5",
     "chokidar": "3.0.2",
     "node-fetch": "2.6.0",
     "nunjucks": "3.2.0",

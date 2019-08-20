@@ -1,7 +1,7 @@
 const nunjucks = require('nunjucks');
 
 nunjucks.configure('./views', {
-  watch: true
+  watch: false
 });
 
 module.exports = {
