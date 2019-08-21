@@ -10,4 +10,4 @@ module.exports = {
   }),
   models: {},
   compiler: (template, data) => (nunjucks.renderString(template, data))
-}
+};

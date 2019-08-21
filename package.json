@@ -1,19 +1,25 @@
 {
   "name": "atx",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Node based static site generator",
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "7.5.5",
+    "@babel/preset-env": "7.5.5",
+    "asbundle": "2.6.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
+    "babelify": "10.0.0",
     "browser-sync": "2.26.7",
+    "browserify": "16.5.0",
+    "chokidar": "3.0.2",
     "command-line-args": "5.1.1",
     "handlebars": "4.1.2",
+    "module-concat": "2.3.0",
     "node-watch": "0.6.2",
     "nodemon": "1.19.1",
-    "parcel-bundler": "1.12.3",
     "path": "0.12.7",
-    "sass": "1.22.3",
-    "webpack": "4.35.2"
+    "sass": "1.22.3"
   },
   "bin": {
     "atx": "./bin/cli.js"

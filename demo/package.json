@@ -9,15 +9,7 @@
     "watch": "../bin/cli.js -w"
   },
   "dependencies": {
-    "@babel/core": "7.5.5",
-    "chokidar": "3.0.2",
-    "node-fetch": "2.6.0",
     "nunjucks": "3.2.0",
-    "parcel-bundler": "1.12.3",
     "symbiotic": "0.1.45"
-  },
-  "devDependencies": {
-    "babel-core": "6.26.3",
-    "babel-preset-env": "1.7.0"
   }
 }
