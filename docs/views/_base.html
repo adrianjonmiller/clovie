@@ -5,32 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{{title}}</title>
-  <link rel="stylesheet" href="https://thin.style/cdn/thin.css">
   <link rel="stylesheet" href="/main.css">
 </head>
 <body class="js-body mrgn--top-xl">
-    <header class="fxd--top-left fxd--top-right">
-      <div class="flx--default origin">
-        <h1 class="abs--center-left ofst--left-md">Logo</h1>
-        <nav class="flx-center">
-          <ul class="rst--list">
-            <li class="typ--iii">
-              <a href="/" class="rst--link">Home</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    {% include '_header.html' %}
     {% block splash %}
     {% endblock %}
-    <main class="@base--2-3 @phone--1-1 flx-center mrgn--top-lg">
+    <main class="flx-center mrgn--top-lg">
       {% block main%}
       {% endblock %}
     </main>
-    <aside>
-      {% block aside %}
-      {% endblock %}
-    </aside>
     <fotoer class="abs--bottom-left">
       <p>&copy; 2019 Knitch Studios. LLC</p>
     </fotoer>

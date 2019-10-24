@@ -780,6 +780,11 @@ needle@^2.2.1:
     iconv-lite "^0.4.4"
     sax "^1.2.4"
 
+node-fetch@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
+  integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
+
 node-pre-gyp@^0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.12.0.tgz#39ba4bb1439da030295f899e3b520b7785766149"
@@ -1190,6 +1195,11 @@ tar@^4:
     mkdirp "^0.5.0"
     safe-buffer "^5.1.2"
     yallist "^3.0.3"
+
+thin.css@1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/thin.css/-/thin.css-1.0.18.tgz#c9bf3301f2f6a5648e97e866b51d9fb49fc71a1c"
+  integrity sha512-IfdO0wWSmUaBhH1XEbr3YQctPPu3q/ew/RaIvU5FnVQanqab06ocmm0jDHlgfsmZcmMOxqlSXzYOlFfU155ouQ==
 
 to-object-path@^0.3.0:
   version "0.3.0"
