@@ -27,6 +27,7 @@ if (options.watch) {
     site.watch();
   });
 } else {
-  site.build();
-  process.exit();
+  site.build().then(() => {
+    process.exit();
+  })
 }
