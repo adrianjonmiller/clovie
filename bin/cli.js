@@ -28,6 +28,8 @@ if (options.watch) {
   });
 } else {
   site.build().then(() => {
-    process.exit();
+    process.nextTick(() => {
+      process.exit();
+    })
   })
 }
