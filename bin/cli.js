@@ -28,4 +28,5 @@ if (options.watch) {
   });
 } else {
   site.build();
+  process.exit();
 }
