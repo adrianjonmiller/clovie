@@ -22,6 +22,9 @@
     "sass": "1.22.3",
     "type-detect": "4.0.8"
   },
+  "scripts": {
+    "build-docs": "cd docs && npm run build"
+  },
   "bin": {
     "atx": "./bin/cli.js"
   }
