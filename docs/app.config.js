@@ -39,9 +39,18 @@ module.exports = {
       reject(error)
     })
   }),
-  models: {},
+  models: {
+    allPhotos: {
+      template: '_article.html',
+      output: (val) => {
+        return 'articles/' + val.title.toLowerCase() + '.html'
+      },
+      transform: (val) => {
+        return val
+      }
+    }
+  },
   compiler: (template, data) => {
-    console.log(data)
     return nunjucks.renderString(template, data);
   }
 };
