@@ -23,7 +23,7 @@
     "type-detect": "4.0.8"
   },
   "scripts": {
-    "build-docs": "cd docs && npm run build"
+    "build-docs": "cd docs && npm i && npm run build"
   },
   "bin": {
     "atx": "./bin/cli.js"
