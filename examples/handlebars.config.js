@@ -7,7 +7,9 @@ module.exports = {
   views: path.join('./views'),
   assets: path.join('./assets'),
   outputDir: path.resolve('./dist/'),
-  data: {},
+  data: {
+    title: 'Handlesbars templates'
+  },
   models: {},
   compiler: (template, data) => {
     let compiled = Handlebars.compile(template);

@@ -11,7 +11,9 @@ module.exports = {
   views: path.join('./views'),
   assets: path.join('./assets'),
   outputDir: path.resolve('./dist/'),
-  data: {},
+  data: {
+    title: 'Nunjucks templates'
+  },
   models: {},
   compiler: (template, data) => {
     return nunjucks.renderString(template, data);

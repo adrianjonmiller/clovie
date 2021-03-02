@@ -11,7 +11,9 @@ module.exports = {
   views: path.join('./views'),
   assets: path.join('./assets'),
   outputDir: path.resolve('./dist/'),
-  data: {},
+  data: {
+    title: 'Pug templates'
+  },
   models: {},
   compiler: (template, data) => {
     const fn = pug.compile(template, {

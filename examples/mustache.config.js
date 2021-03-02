@@ -7,7 +7,9 @@ module.exports = {
   views: path.join('./views'),
   assets: path.join('./assets'),
   outputDir: path.resolve('./dist/'),
-  data: {},
+  data: {
+    title: 'Mustache templates'
+  },
   models: {},
   compiler: (template, data) => {
     return Mustache.render(template, data);
