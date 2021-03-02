@@ -14,7 +14,9 @@ module.exports = {
   data: {},
   models: {},
   compiler: (template, data) => {
-    const fn = pug.compile(template);
+    const fn = pug.compile(template, {
+      basedir: path.join('./views')
+    });
     return fn(data);;
   }
 }
