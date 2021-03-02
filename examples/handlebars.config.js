@@ -1,9 +1,5 @@
 const path = require('path');
-const nunjucks = require('nunjucks');
-
-nunjucks.configure('./views', {
-  watch: process.env.NODE_ENV === 'dev'
-});
+const Handlebars = require('handlebars');
 
 module.exports = {
   scripts: path.join('./scripts/main.js'),
@@ -14,6 +10,7 @@ module.exports = {
   data: {},
   models: {},
   compiler: (template, data) => {
-    return nunjucks.renderString(template, data);
+    let compiled = Handlebars.compile(template);
+    return compiled(data);
   }
 }
