@@ -2,18 +2,8 @@
 
 {% block splash %}
   <h1>ATX</h1>
-  <ul class="rst--list flx--default">
-    <li><a href="">{{title}}</a></li>
-  </ul>
 {% endblock %}
 
 {% block main %}
-  {% for photo in allPhotos %}
-  <li>
-    {{ photo.title }}
-    <img src="{{photo.photo.url}}" />
-  </li>
-  {% else %}
-    <li>This would display if the 'item' collection were empty</li>
-  {% endfor %}
+
 {% endblock %}

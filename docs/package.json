@@ -9,6 +9,7 @@
     "watch": "NODE_ENV=dev ../bin/cli.js -w"
   },
   "dependencies": {
+    "dotenv": "8.2.0",
     "node-fetch": "2.6.0",
     "nunjucks": "3.2.0",
     "symbiotic": "0.1.45",

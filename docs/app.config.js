@@ -1,7 +1,7 @@
+require('dotenv').config();
 const nunjucks = require('nunjucks');
 const fetch = require('node-fetch');
-
-const token = '678a447ea152794270ae8342526551';
+const token = process.env.DATO_TOKEN;
 
 nunjucks.configure('./views', {
   watch: process.env.NODE_ENV === 'dev'
@@ -51,6 +51,7 @@ module.exports = {
     }
   },
   compiler: (template, data) => {
+    console.log(data)
     return nunjucks.renderString(template, data);
   }
 };
