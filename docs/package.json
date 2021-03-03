@@ -5,8 +5,10 @@
   "main": "app.config.js",
   "license": "MIT",
   "scripts": {
-    "build": "NODE_ENV=prod ../bin/cli.js",
-    "watch": "NODE_ENV=dev ../bin/cli.js -w"
+    "build": "atx",
+    "watch": "NODE_ENV=dev atx -w",
+    "build-local": "NODE_ENV=prod ../bin/cli.js",
+    "watch-local": "NODE_ENV=dev ../bin/cli.js -w"
   },
   "dependencies": {
     "dotenv": "8.2.0",
