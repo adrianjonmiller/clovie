@@ -58,5 +58,5 @@ if (options.create) {
     })
   })
 } else {
-  console.log('Please specify a command, --build, --create, --watch')
+  console.log('Atx cli has changed. Please use a specific command, --build, --create, --watch')
 }
