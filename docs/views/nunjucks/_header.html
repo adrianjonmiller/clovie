@@ -1,15 +1,27 @@
-<header class="flx origin">
+<header class="fxd--top-left fxd--top-right origin flx">
     <h1 class="abs--center-left osfst--left-md">Logo</h1>
-    <nav class="flx-center">
+    <nav class="flx-end ofst--right-md">
         <ul class="flx rst--list gtr--md">
             <li class="typ--iii">
-                <a href="/" class="rst--link">Home</a>
+                {% if fileName == '/index.html' %}
+                    <a href="/" class="rst--link is_active">Home</a>
+                {% else %}
+                    <a href="/" class="rst--link">Home</a>
+                {% endif %}
             </li>
             <li class="typ--iii">
-                <a href="/" class="rst--link">About</a>
+                {% if fileName == '/docs.html' %}
+                    <a href="/docs.html" class="rst--link is_active">Docs</a>
+                {% else %}
+                    <a href="/docs.html" class="rst--link">Docs</a>
+                {% endif %}
             </li>
             <li class="typ--iii">
-                <a href="/" class="rst--link">Contact</a>
+                {% if fileName == '/contact.html' %}
+                    <a href="/contact.html" class="rst--link is_active">Contact</a>
+                {% else %}
+                    <a href="/contact.html" class="rst--link">Contact</a>
+                {% endif %}
             </li>
         </ul>
     </nav>

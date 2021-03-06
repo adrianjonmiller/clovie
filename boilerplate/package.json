@@ -1,0 +1,14 @@
+{
+  "name": "Atx",
+  "version": "0.0.0",
+  "description": "Attics boilerplate project",
+  "main": "app.config.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "atx",
+    "watch": "atx -w"
+  },
+  "dependencies": {
+    "atx": "^0.0.16"
+  }
+}
