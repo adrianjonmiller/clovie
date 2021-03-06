@@ -1,7 +1,7 @@
 module.exports = [
 { name: 'build',
   alias: 'b',
-  type: String,
+  type: Boolean,
 },
 { name: 'config',
   alias: 'c',

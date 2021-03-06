@@ -14,7 +14,7 @@ if (options.create) {
   if (typeof options.create === 'string') {
     // New project path
     const newProjectPath = path.resolve(process.cwd(), options.create);
-    
+
     // Clone Boilerplate
     create(newProjectPath)
   } else {
@@ -53,6 +53,7 @@ if (options.create) {
 
   site.build().then(() => {
     process.nextTick(() => {
+      console.log('Build complete')
       process.exit();
     })
   })
