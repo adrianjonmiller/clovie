@@ -1,6 +1,6 @@
 {
   "name": "atx",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Node based static site generator",
   "license": "MIT",
   "dependencies": {
@@ -27,6 +27,6 @@
     "build-docs": "cd docs && npm i && npm run build"
   },
   "bin": {
-    "atx": "./bin/cli.js"
+    "atx": "bin/cli.js"
   }
 }
