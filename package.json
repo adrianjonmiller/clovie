@@ -1,6 +1,6 @@
 {
   "name": "atx",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Node based static site generator",
   "license": "MIT",
   "dependencies": {
