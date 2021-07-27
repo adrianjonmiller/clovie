@@ -13,11 +13,13 @@ module.exports = {
   data: {
     test: [1,2,3,4,5]
   },
-  models: {
-    test: {
+  models: [
+    {
+      ref: 'test',
+      template: '_article.html',
       paginate: 2
     }
-  },
+  ],
   views: templatesPath,
   compiler: (template, data) => {
     return nunjucks.renderString(template, data);
