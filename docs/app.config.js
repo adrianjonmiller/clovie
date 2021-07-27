@@ -17,7 +17,11 @@ module.exports = {
     {
       ref: 'test',
       template: '_article.html',
-      paginate: 2
+      paginate: 2,
+      output: (data, i, prev, next) => {
+        console.log(i, prev, next);
+        return i + '.html'
+      }
     }
   ],
   views: templatesPath,
