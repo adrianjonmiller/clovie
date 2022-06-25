@@ -13,7 +13,7 @@
   "dependencies": {
     "atx": "0.0.16",
     "dotenv": "8.2.0",
-    "node-fetch": "2.6.1",
+    "node-fetch": "2.6.7",
     "nunjucks": "3.2.0",
     "symbiotic": "0.1.45",
     "thin.css": "1.0.18"
