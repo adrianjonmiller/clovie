@@ -1,7 +1,7 @@
 {
   "name": "@atx/docs",
   "private": true,
-  "version": "0.0.1",
+  "version": "2.0.1",
   "description": "ATX documentation",
   "scripts": {
     "build": "atx build",
