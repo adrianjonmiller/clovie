@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{{ title }} - ATX Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/thin.css@2.0.2/dist/thin.css" />
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body class="fll--viewport origin pad--top-xl">
+  <div class="fxd--top-left fxd--top-right">
+    {% include '_header.html' %}
+  </div>
+  {% block splash %}
+  {% endblock %}
+  <div class="flx">
+    <main class="flx-center mrgn--top-lg pad--md" style="max-width: 800px">
+      {% block main %}
+      {% endblock %}
+    </main>
+  </div>
+  <footer class="abs--bottom-left pad--md">
+    <p>&copy; 2024 ATX</p>
+  </footer>
+  <script src="/main.js"></script>
+</body>
+</html>

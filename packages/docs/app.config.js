@@ -11,7 +11,8 @@ nunjucks.configure(templatesPath, {
 
 module.exports = {
   data: {
-    test: [1,2,3,4,5]
+    title: 'ATX',
+    description: 'Simple, fast, mod-able static site generator'
   },
   models: [
     {

@@ -4,8 +4,6 @@ const fs = require("fs")
 
 const boilerplate = path.resolve(__dirname, '../boilerplate');
 
-
-
 module.exports = (dest) => new Promise((res, rej) => {
   try {
     if (fs.existsSync(dest)) {
