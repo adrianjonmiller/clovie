@@ -47,9 +47,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:run": "vitest run",
-    "docs:build": "cd docs && clovie build",
-    "docs:dev": "cd docs && clovie watch",
-    "prepublishOnly": "npm test && npm run docs:build"
+    "docs:build": "cd docs && node ../bin/cli.js build",
+    "docs:dev": "cd docs && node ../bin/cli.js watch",
+    "prepublishOnly": "npm test"
   },
   "dependencies": {
     "@babel/core": "^7.23.7",
