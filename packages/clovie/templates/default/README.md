@@ -1,6 +1,6 @@
-# test-watch
+# {{projectName}}
 
-A static site built with ATX.
+A static site built with Clovie.
 
 ## Getting Started
 
@@ -25,5 +25,5 @@ npm run build
 
 ## Learn More
 
-- [ATX Documentation](https://github.com/your-org/atx)
-- [Examples](https://github.com/your-org/atx/tree/main/examples)
+- [Clovie Documentation](https://github.com/your-org/clovie)
+- [Examples](https://github.com/your-org/clovie/tree/main/examples)

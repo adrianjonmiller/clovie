@@ -1,5 +1,5 @@
 {
-  "name": "atx",
+  "name": "clovie",
   "private": true,
   "version": "1.0.0",
   "workspaces": [
@@ -9,9 +9,9 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
-    "test:watch": "concurrently \"npm run test:watch -w atx\" \"npm run test:watch -w create-atx\"",
-    "docs": "npm run dev -w @atx/docs",
-    "docs:build": "npm run build -w @atx/docs",
+    "test:watch": "concurrently \"npm run test:watch -w clovie\"",
+    "docs": "npm run dev -w @clovie/docs",
+    "docs:build": "npm run build -w @clovie/docs",
     "clean": "npm run clean --workspaces || true",
     "lint": "npm run lint --workspaces || true",
     "format": "npm run format --workspaces || true"

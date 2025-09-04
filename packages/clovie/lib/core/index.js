@@ -19,7 +19,7 @@ import { discoverProjectStructure } from './discover.js';
 import { SmartWatcher } from './watcher.js';
 import { DevServer } from './server.js';
 
-export default class {
+export default class Clovie {
   constructor (config) {
     // Merge with defaults and auto-discover project structure
     this.config = discoverProjectStructure(Object.assign(defaultConfig, config));
@@ -34,13 +34,11 @@ export default class {
     
     this.errorCb = null;
     
-    console.log('🔧 Initializing smart watcher...');
     // Initialize smart watcher
     this.watcher = new SmartWatcher(this);
-    console.log('🔧 Smart watcher initialized');
     
     // Log configuration summary
-    console.log('📁 ATX Configuration:');
+    console.log('📁 Clovie Configuration:');
     console.log(`   Views: ${this.config.views || 'Not found'}`);
     console.log(`   Scripts: ${this.config.scripts || 'Not found'}`);
     console.log(`   Styles: ${this.config.styles || 'Not found'}`);
@@ -55,7 +53,6 @@ export default class {
       // Do initial build
       console.log('📦 Building initial site...');
       await this.build();
-      console.log('   Build completed successfully');
       
       // Start development server
       console.log('🌐 Starting development server...');
@@ -83,18 +80,11 @@ export default class {
     }
   }
 
-  // Test method to see if methods work at all
-  testMethod() {
-    console.log('🧪 TEST METHOD CALLED!');
-    return 'test method works';
-  }
-
   async build () {
     const startTime = Date.now();
     
     try {
       console.log('🚀 Starting build...');
-      console.log('   Config:', JSON.stringify(this.config, null, 2));
       
       // Clean output directory
       console.log('🧹 Cleaning output directory...');

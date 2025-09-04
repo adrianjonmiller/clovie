@@ -1,13 +1,13 @@
-# ATX Monorepo
+# Clovie Monorepo
 
-A monorepo containing ATX, a Node.js-based static site generator, and related tools.
+A monorepo containing Clovie, a Node.js-based static site generator, and related tools.
 
 ## Project Structure
 
 ```
-atx-monorepo/
+clovie-monorepo/
 ├── packages/
-│   ├── atx/             # Core static site generator
+│   ├── clovie/          # Core static site generator
 │   │   ├── __tests__/   # Test files
 │   │   ├── bin/         # CLI executable
 │   │   ├── config/      # Configuration files
@@ -16,18 +16,18 @@ atx-monorepo/
 │   │   │   └── utils/   # Utility functions
 │   │   └── package.json
 │   ├── templates/       # Project templates
-│   └── docs/            # Documentation site (built with ATX)
+│   └── docs/            # Documentation site (built with Clovie)
 ├── examples/             # Example configurations for different template engines
 └── package.json          # Root package.json with workspace configuration
 ```
 
 ## Packages
 
-### @atx/core
+### @clovie/core
 The main static site generator with support for multiple template engines, asset processing, development server, and project creation.
 
-### @atx/docs
-Documentation site built with ATX itself, demonstrating the framework's capabilities.
+### @clovie/docs
+Documentation site built with Clovie itself, demonstrating the framework's capabilities.
 
 ## Getting Started
 

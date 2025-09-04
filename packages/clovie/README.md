@@ -1,11 +1,11 @@
-# ATX - Static Site Generator
+# Clovie - Vintage Web Dev Tooling
 
-A Node.js-based static site generator designed to be simple, fast, and highly modular.
+A Node.js-based static site generator designed to be simple, fast, and highly modular. The "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow.
 
 ## Project Structure
 
 ```
-packages/atx/
+packages/clovie/
 ├── __tests__/           # Test files
 │   └── index.test.js
 ├── bin/                 # CLI executable
@@ -14,7 +14,7 @@ packages/atx/
 │   └── default.config.js
 ├── lib/                 # Source code
 │   ├── core/           # Core functionality
-│   │   ├── index.js    # Main ATX class
+│   │   ├── index.js    # Main Clovie class
 │   │   ├── bundler.js  # JavaScript bundling
 │   │   ├── render.js   # Template rendering
 │   │   ├── write.js    # File writing
@@ -43,7 +43,7 @@ packages/atx/
 #### Option 1: Local Installation (Recommended)
 ```bash
 # Install as dev dependency in your project
-npm install --save-dev atx
+npm install --save-dev clovie
 
 # Use via npm scripts
 npm run build
@@ -53,36 +53,32 @@ npm run dev
 #### Option 2: Global Installation
 ```bash
 # Install globally
-npm install -g atx
+npm install -g clovie
 ```
 
 ### Creating New Projects
 
-#### Using ATX CLI (Recommended)
+#### Using Clovie CLI (Recommended)
 ```bash
 # Create a new project
-npx atx create my-site
+npx clovie create my-site
 
 # Or with global install
-atx create my-site
+clovie create my-site
 ```
 
-#### Using create-atx (Alternative)
-```bash
-# Create a new project
-npx create-atx my-site
-```
+
 
 ### Building and Development
 
 ```bash
 # Build the site
-atx build
+clovie build
 # or
 npm run build
 
 # Start development server with file watching
-atx watch
+clovie watch
 # or
 npm run dev
 ```
@@ -91,7 +87,7 @@ npm run dev
 
 ### Minimal Configuration (Recommended)
 
-ATX uses smart defaults and auto-detection, so you can start with just:
+Clovie uses smart defaults and auto-detection, so you can start with just:
 
 ```javascript
 export default {
@@ -101,7 +97,7 @@ export default {
 };
 ```
 
-ATX will automatically detect:
+Clovie will automatically detect:
 - `views/` directory for HTML templates
 - `scripts/main.js` for JavaScript entry point
 - `styles/main.scss` for SCSS entry point
@@ -125,7 +121,7 @@ export default {
     title: 'My Site'
   },
   
-  // Custom compiler (optional - ATX has a good default)
+  // Custom compiler (optional - Clovie has a good default)
   compiler: (template, data) => {
     return yourTemplateEngine(template, data);
   }
@@ -318,7 +314,7 @@ export default {
 
 ### Error Handling
 
-ATX includes robust error handling for common issues:
+Clovie includes robust error handling for common issues:
 
 - **Missing directories**: Gracefully handles missing views, scripts, or assets folders
 - **File read errors**: Continues processing even if individual files fail
@@ -327,7 +323,7 @@ ATX includes robust error handling for common issues:
 
 ### Progress Indicators
 
-ATX provides clear feedback during builds:
+Clovie provides clear feedback during builds:
 
 ```
 🚀 Starting build...
@@ -350,7 +346,7 @@ ATX provides clear feedback during builds:
 
 ### Auto-Discovery
 
-ATX automatically detects common project structures:
+Clovie automatically detects common project structures:
 
 ```
 🔍 Auto-detected views directory: views

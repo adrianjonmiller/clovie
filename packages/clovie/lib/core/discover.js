@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 
 export function discoverProjectStructure(config) {
-  console.log('🔍 Starting project structure discovery...');
   const cwd = process.cwd();
   const discovered = { ...config };
   
@@ -71,6 +70,5 @@ export function discoverProjectStructure(config) {
     console.warn('⚠️  No views directory found. Create a views/ folder with your HTML templates.');
   }
   
-  console.log('🔍 Project structure discovery completed');
   return discovered;
 }

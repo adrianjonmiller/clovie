@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local
-import ATX from "../lib/core/index.js";
+import Clovie from "../lib/core/index.js";
 
 // Commandline options
 const mainDefinitions = [
@@ -64,7 +64,7 @@ if (mainOptions.create) {
   
   try {
     await copyDir(templateDir, projectPath);
-    console.log(`✅ ATX project created successfully at ${projectPath}`);
+    console.log(`✅ Clovie project created successfully at ${projectPath}`);
     console.log('\nNext steps:');
     console.log(`  cd ${mainOptions.create}`);
     console.log('  npm install');
@@ -87,17 +87,12 @@ const configPath = path.resolve(process.cwd(), options.config);
 // Main function
 async function main() {
   try {
-    console.log('🔧 CLI Debug Info:');
-    console.log('   mainOptions:', mainOptions);
-    console.log('   options:', options);
-    console.log('   options.watch:', options.watch);
-    
     // Config file
     const configModule = await import(configPath);
     const config = configModule.default || configModule;
 
-    // New ATX instance
-    const site = new ATX(config);
+    // New Clovie instance
+    const site = new Clovie(config);
 
     site.error(err => {
       console.error(err);
@@ -105,15 +100,8 @@ async function main() {
     });
 
     if (options.watch) {
-      console.log('🚀 Starting watch mode...');
-      console.log('   site.startWatch method exists:', typeof site.startWatch);
-      console.log('   site.startWatch method:', site.startWatch);
-      console.log('   site methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(site)));
-      console.log('   About to call site.startWatch()...');
       await site.startWatch();
-      console.log('   site.startWatch() completed');
     } else {
-      console.log('🚀 Starting build mode...');
       await site.build();
       console.log('Build complete');
       process.exit(0);

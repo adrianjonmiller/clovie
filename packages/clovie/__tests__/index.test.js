@@ -16,7 +16,7 @@ const TEST_CONFIG = {
   }
 };
 
-describe('ATX', () => {
+describe('Clovie', () => {
   beforeEach(() => {
     // Create test directory structure
     if (!fs.existsSync(TEST_DIR)) {
