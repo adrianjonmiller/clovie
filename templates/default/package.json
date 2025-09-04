@@ -7,6 +7,6 @@
     "dev": "clovie watch"
   },
   "devDependencies": {
-    "clovie": "^0.0.23"
+    "clovie": "^0.1.0"
   }
 }
