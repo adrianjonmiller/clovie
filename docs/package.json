@@ -1,6 +1,6 @@
 {
   "name": "@clovie/docs",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "Clovie documentation site",
   "private": true,
   "type": "module",
