@@ -1,19 +1,55 @@
 {
   "name": "clovie",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Vintage web dev tooling with modern quality of life",
+  "keywords": [
+    "static-site-generator",
+    "ssg",
+    "templating",
+    "handlebars",
+    "nunjucks",
+    "pug",
+    "mustache",
+    "scss",
+    "esbuild",
+    "live-reload",
+    "development-server",
+    "web-development",
+    "nodejs"
+  ],
   "license": "MIT",
+  "author": {
+    "name": "Adrian Miller",
+    "email": "https://github.com/adrianjonmiller/clovie"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adrianjonmiller/clovie.git"
+  },
+  "homepage": "https://github.com/adrianjonmiller/clovie#readme",
+  "bugs": {
+    "url": "https://github.com/adrianjonmiller/clovie/issues"
+  },
   "main": "lib/main.js",
   "type": "module",
   "bin": {
     "clovie": "bin/cli.js"
   },
+  "files": [
+    "lib/**/*",
+    "bin/**/*",
+    "config/**/*",
+    "templates/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "test:run": "vitest run",
     "docs:build": "cd docs && clovie build",
-    "docs:dev": "cd docs && clovie watch"
+    "docs:dev": "cd docs && clovie watch",
+    "prepublishOnly": "npm test && npm run docs:build"
   },
   "dependencies": {
     "@babel/core": "^7.23.7",
