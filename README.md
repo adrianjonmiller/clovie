@@ -1,39 +1,70 @@
-# ATX - extensible static site generator.
+# ATX Monorepo
 
-#### Installation
+A monorepo containing ATX, a Node.js-based static site generator, and related tools.
 
-```
-yarn add atx
-```
-
-#### app.config.js file
+## Project Structure
 
 ```
-{
-  scripts: path.join('./scripts/index.js'), // Path to script entry file
-  styles: path.join('./styles'), // Path to Sass entry file
-  views: path.join('./views'), // Path to views directory
-  outputDir: path.resolve('./dist/'), // Path to output directory
-  data: {}, // Data goes here, can be either obect or Promise
-  compiler: (template, data) => { return somecompiler.output() } // Retern the result of compiler ex: nunucks, handlebars, liquid etc.
-}
-
+atx-monorepo/
+├── packages/
+│   ├── atx/             # Core static site generator
+│   │   ├── __tests__/   # Test files
+│   │   ├── bin/         # CLI executable
+│   │   ├── config/      # Configuration files
+│   │   ├── lib/         # Source code
+│   │   │   ├── core/    # Core functionality
+│   │   │   └── utils/   # Utility functions
+│   │   └── package.json
+│   ├── templates/       # Project templates
+│   └── docs/            # Documentation site (built with ATX)
+├── examples/             # Example configurations for different template engines
+└── package.json          # Root package.json with workspace configuration
 ```
 
-#### Build
+## Packages
 
-```
-npm atx
+### @atx/core
+The main static site generator with support for multiple template engines, asset processing, development server, and project creation.
+
+### @atx/docs
+Documentation site built with ATX itself, demonstrating the framework's capabilities.
+
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+
+# Run tests across all packages
+npm run test
+
+# Start development server for docs
+npm run docs
 ```
 
-#### Watch
+## Development
 
-```
-npm atx --watch
-```
+This is a monorepo using npm workspaces. Each package can be developed independently or as part of the whole project.
 
-or
+### Available Scripts
 
-```
-npm atx -w
-```
+- `npm run build` - Build all packages
+- `npm run dev` - Start development mode for all packages
+- `npm run test` - Run tests across all packages
+- `npm run docs` - Start the documentation site in development mode
+
+## Template Engine Examples
+
+The `examples/` directory contains sample configurations for different template engines:
+
+- Handlebars
+- Mustache
+- Nunjucks
+- Pug
+
+## License
+
+MIT

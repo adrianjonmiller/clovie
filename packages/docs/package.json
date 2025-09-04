@@ -5,7 +5,8 @@
   "description": "ATX documentation",
   "scripts": {
     "build": "atx build",
-    "dev": "atx watch"
+    "dev": "atx watch",
+    "test": "echo 'No tests for docs package'"
   },
   "dependencies": {
     "atx": "file:../atx",
