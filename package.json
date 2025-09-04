@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.0.23",
+  "version": "1.0.0",
   "description": "Vintage web dev tooling with modern quality of life",
   "license": "MIT",
   "main": "lib/main.js",
@@ -18,7 +18,6 @@
   "dependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-
     "esbuild": "^0.19.11",
     "chokidar": "^3.5.3",
     "command-line-args": "^5.2.1",
