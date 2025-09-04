@@ -1,26 +1,38 @@
 {
   "name": "clovie",
-  "private": true,
-  "version": "1.0.0",
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "version": "0.0.23",
+  "description": "Vintage web dev tooling with modern quality of life",
+  "license": "MIT",
+  "main": "lib/main.js",
+  "type": "module",
+  "bin": {
+    "clovie": "bin/cli.js"
+  },
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "test:watch": "concurrently \"npm run test:watch -w clovie\"",
-    "docs": "npm run dev -w @clovie/docs",
-    "docs:build": "npm run build -w @clovie/docs",
-    "clean": "npm run clean --workspaces || true",
-    "lint": "npm run lint --workspaces || true",
-    "format": "npm run format --workspaces || true"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:run": "vitest run",
+    "docs:build": "cd docs && clovie build",
+    "docs:dev": "cd docs && clovie watch"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.7",
+
+    "esbuild": "^0.19.11",
+    "chokidar": "^3.5.3",
+    "command-line-args": "^5.2.1",
+    "express": "^4.18.2",
+    "handlebars": "^4.7.8",
+    "sass": "^1.69.5",
+    "socket.io": "^4.7.4",
+    "type-detect": "^4.0.8",
+    "babelify": "^10.0.0"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
-    "eslint": "^8.56.0",
-    "prettier": "^3.1.1",
-    "typescript": "^5.3.3",
     "vitest": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

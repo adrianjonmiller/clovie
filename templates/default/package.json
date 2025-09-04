@@ -1,0 +1,12 @@
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "description": "Clovie static site",
+  "scripts": {
+    "build": "clovie build",
+    "dev": "clovie watch"
+  },
+  "devDependencies": {
+    "clovie": "^0.0.23"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@clovie/docs",
+  "version": "1.0.0",
+  "description": "Clovie documentation site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "clovie build",
+    "dev": "clovie watch"
+  },
+  "devDependencies": {
+    "clovie": "file:../"
+  }
+}
