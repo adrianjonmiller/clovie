@@ -1,84 +1,617 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{title}} - {{description}}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clovie – Vintage Web Dev Tooling (Docs)</title>
+  <link rel="stylesheet" href="https://unpkg.com/thin.css">
   <link rel="stylesheet" href="main.css">
+  <meta name="description" content="Single‑page documentation for Clovie, a simple, fast, modular Node.js static site generator.">
 </head>
 <body>
-  <header>
-    <h1>{{title}} test</h1>
-    <p class="tagline">{{description}}</p>
-    <p class="version">v{{version}}</p>
+  <header class="header">
+    <h1 id="top" class="header-title type--size-iii">Clovie</h1>
+    <p class="margin--top-md">A Node.js-based static site generator designed to be simple, fast, and highly modular. The – simple but deep, easy to start with room to grow.</p>
   </header>
+  
 
-  <main>
-    <section class="hero">
-      <h2></h2>
-      <p>Simple but deep. Easy to start, room to grow. No hand-holding - you learn by doing.</p>
+  <nav class="fixed--top-left padding--all-md" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <ul class="reset">
+      <li><a href="#overview" class="link-nav js--navLink reset">Overview</a></li>
+      <li><a href="#project-structure" class="js--navLink reset">Project Structure</a></li>
+      <li><a href="#core-features" class="js--navLink reset">Core Features</a></li>
+      <li><a href="#usage" class="js--navLink reset">Usage</a>
+        <ul class="padding--left-md reset">
+          <li><a href="#installation" class="js--navLink reset">Installation</a></li>
+          <li><a href="#creating-projects" class="js--navLink reset">Creating New Projects</a></li>
+          <li><a href="#build-dev" class="js--navLink reset">Building and Development</a></li>
+        </ul>
+      </li>
+      <li><a href="#configuration" class="js--navLink reset">Configuration</a>
+        <ul class="padding--left-md reset">
+          <li><a href="#minimal-config" class="js--navLink reset">Minimal Configuration</a></li>
+          <li><a href="#full-config" class="js--navLink reset">Full Configuration</a></li>
+        </ul>
+      </li>
+      <li><a href="#advanced" class="js--navLink reset">Advanced Features</a>
+        <ul class="padding--left-md reset">
+          <li><a href="#async-data" class="js--navLink reset">Async Data Loading</a></li>
+          <li><a href="#models" class="js--navLink reset">Data Models &amp; Dynamic Pages</a></li>
+          <li><a href="#custom-engines" class="js--navLink reset">Custom Template Engines</a></li>
+          <li><a href="#pagination" class="js--navLink reset">Pagination</a></li>
+          <li><a href="#data-transform" class="js--navLink reset">Data Transformation</a></li>
+        </ul>
+      </li>
+      <li><a href="#error-best" class="js--navLink reset">Error Handling &amp; Best Practices</a>
+        <ul class="padding--left-md reset">
+          <li><a href="#error-handling" class="js--navLink reset">Error Handling</a></li>
+          <li><a href="#progress" class="js--navLink reset">Progress Indicators</a></li>
+          <li><a href="#auto-discovery" class="js--navLink reset">Auto-Discovery</a></li>
+          <li><a href="#best-practices" class="js--navLink reset">Best Practices</a></li>
+        </ul>
+      </li>
+      <li><a href="#starter-structure" class="js--navLink reset">Project Structure (Created Project)</a></li>
+      <li><a href="#development" class="js--navLink reset">Development</a></li>
+      <li><a href="#troubleshooting" class="js--navLink reset">Troubleshooting</a></li>
+      <li><a href="#license" class="js--navLink reset">License</a></li>
+    </ul>
+  </nav>
+
+  <main class="main js--scrollPosition">
+    <section id="overview" class="margin--top-md margin--top-xl">
+      <h2>Overview</h2>
+      <p>Clovie is a modern yet minimalist static site generator that emphasizes sensible defaults, modularity, and speed. It supports multiple template engines, bundles JavaScript, compiles SCSS, copies assets, and ships with a development server with live reload.</p>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section class="features">
-      <h2>Features</h2>
+    <section id="core-features" class="margin--top-md margin--top-xl">
+      <h2>Core Features</h2>
       <ul>
-        {{#each features}}
-        <li>{{this}}</li>
-        {{/each}}
+        <li><strong>Template Engine Agnostic:</strong> Handlebars, Nunjucks, Pug, Mustache, or custom.</li>
+        <li><strong>Asset Processing:</strong> JavaScript bundling with esbuild, SCSS compilation, static asset copying.</li>
+        <li><strong>Development Server:</strong> Live reload with Browser‑Sync and file watching.</li>
+        <li><strong>Data-Driven Pages:</strong> Model system for dynamic page generation.</li>
+        <li><strong>Pagination Support:</strong> Built‑in pagination for data‑driven content.</li>
       </ul>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section class="examples">
-      <h2>Examples</h2>
-      <div class="example-grid">
-        {{#each examples}}
-        <div class="example-card">
-          <h3>{{name}}</h3>
-          <p>{{description}}</p>
+    <section id="usage" class="margin--top-md margin--top-xl">
+      <h2>Usage</h2>
+
+      <h3 id="installation" class="margin--top-sm">Installation</h3>
+      <div class="codeBlock">
+        <div class="codeBlock-header margin--top-sm padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">
+            Option 1: Local Installation (Recommended)
+          </h4>
         </div>
-        {{/each}}
+      </h4>
+      <div class="codeBlock-code padding--all-md reset">
+        <code class="codeBlock-code-copy js--copyCode" data-copy-text="copy">npm install --save-dev clovie</code>
+        <br>
+        <br>
+        <code>
+          # Use via npm scripts
+        </code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">
+          npm run build
+        </code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">
+          npm run dev
+        </code>
       </div>
+      </div>
+      <div class="codeBlock">
+        <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Option 2: Global Installation</h4>
+        </div>
+      <div class="codeBlock-code padding--all-md reset">
+        <code class="codeBlock-code-copy js--copyCode">npm install -g clovie</code>
+      </div>
+</div>
+  <div class="codeBlock">
+    <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+      
+      <h4 class="codeBlock-header-title">
+        Using Clovie CLI (Recommended)
+      </h4>
+    </div>
+      <div class="codeBlock-code padding--all-md reset">
+        <code># Create a new project</code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">npx clovie create my-site</code>
+        <br>
+        <br>
+        <code># Or with global install</code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">clovie create my-site</code>
+      </div>
+</div>
+
+      <h3 id="build-dev" class="margin--top-lg">Building and Development</h3>
+      <div class="codeBlock">
+        <div class="codeBlock-header margin--top-md padding--all-md">
+          <h4>Build the site</h4>
+        </div>
+      <div class="codeBlock-code padding--all-md reset">
+        <code># Global</code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">clovie build</code>
+        <br>
+        <br>
+        <code># or</code>
+        <br>
+        <code class="codeBlock-code-copy js--copyCode">npm run build</code>
+      </div>
+</div>
+
+<div class="codeBlock">
+  <div class="codeBlock-header margin--top-md padding--all-md">
+    <h4>Dev/Watch</h4>
+  </div>
+<div class="codeBlock-code padding--all-md reset">
+  <code># Global</code>
+  <br>
+  <code class="codeBlock-code-copy js--copyCode">clovie watch</code>
+  <br>
+  <br>
+  <code># or</code>
+  <br>
+  <code class="codeBlock-code-copy js--copyCode">npm run dev</code>
+</div>
+
+</div>
+      <p class="type--align-right margin--top-md"><a href="#top" class="link-backToTop reset">Back to top</a></p>
     </section>
 
-    <section class="getting-started">
-      <h2>Get Started</h2>
-      <div class="code-block">
-        <code>npx clovie create my-site</code>
+    <section id="configuration" class="margin--top-md margin--top-xl">
+      <h2>Configuration</h2>
+      
+      <div class="codeBlock layout--container">
+        <div class="codeBlock-header margin--top-md padding--all-md">
+          <h4 id="minimal-config" class="margin--top-sm">Minimal Configuration (Recommended)</h4>
+          <p class="margin--top-xs type--size-v-1">Clovie uses smart defaults and auto‑detection, so you can start with just:</p>
+        </div>
+        <button class="button layout--top-right">Copy</button>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  data: {
+    title: 'My Site'
+  }
+};
+</code></pre>
       </div>
-      <p>That's it! Clovie will auto-detect your project structure and get you building.</p>
+      <div class="commentBlock margin--top-md padding--all-md pattern-slash-grid">
+        <p>Auto‑detection includes:</p>
+        <ul>
+          <li><code>views/</code> directory for HTML templates</li>
+          <li><code>scripts/main.js</code> for JavaScript entry point</li>
+          <li><code>styles/main.scss</code> for SCSS entry point</li>
+          <li><code>assets/</code> directory for static files</li>
+        </ul>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4 id="full-config">Full Configuration</h4>
+        </div>
+<pre class="codeBlock-code padding--all-md reset"><code class="codeBlock-code-copy js--copyCode">export default {
+  // Custom paths (optional - Clovie will auto-detect if not specified)
+  scripts: './src/js/app.js',
+  styles: './src/css/main.scss',
+  views: './templates',
+  assets: './public',
+  outputDir: './build',
+  
+  // Your data
+  data: {
+    title: 'My Site'
+  },
+  
+  // Custom compiler (optional - Clovie has a good default)
+  compiler: (template, data) => {
+    return yourTemplateEngine(template, data);
+  }
+};
+</code>
+</pre>
+      </div>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+
+    <section id="advanced" class="margin--top-md margin--top-xl">
+      <h2>Advanced Features</h2>
+
+      
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4 id="async-data">Async Data Loading</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  // ... other config
+  data: async () => {
+    // Fetch data from API
+    const response = await fetch('https://api.example.com/posts');
+    const posts = await response.json();
+    
+    return {
+      title: 'My Blog',
+      posts: posts,
+      timestamp: new Date().toISOString()
+    };
+  }
+};
+</code></pre>
+      </div>
+
+      
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4 id="models">Data Models &amp; Dynamic Pages</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  // ... other config
+  data: {
+    title: 'My Blog',
+    posts: [
+      { id: 1, title: 'First Post', content: 'Hello World' },
+      { id: 2, title: 'Second Post', content: 'Another post' },
+      { id: 3, title: 'Third Post', content: 'Yet another' }
+    ]
+  },
+  models: {
+    posts: {
+      template: '_post.html',        // Template to use
+      paginate: 2,                   // Posts per page (optional)
+      output: (post, index) => {     // Custom output filename
+        return `post-${post.id}.html`;
+      },
+      transform: (post, index) => {  // Transform data before rendering
+        return {
+          ...post,
+          excerpt: post.content.substring(0, 100) + '...',
+          date: new Date().toISOString()
+        };
+      }
+    }
+  }
+};
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Data Transformation</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  // ... other config
+  models: {
+    products: {
+      template: '_product.html',
+      transform: (product, index) => {
+        return {
+          ...product,
+          price: `$${product.price.toFixed(2)}`,
+          slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+          inStock: product.quantity > 0
+        };
+      }
+    }
+  }
+};
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Pagination</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  // ... other config
+  models: {
+    blog: {
+      template: '_blog.html',
+      paginate: 5,  // 5 posts per page
+      output: (posts, pageNum) => {
+        return pageNum === 0 ? 'blog.html' : `blog-${pageNum + 1}.html`;
+      }
+    }
+  }
+};
+</code></pre>
+      </div>
+      <div class="commentBlock margin--top-md padding--all-md">
+        <p><strong>Output:</strong></p>
+        <ul>
+          <li><code>blog.html</code> – First 5 posts</li>
+          <li><code>blog-2.html</code> – Next 5 posts</li>
+          <li><code>blog-3.html</code> – Remaining posts</li>
+        </ul>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Template (<code>_post.html</code>):</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;{{local.title}} - {{title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;article&gt;
+    &lt;h1&gt;{{local.title}}&lt;/h1&gt;
+    &lt;p&gt;{{local.excerpt}}&lt;/p&gt;
+    &lt;div&gt;{{local.content}}&lt;/div&gt;
+  &lt;/article&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+      </div>
+      <p class="margin--top-md"><strong>Output:</strong></p>
+      <ul>
+        <li><code>post-1.html</code> – First post page</li>
+        <li><code>post-2.html</code> – Second post page</li>
+        <li><code>post-3.html</code> – Third post page</li>
+      </ul>
+
+      <h3 id="custom-engines" class="margin--top-lg">Custom Template Engines</h3>
+      <p class="margin--top-xs type--size-v-1">Clovie is template‑engine agnostic. Examples for popular engines:</p>
+      
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Handlebars</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>import Handlebars from 'handlebars';
+
+export default {
+  // ... other config
+  compiler: (template, data) => {
+    const compiled = Handlebars.compile(template);
+    return compiled(data);
+  }
+};
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Nunjucks</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>import nunjucks from 'nunjucks';
+
+export default {
+  // ... other config
+  compiler: (template, data) => {
+    return nunjucks.renderString(template, data);
+  }
+};
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Pug</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>import pug from 'pug';
+
+export default {
+  // ... other config
+  compiler: (template, data) => {
+    return pug.render(template, { ...data, pretty: true });
+  }
+};
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Custom Engine</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+  // ... other config
+  compiler: (template, data) => {
+    // Simple variable replacement
+    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+      return data[key] || match;
+    });
+  }
+};
+</code></pre>
+      </div>
+
+      
+
+      
+      
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+    
+    <section id="error-best" class="margin--top-md margin--top-xl">
+      <h2>Error Handling &amp; Best Practices</h2>
+
+      <h3 id="error-handling">Error Handling</h3>
+      <ul>
+        <li><strong>Missing directories:</strong> Handles missing views, scripts, or assets folders.</li>
+        <li><strong>File read errors:</strong> Continues processing even if individual files fail.</li>
+        <li><strong>Template errors:</strong> Clear error messages for compilation failures.</li>
+        <li><strong>Data validation:</strong> Warns about invalid data structures.</li>
+      </ul>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Progress Indicators</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>🚀 Starting build...
+🧹 Cleaning output directory...
+📊 Loading data...
+   Loaded 2 data sources
+📝 Processing views...
+   Processed 5 views
+🎨 Rendering templates...
+   Rendered 5 templates
+⚡ Bundling scripts...
+   Bundled 1 script files
+🎨 Compiling styles...
+   Compiled 1 style files
+📦 Processing assets...
+   Processed 3 asset files
+💾 Writing files...
+✅ Build completed in 45ms
+</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Auto‑Discovery</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>🔍 Auto-detected views directory: views
+🔍 Auto-detected scripts entry: scripts/main.js
+🔍 Auto-detected styles entry: styles/main.scss
+🔍 Auto-detected assets directory: assets
+</code></pre>
+      </div>
+      <div class="commentBlock padding--all-lg margin--top-md">
+      <h3 id="best-practices">Best Practices</h3>
+      <ol>
+        <li>Use partial templates (files starting with <code>_</code>) for reusable components.</li>
+        <li>Validate data structures before passing to models.</li>
+        <li>Handle async data with proper error catching.</li>
+        <li>Use meaningful output filenames for SEO and organization.</li>
+        <li>Transform data in the model configuration, not in templates.</li>
+      </ol>
+      </div>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+
+    <section id="starter-structure" class="margin--top-md margin--top-xl">
+      <h2>Project Structure</h2>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Default</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>my-site/
+├── app.config.js          # Configuration
+├── package.json           # Dependencies and scripts
+├── README.md              # Project documentation
+├── views/                 # HTML templates
+│   └── index.html        # Home page template
+├── scripts/              # JavaScript
+│   └── main.js          # Main script file
+├── styles/               # SCSS
+│   └── main.scss        # Main stylesheet
+└── assets/               # Static files (images, etc.)
+</code></pre>
+      </div>
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md">
+          <h4>Custom</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>my-site/
+├── app.config.js          # Configuration
+├── views/                 # Templates
+│   ├── _base.html        # Base template (partial)
+│   ├── _header.html      # Header partial
+│   ├── index.html        # Home page
+│   └── _post.html        # Post template (partial)
+├── scripts/              # JavaScript
+│   └── main.js
+├── styles/               # SCSS
+│   └── main.scss
+├── assets/               # Static files
+│   └── images/
+└── data/                 # Data files (optional)
+    └── posts.json
+</code></pre>
+      </div>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+
+    <section id="development" class="margin--top-md margin--top-xl">
+      <h2>Development</h2>
+      <div class="codeBlock">
+        <div class="codeBlock-code padding--all-md reset">
+          <code># Install dependencies</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">npm install</code>
+          <br>
+          <br>
+          <code># Run tests</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">npm test</code>
+          <br>
+          <br>
+          <code># Run tests in watch mode</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">npm run test:watch</code>
+        </div>
+      </div>
+      <p><a href="#top">Back to top</a></p>
+    </section>
+
+    <section id="project-structure" class="margin--top-xl">
+      <h2 class="margin--top-md">Project Structure</h2>
+      <pre class="code padding--all-md"><code>packages/clovie/
+├── __tests__/           # Test files
+│   └── index.test.js
+├── bin/                 # CLI executable
+│   └── cli.js
+├── config/              # Configuration files
+│   └── default.config.js
+├── lib/                 # Source code
+│   ├── core/           # Core functionality
+│   │   ├── index.js    # Main Clovie class
+│   │   ├── bundler.js  # JavaScript bundling
+│   │   ├── render.js   # Template rendering
+│   │   ├── write.js    # File writing
+│   │   ├── getViews.js # View processing
+│   │   ├── getData.js  # Data loading
+│   │   ├── getStyles.js # SCSS compilation
+│   │   └── getAssets.js # Asset processing
+│   └── utils/          # Utility functions
+│       ├── clean.js    # Directory cleaning
+│       └── create.js   # Project creation
+└── package.json
+</code></pre>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+
+    <section id="troubleshooting" class="margin--top-md margin--top-xl">
+      <h2>Troubleshooting</h2>
+
+      <h3>Common Issues</h3>
+      <p><strong>"Views directory does not exist"</strong></p>
+      <ul>
+        <li>Ensure the <code>views</code> path in your config is correct.</li>
+        <li>Create the <code>views</code> directory if it does not exist.</li>
+      </ul>
+      <p><strong>"Data for model must be an array"</strong></p>
+      <ul>
+        <li>Check that your data structure matches the model configuration.</li>
+        <li>Ensure the referenced data key contains an array.</li>
+      </ul>
+      <p><strong>"Maximum directory depth exceeded"</strong></p>
+      <ul>
+        <li>Check for circular symlinks or extremely deep directory structures.</li>
+        <li>The limit is 50 levels deep (configurable in code).</li>
+      </ul>
+      <p><strong>Build failures</strong></p>
+      <ul>
+        <li>Check console output for specific error messages.</li>
+        <li>Verify all referenced files exist.</li>
+        <li>Ensure template syntax matches your compiler.</li>
+      </ul>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
+    </section>
+
+    <section id="license" class="margin--top-md margin--top-xl">
+      <h2>License</h2>
+      <p>MIT</p>
+      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
   </main>
 
   <footer>
-    <p>Built with ❤️ using Clovie itself</p>
+    <p>Generated from the Clovie README. © Your Project Authors.</p>
   </footer>
-
+  <h6 id="top" class="header-title type--size-iii fixed--bottom-left">Clovie</h6>
   <script src="main.js"></script>
-  
-  <!-- Live Reload Script -->
-  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-  <script>
-    (function() {
-      const socket = io();
-      
-      socket.on('reload', () => {
-        console.log('🔄 Live reload triggered');
-        window.location.reload();
-      });
-      
-      // Also reload on file changes (fallback)
-      socket.on('connect', () => {
-        console.log('🔌 Connected to live reload server');
-      });
-      
-      socket.on('disconnect', () => {
-        console.log('🔌 Disconnected from live reload server');
-      });
-      
-      socket.on('connect_error', (error) => {
-        console.error('🔌 Connection error:', error);
-      });
-    })();
-  </script>
 </body>
 </html>

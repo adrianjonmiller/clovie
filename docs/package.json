@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "clovie": "file:../"
+  },
+  "dependencies": {
+    "symbiotic": "^2.0.1"
   }
 }
