@@ -57,6 +57,9 @@ const symbiote = createSymbiote(
               continue;
             }
             const element = document.querySelector(`[href="#${id}"]`);
+            if (!element) {
+              continue;
+            }
             element.classList.add('is-active');
             currentlyActive.add(id);
           }
@@ -66,6 +69,9 @@ const symbiote = createSymbiote(
               continue;
             }
             const element = document.querySelector(`[href="#${id}"]`);
+            if (!element) {
+              continue;
+            }
             element.classList.remove('is-active');
             currentlyActive.delete(id);
           }
