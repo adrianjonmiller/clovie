@@ -5,8 +5,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node ../bin/cli.js build",
-    "dev": "node ../bin/cli.js watch"
+    "build": "clovie build",
+    "dev": "clovie watch"
   },
   "devDependencies": {
     "clovie": "file:../"
