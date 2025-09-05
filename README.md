@@ -135,7 +135,7 @@ export default {
 Clovie supports asynchronous data loading for dynamic content:
 
 ```javascript
-// app.config.js
+// clovie.config.js
 export default {
   // ... other config
   data: async () => {
@@ -157,7 +157,7 @@ export default {
 Create multiple pages from data arrays using the models system:
 
 ```javascript
-// app.config.js
+// clovie.config.js
 export default {
   // ... other config
   data: {
@@ -369,7 +369,7 @@ When you create a new project with `clovie create`, you get this structure:
 
 ```
 my-site/
-├── app.config.js          # Configuration
+├── clovie.config.js          # Configuration
 ├── package.json           # Dependencies and scripts
 ├── README.md              # Project documentation
 ├── views/                 # HTML templates
@@ -386,7 +386,7 @@ You can also create your own structure:
 
 ```
 my-site/
-├── app.config.js          # Configuration
+├── clovie.config.js          # Configuration
 ├── views/                 # Templates
 │   ├── _base.html        # Base template (partial)
 │   ├── _header.html      # Header partial

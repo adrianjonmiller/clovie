@@ -9,7 +9,7 @@
     "dev": "clovie watch"
   },
   "dependencies": {
-    "clovie": "^0.1.1",
+    "clovie": "0.1.2",
     "symbiotic": "^2.0.1"
   }
 }

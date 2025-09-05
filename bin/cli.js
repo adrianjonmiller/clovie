@@ -77,7 +77,7 @@ const argv = mainOptions._unknown || [];
 
 // Command-specific options
 const optionDefinitions = [
-  { name: 'config', alias: 'c', type: String, defaultValue: 'app.config.js' },
+  { name: 'config', alias: 'c', type: String, defaultValue: 'clovie.config.js' },
   { name: 'watch', alias: 'w', type: Boolean },
   { name: 'template', alias: 't', type: String, defaultValue: 'default' }
 ];
