@@ -8,10 +8,8 @@
     "build": "clovie build",
     "dev": "clovie watch"
   },
-  "devDependencies": {
-    "clovie": "file:../"
-  },
   "dependencies": {
+    "clovie": "^0.1.1",
     "symbiotic": "^2.0.1"
   }
 }
