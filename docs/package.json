@@ -8,11 +8,11 @@
     "build": "clovie build",
     "dev": "clovie watch",
     "link-local": "npm link clovie",
-    "unlink-local": "npm unlink clovie && npm install clovie@0.1.3",
+    "unlink-local": "npm unlink clovie && npm install clovie",
     "deploy": "npm run unlink-local && npm run build"
   },
   "dependencies": {
-    "clovie": "0.1.3",
+    "clovie": "^0.1.4",
     "symbiotic": "^2.0.1"
   }
 }
