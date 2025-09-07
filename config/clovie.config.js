@@ -5,15 +5,19 @@ export default {
   // Smart defaults - these paths are automatically detected
   scripts: null,        // Will auto-detect if not specified
   styles: null,         // Will auto-detect if not specified
-  views: null,          // Will auto-detect if not specified
   assets: null,         // Will auto-detect if not specified
+  views: null,
+  partials: null,
   outputDir: path.resolve('./dist/'),
   
   // Data and models
   data: {},
   models: {},
   
-  // Default compiler - Handlebars for powerful templating
+  register: (name, template) => {
+    Handlebars.registerPartial(name, template);
+  },
+
   compiler: (template, data) => {
     try {
       const compiled = Handlebars.compile(template);

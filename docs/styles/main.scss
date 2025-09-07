@@ -9,8 +9,23 @@
   url("https://db.onlinewebfonts.com/t/0d2fc67532a7c000fa3b6d66f0a70103.svg#Monorama")format("svg");
 }
 
+@font-face {
+  font-family: "ABC Diatype Mono";
+  src: url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.eot");
+  src: url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/fbee28f49e99c472f1f569c6ddc24ebe.svg#ABC Diatype Mono")format("svg");
+}
+
+
 :root {
 
+}
+
+pre {
+  white-space: pre-wrap;
 }
 
 .nav {
@@ -37,10 +52,6 @@
     letter-spacing: -0.05em;
 
   }
-}
-
-.is-active {
-  color: red;
 }
 
 .codeBlock {
@@ -100,9 +111,42 @@
     text-underline-offset: 5px;
   }
 
-  &-nav {
+  &-pageContents {
     text-decoration: none;
     color: black;
+    display: inline-block;
+    transition: transform 0.25s ease-in-out, color 0.25s ease-in-out;
+    transform-origin: left center;
+    position: relative;
+    color: black;
+    display: inline-block;
+    vertical-align: baseline;
+    padding: .125rem;
+
+    &:after {
+      content: attr(data-content);
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: .125rem;
+      background-color: black;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      transition: width 0.25s ease-in-out, opacity 0s ease 0.25s;
+      opacity: 0;
+    }
+
+    &.is-key {
+      &:after {
+        opacity: 1;
+        transition: width 0.25s ease-in-out, opacity 0s ease 0s;
+        width: 100%;
+      }
+    }
+  
   }
 }
 

@@ -97,9 +97,21 @@ const configPath = path.resolve(process.cwd(), options.config);
 // Main function
 async function main() {
   try {
-    // Config file
-    const configModule = await import(configPath);
-    const config = configModule.default || configModule;
+    // Config file - use default if not found
+    let config;
+    try {
+      const configModule = await import(configPath);
+      config = configModule.default || configModule;
+    } catch (err) {
+      if (err.code === 'ERR_MODULE_NOT_FOUND') {
+        // Use default config if clovie.config.js not found
+        const defaultConfigModule = await import('../config/clovie.config.js');
+        config = defaultConfigModule.default;
+        console.log('📁 Using default Clovie configuration');
+      } else {
+        throw err;
+      }
+    }
 
     // New Clovie instance
     const site = new Clovie(config);

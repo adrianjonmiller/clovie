@@ -37,57 +37,127 @@ const symbiote = createSymbiote(
       return () => element.removeEventListener('click', click);
     },
     'js--scrollPosition': (element) => {
-      const elementsInView = new Set();
-      const currentlyActive = new Set();
+      // Get all elements with IDs in document order
+      const elementsWithIds = element.querySelectorAll('[id]');
+      const elementsArray = Array.from(elementsWithIds);
+      const totalSections = elementsArray.length;
       
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            elementsInView.add(entry.target.id);
-          } else {
-            elementsInView.delete(entry.target.id);
-          }
+      // Store initial bounding rects for each element
+      const elementRects = elementsArray.map(el => ({
+        id: el.id,
+        top: el.getBoundingClientRect().top + window.scrollY,
+        height: el.getBoundingClientRect().height
+      }));
+      
+      let animationFrameId;
+      let isAnimating = false;
+      
+      const updateNavigation = () => {
+        if (isAnimating) return; // Don't start new animation if one is running
+        
+        isAnimating = true;
+        
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        
+        // Clear all styles first
+        document.querySelectorAll('.link-pageContents').forEach(link => {
+          link.style.color = '';
+          link.style.transform = '';
+          link.classList.remove('is-key');
         });
         
-        // Log all elements currently in view
-        if (elementsInView.size > 0) {
-          console.log('elementsInView', elementsInView);
-          for (const id of elementsInView) {
-            if (currentlyActive.has(id)) {
-              continue;
-            }
-            const element = document.querySelector(`[href="#${id}"]`);
-            if (!element) {
-              continue;
-            }
-            element.classList.add('is-active');
-            currentlyActive.add(id);
-          }
-
-          for (const id of currentlyActive) {
-            if (elementsInView.has(id)) {
-              continue;
-            }
-            const element = document.querySelector(`[href="#${id}"]`);
-            if (!element) {
-              continue;
-            }
-            element.classList.remove('is-active');
-            currentlyActive.delete(id);
+        // Find the element closest to the top of the viewport
+        let keyElementIndex = 0;
+        let closestDistance = Infinity;
+        
+        for (let i = 0; i < elementsArray.length; i++) {
+          const rect = elementRects[i];
+          const distanceFromTop = Math.abs(rect.top - scrollY);
+          
+          if (distanceFromTop < closestDistance) {
+            closestDistance = distanceFromTop;
+            keyElementIndex = i;
           }
         }
-      }, {
-        threshold: 0.1 // Trigger when 10% of element is visible
-      });
+        
+        // Key element always gets maximum intensity
+        const keyElementIntensity = 1;
+        
+        // Calculate effects for each section based on proximity to key element
+        elementsArray.forEach((el, i) => {
+          const navLink = document.querySelector(`[href="#${el.id}"]`);
+          if (!navLink) return;
+          
+          // Add is-key class to the key element
+          if (i === keyElementIndex) {
+            navLink.classList.add('is-key');
+          }
+          
+          // Calculate distance from key element
+          const distanceFromKey = Math.abs(i - keyElementIndex);
+          
+          // Calculate spectrum position (0 = red, 1 = violet)
+          const spectrumPosition = i / (totalSections - 1);
+          const hue = spectrumPosition * 300; // 300 degrees covers red to violet
+          
+          // Calculate intensity based on distance from key element
+          // Closer to key = higher intensity
+          const maxDistance = 4; // Fade out over 4 positions
+          const proximityIntensity = Math.max(0, 1 - (distanceFromKey / maxDistance));
+          
+          // Combine key element intensity with proximity intensity
+          const finalIntensity = keyElementIntensity * proximityIntensity;
+          
+          // Apply color and transform based on combined intensity
+          const maxShift = 1; // 1rem max shift
+          const maxScale = 0.2; // 20% max scale increase
+          const maxSaturation = 100; // 100% max saturation
+          
+          // Calculate continuous values based on final intensity
+          const shift = finalIntensity * maxShift;
+          const scale = 1 + (finalIntensity * maxScale);
+          const saturation = finalIntensity * maxSaturation;
+          
+          // Apply the calculated values
+          // navLink.style.color = `hsl(${hue}, ${saturation}%, 50%)`;
+          // navLink.style.transform = `scale(${scale}) translateX(${shift}rem)`;
+        });
+        
+        // Mark animation as complete after a short delay
+        setTimeout(() => {
+          isAnimating = false;
+        }, 16); // ~1 frame at 60fps
+      };
       
-      // Observe all elements with IDs
-      const elementsWithIds = element.querySelectorAll('[id]');
-      elementsWithIds.forEach(el => {
-        observer.observe(el);
-      });
+      // Debounced scroll handler
+      let scrollTimeout;
+      const handleScroll = () => {
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout);
+        }
+        
+        scrollTimeout = setTimeout(() => {
+          updateNavigation();
+        }, 16); // ~1 frame at 60fps
+      };
+      
+      // Add scroll event listener
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Initial update
+      updateNavigation();
       
       // Return cleanup function
-      return () => observer.disconnect();
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout);
+        }
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
   }
 );

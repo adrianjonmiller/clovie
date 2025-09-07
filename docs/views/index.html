@@ -9,64 +9,56 @@
   <meta name="description" content="Single‑page documentation for Clovie, a simple, fast, modular Node.js static site generator.">
 </head>
 <body>
-  <header class="header">
+  <header class="header padding--all-md">
     <h1 id="top" class="header-title type--size-iii">Clovie</h1>
     <p class="margin--top-md">A Node.js-based static site generator designed to be simple, fast, and highly modular. Simple but deep, easy to start with room to grow.</p>
   </header>
-  
 
-  <nav class="nav fixed--top-left padding--all-md" aria-label="Table of contents">
-    <h2>Contents</h2>
+  <div class="fixed--top-right padding--all-md flex">
+    {{> nav }}
+  </div>
+  
+  <nav class="nav fixed--left-center" aria-label="Table of contents">
     <ul class="reset">
-      <li><a href="#overview" class="link-nav js--navLink reset">Overview</a></li>
-      <li><a href="#project-structure" class="js--navLink reset">Project Structure</a></li>
-      <li><a href="#core-features" class="js--navLink reset">Core Features</a></li>
-      <li><a href="#usage" class="js--navLink reset">Usage</a>
-        <ul class="padding--left-md reset">
-          <li><a href="#installation" class="js--navLink reset">Installation</a></li>
-          <li><a href="#creating-projects" class="js--navLink reset">Creating New Projects</a></li>
-          <li><a href="#build-dev" class="js--navLink reset">Building and Development</a></li>
-        </ul>
-      </li>
-      <li><a href="#configuration" class="js--navLink reset">Configuration</a>
-        <ul class="padding--left-md reset">
-          <li><a href="#minimal-config" class="js--navLink reset">Minimal Configuration</a></li>
-          <li><a href="#full-config" class="js--navLink reset">Full Configuration</a></li>
-        </ul>
-      </li>
-      <li><a href="#advanced" class="js--navLink reset">Advanced Features</a>
-        <ul class="padding--left-md reset">
-          <li><a href="#async-data" class="js--navLink reset">Async Data Loading</a></li>
-          <li><a href="#models" class="js--navLink reset">Data Models &amp; Dynamic Pages</a></li>
-          <li><a href="#custom-engines" class="js--navLink reset">Custom Template Engines</a></li>
-          <li><a href="#pagination" class="js--navLink reset">Pagination</a></li>
-          <li><a href="#data-transform" class="js--navLink reset">Data Transformation</a></li>
-        </ul>
-      </li>
-      <li><a href="#error-best" class="js--navLink reset">Error Handling &amp; Best Practices</a>
-        <ul class="padding--left-md reset">
-          <li><a href="#error-handling" class="js--navLink reset">Error Handling</a></li>
-          <li><a href="#progress" class="js--navLink reset">Progress Indicators</a></li>
-          <li><a href="#auto-discovery" class="js--navLink reset">Auto-Discovery</a></li>
-          <li><a href="#best-practices" class="js--navLink reset">Best Practices</a></li>
-        </ul>
-      </li>
-      <li><a href="#starter-structure" class="js--navLink reset">Project Structure (Created Project)</a></li>
-      <li><a href="#development" class="js--navLink reset">Development</a></li>
-      <li><a href="#troubleshooting" class="js--navLink reset">Troubleshooting</a></li>
-      <li><a href="#license" class="js--navLink reset">License</a></li>
+      <li><a href="#overview" class="link-pageContents js--navLink reset" data-content="Overview">Overview</a></li>
+      <li><a href="#core-features" class="link-pageContents js--navLink reset" data-content="Core Features">Core Features</a></li>
+      <li><a href="#usage" class="link-pageContents js--navLink reset" data-content="Usage">Usage</a></li>
+      <li><a href="#newProject" class="link-pageContents js--navLink reset" data-content="New Project">New Project</a></li>
+      <li><a href="#installation" class="link-pageContents js--navLink reset" data-content="Installation">Installation</a></li>
+      <li><a href="#build-dev" class="link-pageContents js--navLink reset" data-content="Building and Development">Building and Development</a></li>
+      <li><a href="#configuration" class="link-pageContents js--navLink reset" data-content="Configuration">Configuration</a>
+      <li><a href="#minimal-config" class="link-pageContents js--navLink reset" data-content="Minimal Configuration">Minimal Configuration</a></li>
+      <li><a href="#full-config" class="link-pageContents js--navLink reset" data-content="Full Configuration">Full Configuration</a></li>
+      <li><a href="#advanced" class="link-pageContents js--navLink reset" data-content="Advanced Features">Advanced Features</a></li>
+      <li><a href="#async-data" class="link-pageContents js--navLink reset" data-content="Async Data Loading">Async Data Loading</a></li>
+      <li><a href="#models" class="link-pageContents js--navLink reset" data-content="Data Models &amp; Dynamic Pages">Data Models &amp; Dynamic Pages</a></li>
+      <li><a href="#data-transform" class="link-pageContents js--navLink reset" data-content="Data Transformation">Data Transformation</a></li>
+      <li><a href="#pagination" class="link-pageContents js--navLink reset" data-content="Pagination">Pagination</a></li>
+      <li><a href="#template-engines" class="link-pageContents js--navLink reset" data-content="Template Engines">Template Engines</a></li>
+      <li><a href="#handlebars" class="link-pageContents js--navLink reset" data-content="Handlebars">Handlebars</a></li>
+      <li><a href="#nunjucks" class="link-pageContents js--navLink reset" data-content="Nunjucks">Nunjucks</a></li>
+      <li><a href="#pug" class="link-pageContents js--navLink reset" data-content="Pug">Pug</a></li>
+      <li><a href="#custom-engine" class="link-pageContents js--navLink reset" data-content="Custom Engine">Custom Engine</a></li>
+      <li><a href="#error-best" class="link-pageContents js--navLink reset" data-content="Error Handling &amp; Best Practices">Error Handling &amp; Best Practices</a></li>
+      <li><a href="#error-handling" class="link-pageContents js--navLink reset" data-content="Error Handling">Error Handling</a></li>
+      <li><a href="#progress" class="link-pageContents js--navLink reset" data-content="Progress Indicators">Progress Indicators</a></li>
+      <li><a href="#best-practices" class="link-pageContents js--navLink reset" data-content="Best Practices">Best Practices</a></li>
+      <li><a href="#starter-structure" class="link-pageContents js--navLink reset" data-content="Project Structure (Created Project)">Project Structure (Created Project)</a></li>
+      <li><a href="#development" class="link-pageContents js--navLink reset" data-content="Development">Development</a></li>
+      <li><a href="#project-structure" class="link-pageContents js--navLink reset" data-content="Project Structure (Source)">Project Structure (Source)</a></li>
+      <li><a href="#troubleshooting" class="link-pageContents js--navLink reset" data-content="Troubleshooting">Troubleshooting</a></li>
+      <li><a href="#license" class="link-pageContents js--navLink reset" data-content="License">License</a></li>
     </ul>
   </nav>
 
-  <main class="main js--scrollPosition">
+  <main class="main padding--all-md js--scrollPosition">
     <section id="overview" class="margin--top-md margin--top-xl">
       <h2>Overview</h2>
       <p>Clovie is a modern yet minimalist static site generator that emphasizes sensible defaults, modularity, and speed. It supports multiple template engines, bundles JavaScript, compiles SCSS, copies assets, and ships with a development server with live reload.</p>
-      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="core-features" class="margin--top-md margin--top-xl">
-      <h2>Core Features</h2>
+    <section  class="margin--top-md margin--top-xl">
+      <h2 id="core-features">Core Features</h2>
       <ul>
         <li><strong>Template Engine Agnostic:</strong> Handlebars, Nunjucks, Pug, Mustache, or custom.</li>
         <li><strong>Asset Processing:</strong> JavaScript bundling with esbuild, SCSS compilation, static asset copying.</li>
@@ -74,11 +66,10 @@
         <li><strong>Data-Driven Pages:</strong> Model system for dynamic page generation.</li>
         <li><strong>Pagination Support:</strong> Built‑in pagination for data‑driven content.</li>
       </ul>
-      <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="usage" class="margin--top-md margin--top-xl">
-      <h2>Usage</h2>
+    <section  class="margin--top-md margin--top-xl">
+      <h2 id="usage">Usage</h2>
 
       <h3 id="newProject" class="margin--top-sm">New Project</h3>
       <div class="codeBlock margin--top-sm">
@@ -135,8 +126,8 @@
 </div>
       <h3 id="build-dev" class="margin--top-lg">Building and Development</h3>
       <div class="codeBlock">
-        <div class="codeBlock-header margin--top-md padding--all-md">
-          <h4>Build the site</h4>
+        <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Build the site</h4>
         </div>
       <div class="codeBlock-code padding--all-md reset">
         <code># Global</code>
@@ -151,8 +142,8 @@
 </div>
 
 <div class="codeBlock">
-  <div class="codeBlock-header margin--top-md padding--all-md">
-    <h4>Dev/Watch</h4>
+  <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+    <h4 class="codeBlock-header-title">Dev/Watch</h4>
   </div>
 <div class="codeBlock-code padding--all-md reset">
   <code># Global</code>
@@ -169,13 +160,13 @@
       <p class="type--align-right margin--top-md"><a href="#top" class="link-backToTop reset">Back to top</a></p>
     </section>
 
-    <section id="configuration" class="margin--top-md margin--top-xl">
-      <h2>Configuration</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="configuration">Configuration</h2>
       
       <div class="codeBlock layout--container">
-        <div class="codeBlock-header margin--top-md padding--all-md">
-          <h4 id="minimal-config" class="margin--top-sm">Minimal Configuration (Recommended)</h4>
-          <p class="margin--top-xs type--size-v-1">Clovie uses smart defaults and auto‑detection, so you can start with just:</p>
+        <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+          <h4 id="minimal-config" class="codeBlock-header-title margin--top-sm">Minimal Configuration (Recommended)</h4>
+          <p class="margin--top-xs type--size-v-1 codeBlock-header-title">Clovie uses smart defaults and auto‑detection, so you can start with just:</p>
         </div>
         <button class="button layout--top-right">Copy</button>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
@@ -196,8 +187,8 @@
       </div>
 
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4 id="full-config">Full Configuration</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="full-config" class="codeBlock-header-title">Full Configuration</h4>
         </div>
 <pre class="codeBlock-code padding--all-md reset"><code class="codeBlock-code-copy js--copyCode">export default {
   // Custom paths (optional - Clovie will auto-detect if not specified)
@@ -223,13 +214,13 @@
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="advanced" class="margin--top-md margin--top-xl">
-      <h2>Advanced Features</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="advanced">Advanced Features</h2>
 
       
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4 id="async-data">Async Data Loading</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="async-data" class="codeBlock-header-title">Async Data Loading</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
@@ -250,8 +241,8 @@
 
       
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4 id="models">Data Models &amp; Dynamic Pages</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="models" class="codeBlock-header-title">Data Models &amp; Dynamic Pages</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
@@ -283,8 +274,8 @@
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Data Transformation</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="data-transform" class="codeBlock-header-title">Data Transformation</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
@@ -305,8 +296,8 @@
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Pagination</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="pagination" class="codeBlock-header-title">Pagination</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
@@ -331,8 +322,8 @@
         </ul>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Template (<code>_post.html</code>):</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Template (<code>_post.html</code>):</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -356,12 +347,12 @@
         <li><code>post-3.html</code> – Third post page</li>
       </ul>
 
-      <h3 id="custom-engines" class="margin--top-lg">Custom Template Engines</h3>
+      <h3 id="template-engines" class="margin--top-lg">Template Engines</h3>
       <p class="margin--top-xs type--size-v-1">Clovie is template‑engine agnostic. Examples for popular engines:</p>
       
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Handlebars</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="handlebars" class="codeBlock-header-title">Handlebars</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>import Handlebars from 'handlebars';
 
@@ -375,8 +366,8 @@ export default {
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Nunjucks</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="nunjucks" class="codeBlock-header-title">Nunjucks</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>import nunjucks from 'nunjucks';
 
@@ -389,8 +380,8 @@ export default {
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Pug</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="pug" class="codeBlock-header-title">Pug</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>import pug from 'pug';
 
@@ -403,8 +394,8 @@ export default {
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Custom Engine</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="custom-engine" class="codeBlock-header-title">Custom Engine</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
@@ -425,8 +416,8 @@ export default {
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
     
-    <section id="error-best" class="margin--top-md margin--top-xl">
-      <h2>Error Handling &amp; Best Practices</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="error-best">Error Handling &amp; Best Practices</h2>
 
       <h3 id="error-handling">Error Handling</h3>
       <ul>
@@ -437,8 +428,8 @@ export default {
       </ul>
 
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Progress Indicators</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 id="progress" class="codeBlock-header-title">Progress Indicators</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>🚀 Starting build...
 🧹 Cleaning output directory...
@@ -460,8 +451,8 @@ export default {
       </div>
 
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Auto‑Discovery</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Auto‑Discovery</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>🔍 Auto-detected views directory: views
 🔍 Auto-detected scripts entry: scripts/main.js
@@ -482,11 +473,11 @@ export default {
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="starter-structure" class="margin--top-md margin--top-xl">
-      <h2>Project Structure</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="starter-structure">Project Structure</h2>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Default</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Default</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>my-site/
 ├── clovie.config.js          # Configuration
@@ -502,8 +493,8 @@ export default {
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md">
-          <h4>Custom</h4>
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Custom</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>my-site/
 ├── clovie.config.js          # Configuration
@@ -525,8 +516,8 @@ export default {
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="development" class="margin--top-md margin--top-xl">
-      <h2>Development</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="development">Development</h2>
       <div class="codeBlock">
         <div class="codeBlock-code padding--all-md reset">
           <code># Install dependencies</code>
@@ -544,12 +535,12 @@ export default {
           <code class="codeBlock-code-copy js--copyCode">npm run test:watch</code>
         </div>
       </div>
-      <p><a href="#top">Back to top</a></p>
+      <p class="type--align-right margin--top-md"><a href="#top" class="link-backToTop reset">Back to top</a></p>
     </section>
 
-    <section id="project-structure" class="margin--top-xl">
-      <h2 class="margin--top-md">Project Structure</h2>
-      <pre class="code padding--all-md"><code>packages/clovie/
+    <section class="margin--top-xl">
+      <h2 id="project-structure" class="margin--top-md" >Project Structure</h2>
+      <pre class="codeBlock-code padding--all-md reset"><code>packages/clovie/
 ├── __tests__/           # Test files
 │   └── index.test.js
 ├── bin/                 # CLI executable
@@ -574,8 +565,8 @@ export default {
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="troubleshooting" class="margin--top-md margin--top-xl">
-      <h2>Troubleshooting</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="troubleshooting">Troubleshooting</h2>
 
       <h3>Common Issues</h3>
       <p><strong>"Views directory does not exist"</strong></p>
@@ -602,8 +593,8 @@ export default {
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>
 
-    <section id="license" class="margin--top-md margin--top-xl">
-      <h2>License</h2>
+    <section class="margin--top-md margin--top-xl">
+      <h2 id="license">License</h2>
       <p>MIT</p>
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>

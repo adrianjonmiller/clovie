@@ -10,9 +10,21 @@ const TEST_CONFIG = {
   scripts: path.join(TEST_DIR, 'scripts/main.js'),
   styles: path.join(TEST_DIR, 'styles/main.scss'),
   assets: path.join(TEST_DIR, 'assets'),
+  partials: path.join(TEST_DIR, 'partials'),
   outputDir: path.join(TEST_DIR, 'dist'),
   data: {
     title: 'Test Site'
+  },
+  compiler: (template, data) => {
+    // Simple template compilation for testing
+    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+      return data[key] || match;
+    });
+  },
+  register: (name, template) => {
+    // Mock Handlebars registration for testing
+    if (!global.testPartials) global.testPartials = {};
+    global.testPartials[name] = template;
   }
 };
 
@@ -25,6 +37,7 @@ describe('Clovie', () => {
       fs.mkdirSync(path.join(TEST_DIR, 'scripts'));
       fs.mkdirSync(path.join(TEST_DIR, 'styles'));
       fs.mkdirSync(path.join(TEST_DIR, 'assets'));
+      fs.mkdirSync(path.join(TEST_DIR, 'partials'));
 
       // Create a test asset file
       fs.writeFileSync(
@@ -50,6 +63,16 @@ describe('Clovie', () => {
     fs.writeFileSync(
       path.join(TEST_DIR, 'styles/main.scss'),
       'body { color: black; }'
+    );
+
+    // Create test partials
+    fs.writeFileSync(
+      path.join(TEST_DIR, 'partials/header.html'),
+      '<header><h1>{{title}}</h1></header>'
+    );
+    fs.writeFileSync(
+      path.join(TEST_DIR, 'partials/footer.html'),
+      '<footer><p>&copy; 2024 Test Site</p></footer>'
     );
   });
 
@@ -129,5 +152,76 @@ describe('Clovie', () => {
 
     // Verify the console.log was called with expected value
     expect(context.console.log).toHaveBeenCalledWith('Hello, World!');
+  }, 10000);
+
+  it('should load and register partials', async () => {
+    // Clear any existing test partials
+    global.testPartials = {};
+    
+    const site = new Clovie(TEST_CONFIG);
+    await site.build();
+
+    // Check if partials were registered
+    expect(global.testPartials).toHaveProperty('header');
+    expect(global.testPartials).toHaveProperty('footer');
+    expect(global.testPartials.header).toBe('<header><h1>{{title}}</h1></header>');
+    expect(global.testPartials.footer).toBe('<footer><p>&copy; 2024 Test Site</p></footer>');
+  }, 10000);
+
+  it('should handle partials with custom register function', async () => {
+    // Clear any existing test partials
+    global.testPartials = {};
+    
+    const customPartialsConfig = {
+      ...TEST_CONFIG,
+      register: (name, template) => {
+        // Custom register function that adds a prefix
+        if (!global.testPartials) global.testPartials = {};
+        global.testPartials[`custom_${name}`] = `<!-- Custom: ${template} -->`;
+      }
+    };
+
+    const site = new Clovie(customPartialsConfig);
+    await site.build();
+
+    // Check if partials were registered with custom register function
+    expect(global.testPartials).toHaveProperty('custom_header');
+    expect(global.testPartials).toHaveProperty('custom_footer');
+    expect(global.testPartials.custom_header).toBe('<!-- Custom: <header><h1>{{title}}</h1></header> -->');
+    expect(global.testPartials.custom_footer).toBe('<!-- Custom: <footer><p>&copy; 2024 Test Site</p></footer> -->');
+  }, 10000);
+
+  it('should handle missing partials directory gracefully', async () => {
+    // Clear any existing test partials
+    global.testPartials = {};
+    
+    // Mock console methods to prevent test failures
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    console.warn = vi.fn();
+    console.error = vi.fn();
+    
+    try {
+      const configWithoutPartials = {
+        ...TEST_CONFIG,
+        partials: path.join(TEST_DIR, 'nonexistent-partials'),
+        register: (name, template) => {
+          if (!global.testPartials) global.testPartials = {};
+          global.testPartials[name] = template;
+        }
+      };
+
+      const site = new Clovie(configWithoutPartials);
+      
+      // Should not throw an error
+      await expect(site.build()).resolves.not.toThrow();
+      
+      // Should not register any partials
+      expect(global.testPartials || {}).toEqual({});
+    } finally {
+      // Restore original console methods
+      console.warn = originalWarn;
+      console.error = originalError;
+    }
   }, 10000);
 }); 

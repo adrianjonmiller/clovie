@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "clovie build",
-    "dev": "clovie watch"
+    "dev": "clovie watch",
+    "link-local": "npm link clovie",
+    "unlink-local": "npm unlink clovie && npm install clovie@0.1.3",
+    "deploy": "npm run unlink-local && npm run build"
   },
   "dependencies": {
     "clovie": "0.1.3",
