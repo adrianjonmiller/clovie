@@ -55,15 +55,16 @@
   "dependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-    "esbuild": "^0.19.11",
+    "babelify": "^10.0.0",
     "chokidar": "^3.5.3",
     "command-line-args": "^5.2.1",
+    "esbuild": "^0.19.11",
     "express": "^4.18.2",
     "handlebars": "^4.7.8",
+    "istextorbinary": "^9.5.0",
     "sass": "^1.69.5",
     "socket.io": "^4.7.4",
-    "type-detect": "^4.0.8",
-    "babelify": "^10.0.0"
+    "type-detect": "^4.0.8"
   },
   "devDependencies": {
     "vitest": "^1.0.4"
