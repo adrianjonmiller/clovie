@@ -7,7 +7,7 @@ const TEXT = {
 
 const symbiote = createSymbiote(
   {
-    'js--navLink': (element) => {
+    '.js--navLink': (element) => {
       const click = (e) => {
         e.preventDefault();
         const target = element.getAttribute('href');
@@ -17,7 +17,7 @@ const symbiote = createSymbiote(
       element.addEventListener('click', click);
       return () => element.removeEventListener('click', click);
     },
-    'js--copyCode': (element) => {
+    '.js--copyCode': (element) => {
       let timeout;
       requestAnimationFrame(() => {
         element.setAttribute('data-copy-text', TEXT.COPY);
@@ -36,7 +36,7 @@ const symbiote = createSymbiote(
       element.addEventListener('click', click);
       return () => element.removeEventListener('click', click);
     },
-    'js--scrollPosition': (element) => {
+    '.js--scrollPosition': (element) => {
       // Get all elements with IDs in document order
       const elementsWithIds = element.querySelectorAll('[id]');
       const elementsArray = Array.from(elementsWithIds);

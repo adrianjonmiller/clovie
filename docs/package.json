@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "clovie": "^0.1.4",
-    "symbiotic": "^2.0.1"
+    "symbiotic": "^2.1.0"
   }
 }
