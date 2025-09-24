@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> - Clovie Test Site (Live)</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        nav { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; }
+        .meta { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/hello-world">Sample Blog Post</a>
+        <a href="/admin">Admin (protected)</a>
+    </nav>
+    
+    <h1></h1>
+    <p></p>
+    
+    <div class="meta">
+        <p><strong>Site:</strong> Clovie Test Site (Live)</p>
+        <p><strong>Description:</strong> Testing the new routing system in live mode with dynamic content</p>
+    </div>
+
+  <!-- Live Reload Script (Development Mode Only) -->
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script>
+    (function() {
+      const socket = io();
+      
+      socket.on('reload', () => {
+        console.log('🔄 Live reload triggered');
+        window.location.reload();
+      });
+      
+      socket.on('connect', () => {
+        console.log('🔌 Connected to live reload server');
+      });
+      
+      socket.on('disconnect', () => {
+        console.log('🔌 Disconnected from live reload server');
+      });
+      
+      socket.on('connect_error', (error) => {
+        console.error('🔌 Connection error:', error);
+      });
+    })();
+  </script>
+</body>
+</html>

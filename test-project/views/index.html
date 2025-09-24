@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        nav { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; }
+        .meta { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/hello-world">Sample Blog Post</a>
+        <a href="/admin">Admin (protected)</a>
+    </nav>
+    
+    <h1>{{title}}</h1>
+    <p>{{message}}</p>
+    
+    <div class="meta">
+        <p><strong>Site:</strong> {{siteName}}</p>
+        <p><strong>Description:</strong> {{description}}</p>
+        {{#if posts}}
+        <h3>Recent Posts:</h3>
+        <ul>
+            {{#each posts}}
+            <li><a href="/blog/{{slug}}">{{title}}</a></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </div>
+</body>
+</html>

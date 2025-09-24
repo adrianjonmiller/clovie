@@ -1,0 +1,15 @@
+{
+  "name": "clovie-routing-test",
+  "version": "1.0.0",
+  "description": "Test project for Clovie's new routing system",
+  "type": "module",
+  "scripts": {
+    "build:static": "node ../bin/cli.js --config static.config.js",
+    "dev:live": "node ../bin/cli.js --config live.config.js --watch",
+    "test:api": "curl -s http://localhost:3002/api/posts | jq .",
+    "test:auth": "curl -H 'Authorization: Bearer admin-token' http://localhost:3002/admin"
+  },
+  "keywords": ["clovie", "routing", "static-site-generator"],
+  "author": "Clovie Test",
+  "license": "MIT"
+}

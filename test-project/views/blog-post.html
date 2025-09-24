@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        nav { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; }
+        .meta { color: #666; border-left: 3px solid #ddd; padding-left: 15px; margin: 20px 0; }
+        .content { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/hello-world">Sample Blog Post</a>
+        <a href="/admin">Admin (protected)</a>
+    </nav>
+    
+    <h1>{{title}}</h1>
+    
+    <div class="meta">
+        <p><strong>Slug:</strong> {{slug}}</p>
+        {{#if post.author}}<p><strong>Author:</strong> {{post.author}}</p>{{/if}}
+        {{#if post.date}}<p><strong>Date:</strong> {{post.date}}</p>{{/if}}
+    </div>
+    
+    <div class="content">
+        {{#if post.content}}
+            <p>{{post.content}}</p>
+        {{else}}
+            <p>{{content}}</p>
+        {{/if}}
+    </div>
+    
+    <p><a href="/">← Back to Home</a></p>
+</body>
+</html>

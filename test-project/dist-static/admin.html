@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> - Clovie Test Site (Static)</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        nav { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #333; }
+        .admin-panel { background: #f0f8ff; padding: 20px; border-radius: 5px; border: 2px solid #4a90e2; }
+        .api-test { margin-top: 20px; }
+        button { background: #4a90e2; color: white; padding: 10px 15px; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/hello-world">Sample Blog Post</a>
+        <a href="/admin">Admin (protected)</a>
+    </nav>
+    
+    <div class="admin-panel">
+        <h1>🔐 </h1>
+        <p></p>
+        <p><strong>Welcome, admin!</strong> You have successfully accessed the protected area.</p>
+        
+        <div class="api-test">
+            <h3>Test API:</h3>
+            <button onclick="testAPI()">Test /api/posts</button>
+            <button onclick="testAPISlug()">Test /api/posts/hello-world</button>
+            <div id="api-result" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 3px;"></div>
+        </div>
+    </div>
+    
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/posts');
+                const data = await response.json();
+                document.getElementById('api-result').innerHTML = `<strong>GET /api/posts:</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (err) {
+                document.getElementById('api-result').innerHTML = `<strong>Error:</strong> ${err.message}`;
+            }
+        }
+        
+        async function testAPISlug() {
+            try {
+                const response = await fetch('/api/posts/hello-world');
+                const data = await response.json();
+                document.getElementById('api-result').innerHTML = `<strong>GET /api/posts/hello-world:</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (err) {
+                document.getElementById('api-result').innerHTML = `<strong>Error:</strong> ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
