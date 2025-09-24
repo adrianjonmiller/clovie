@@ -2,6 +2,9 @@ import Handlebars from 'handlebars';
 import path from 'path';
 
 export default {
+  // Mode: 'static' for static site generation, 'live' for dynamic server
+  mode: 'static',
+  
   // Smart defaults - these paths are automatically detected
   scripts: null,        // Will auto-detect if not specified
   styles: null,         // Will auto-detect if not specified
@@ -9,6 +12,26 @@ export default {
   views: null,
   partials: null,
   outputDir: path.resolve('./dist/'),
+  
+  // Server configuration (for live mode)
+  server: {
+    port: 3000,
+    host: 'localhost',
+    open: false
+  },
+  
+  // Routes configuration
+  routes: [],
+  
+  // API routes configuration
+  api: [],
+  
+  // Global middleware (for live mode)
+  middleware: [],
+  
+  // Global hooks
+  before: null,   // Global before hook
+  after: null,    // Global after hook
   
   // Data and models
   data: {},
@@ -30,6 +53,6 @@ export default {
   
   // Development options
   watch: false,
-  port: 3000,
+  port: 3000,  // Deprecated: use server.port instead
   open: false
 }
