@@ -3,3 +3,4 @@ node_modules
 .DS_Store
 yarn-error.log
 .ignore
+.DS_Store
