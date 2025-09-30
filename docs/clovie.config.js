@@ -1,6 +1,11 @@
 import Handlebars from 'handlebars';
 import * as sass from 'sass';
 
+// Detect environment
+const isNetlify = process.env.NETLIFY === 'true';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.CONTEXT === 'production';
+const isDevelopment = !isProduction;
+
 export default {
   // Project structure
   views: './views',
@@ -9,9 +14,9 @@ export default {
   styles: './styles',
   outputDir: './dist',
   
-  // Development mode
-  mode: 'development',
-  port: 3002, // Different port from dev-project
+  // Environment-aware settings
+  mode: isDevelopment ? 'development' : 'production',
+  port: isDevelopment ? 3002 : 3000, // Different port for development
   
   // Template compilation - Handlebars
   templateCompiler: (template, data) => {
@@ -32,8 +37,9 @@ export default {
   styleCompiler: async (content, filePath) => {
     try {
       const result = sass.compileString(content, {
-        style: 'expanded',
-        sourceMap: false
+        style: isProduction ? 'compressed' : 'expanded',
+        sourceMap: isDevelopment,
+        verbose: isDevelopment
       });
       return result.css;
     } catch (err) {
@@ -46,6 +52,9 @@ export default {
   data: {
     title: 'Clovie Documentation',
     description: 'Single‑page documentation for Clovie, a simple, fast, modular Node.js static site generator.',
-    version: '0.1.4'
+    version: '0.1.4',
+    environment: isProduction ? 'production' : 'development',
+    isNetlify,
+    buildTime: new Date().toISOString()
   }
 };
