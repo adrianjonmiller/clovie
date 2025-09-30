@@ -31,10 +31,12 @@ packages/clovie/
 ## Core Features
 
 - **Template Engine Agnostic**: Support for Handlebars, Nunjucks, Pug, Mustache, or custom engines
-- **Asset Processing**: JavaScript bundling with esbuild, SCSS compilation, static asset copying
-- **Development Server**: Live reload with Browser-Sync and file watching
-- **Data-Driven Pages**: Model system for dynamic page generation
-- **Pagination Support**: Built-in pagination for data-driven content
+- **Asset Processing**: JavaScript bundling with esbuild, SCSS compilation, static asset copying  
+- **Development Server**: Live reload with Express and file watching
+- **Dynamic Routing**: Powerful route system for both static and server-side page generation
+- **Server-Side Rendering**: Full Express applications with dynamic routes and API endpoints
+- **Incremental Builds**: Smart caching for faster rebuilds
+- **Auto-Discovery**: Intelligent project structure detection
 
 ## Usage
 
@@ -121,10 +123,69 @@ export default {
     title: 'My Site'
   },
   
-  // Custom compiler (optional - Clovie has a good default)
-  compiler: (template, data) => {
-    return yourTemplateEngine(template, data);
-  }
+  // Routes for dynamic pages from data
+  routes: [{
+    name: 'Blog Posts',
+    path: '/posts/:slug',
+    template: 'post.html',
+    repeat: (state) => state.get(['posts']),
+    data: (state, post) => ({ 
+      ...post, 
+      title: post.title,
+      slug: post.slug 
+    })
+  }]
+};
+```
+
+### Server Application Configuration  
+
+```javascript
+export default {
+  type: 'server', // Express application mode
+  
+  port: 3000,
+  outputDir: './dist', // Serve static files from here
+  
+  // Same view/asset processing as static mode
+  views: './src/views',
+  scripts: './src/js', 
+  styles: './src/scss',
+  
+  // Server-specific routes
+  routes: [{
+    name: 'Posts API',
+    path: '/api/posts',
+    method: 'GET',
+    handler: async (req, res) => {
+      const posts = await getPosts();
+      res.json(posts);
+    }
+  }, {
+    name: 'Post Pages',
+    path: '/posts/:slug',
+    template: 'post.html',
+    data: async (state, params) => {
+      const post = await getPost(params.slug);
+      return { post };
+    }
+  }],
+  
+  // API routes
+  api: [{
+    path: '/api/users',
+    method: 'POST',
+    handler: async (req, res) => {
+      const user = await createUser(req.body);
+      res.json(user);
+    }
+  }],
+  
+  // Express middleware
+  middleware: [
+    express.json(),
+    cors()
+  ]
 };
 ```
 
@@ -152,9 +213,9 @@ export default {
 };
 ```
 
-### Data Models & Dynamic Pages
+### Dynamic Routes & Data-Driven Pages
 
-Create multiple pages from data arrays using the models system:
+Create multiple pages from data arrays using the routes system:
 
 ```javascript
 // clovie.config.js
@@ -163,51 +224,46 @@ export default {
   data: {
     title: 'My Blog',
     posts: [
-      { id: 1, title: 'First Post', content: 'Hello World' },
-      { id: 2, title: 'Second Post', content: 'Another post' },
-      { id: 3, title: 'Third Post', content: 'Yet another' }
+      { id: 1, title: 'First Post', content: 'Hello World', slug: 'first-post' },
+      { id: 2, title: 'Second Post', content: 'Another post', slug: 'second-post' },
+      { id: 3, title: 'Third Post', content: 'Yet another', slug: 'third-post' }
     ]
   },
-  models: {
-    posts: {
-      template: '_post.html',        // Template to use
-      paginate: 2,                   // Posts per page (optional)
-      output: (post, index) => {     // Custom output filename
-        return `post-${post.id}.html`;
-      },
-      transform: (post, index) => {  // Transform data before rendering
-        return {
-          ...post,
-          excerpt: post.content.substring(0, 100) + '...',
-          date: new Date().toISOString()
-        };
-      }
-    }
-  }
+  routes: [{
+    name: 'Blog Posts',
+    path: '/posts/:slug',
+    template: 'post.html',
+    repeat: (state) => state.get(['posts']),
+    data: (state, post) => ({
+      ...post,
+      excerpt: post.content.substring(0, 100) + '...',
+      date: new Date().toISOString()
+    })
+  }]
 };
 ```
 
-**Template (`_post.html`):**
+**Template (`post.html`):**
 ```html
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{{local.title}} - {{title}}</title>
+  <title>{{title}} - {{../title}}</title>
 </head>
 <body>
   <article>
-    <h1>{{local.title}}</h1>
-    <p>{{local.excerpt}}</p>
-    <div>{{local.content}}</div>
+    <h1>{{title}}</h1>
+    <p>{{excerpt}}</p>
+    <div>{{content}}</div>
   </article>
 </body>
 </html>
 ```
 
 **Output:**
-- `post-1.html` - First post page
-- `post-2.html` - Second post page  
-- `post-3.html` - Third post page
+- `posts/first-post.html` - First post page
+- `posts/second-post.html` - Second post page  
+- `posts/third-post.html` - Third post page
 
 ### Custom Template Engines
 
@@ -263,50 +319,55 @@ export default {
 };
 ```
 
-### Pagination
+### Route Pagination
 
-The models system includes built-in pagination:
+Routes support built-in pagination for large datasets:
 
 ```javascript
 export default {
   // ... other config
-  models: {
-    blog: {
-      template: '_blog.html',
-      paginate: 5,  // 5 posts per page
-      output: (posts, pageNum) => {
-        return pageNum === 0 ? 'blog.html' : `blog-${pageNum + 1}.html`;
-      }
-    }
-  }
+  routes: [{
+    name: 'Blog Pagination',
+    path: '/blog/:page?',
+    template: 'blog.html',
+    paginate: 5,  // 5 posts per page
+    repeat: (state) => state.get(['posts']),
+    data: (state, posts, pageInfo) => ({
+      posts,
+      pagination: pageInfo,
+      title: `Blog - Page ${pageInfo.current}`
+    })
+  }]
 };
 ```
 
 **Output:**
-- `blog.html` - First 5 posts
-- `blog-2.html` - Next 5 posts
-- `blog-3.html` - Remaining posts
+- `blog.html` - First 5 posts (page 1)
+- `blog/2.html` - Next 5 posts (page 2)
+- `blog/3.html` - Remaining posts (page 3)
 
-### Data Transformation
+### Data Transformation in Routes
 
-Transform data before rendering with custom functions:
+Transform data before rendering using the `data` function:
 
 ```javascript
 export default {
   // ... other config
-  models: {
-    products: {
-      template: '_product.html',
-      transform: (product, index) => {
-        return {
-          ...product,
-          price: `$${product.price.toFixed(2)}`,
-          slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-          inStock: product.quantity > 0
-        };
-      }
-    }
-  }
+  routes: [{
+    name: 'Products',
+    path: '/products/:slug',
+    template: 'product.html',
+    repeat: (state) => state.get(['products']),
+    data: (state, product) => ({
+      ...product,
+      price: `$${product.price.toFixed(2)}`,
+      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+      inStock: product.quantity > 0,
+      relatedProducts: state.get(['products']).filter(p => 
+        p.category === product.category && p.id !== product.id
+      )
+    })
+  }]
 };
 ```
 
@@ -358,10 +419,11 @@ Clovie automatically detects common project structures:
 ### Best Practices
 
 1. **Use partial templates** (files starting with `_`) for reusable components
-2. **Validate data structures** before passing to models
-3. **Handle async data** with proper error catching
-4. **Use meaningful output filenames** for SEO and organization
-5. **Transform data** in the model configuration, not in templates
+2. **Validate data structures** before passing to routes
+3. **Handle async data** with proper error catching in route data functions
+4. **Use meaningful route paths** for SEO and organization
+5. **Transform data** in route data functions, not in templates
+6. **Separate static and dynamic routes** for better performance
 
 ### Project Structure
 
@@ -423,9 +485,9 @@ npm run test:watch
 - Ensure the `views` path in your config is correct
 - Create the views directory if it doesn't exist
 
-**"Data for model must be an array"**
-- Check that your data structure matches the model configuration
-- Ensure the referenced data key contains an array
+**"Route repeat function must return an array"**
+- Check that your route's repeat function returns an array
+- Ensure the data structure matches the route configuration
 
 **"Maximum directory depth exceeded"**
 - Check for circular symlinks or extremely deep directory structures

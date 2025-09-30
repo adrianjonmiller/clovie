@@ -31,9 +31,9 @@
       <li><a href="#full-config" class="link-pageContents js--navLink reset" data-content="Full Configuration">Full Configuration</a></li>
       <li><a href="#advanced" class="link-pageContents js--navLink reset" data-content="Advanced Features">Advanced Features</a></li>
       <li><a href="#async-data" class="link-pageContents js--navLink reset" data-content="Async Data Loading">Async Data Loading</a></li>
-      <li><a href="#models" class="link-pageContents js--navLink reset" data-content="Data Models &amp; Dynamic Pages">Data Models &amp; Dynamic Pages</a></li>
+      <li><a href="#routes" class="link-pageContents js--navLink reset" data-content="Dynamic Routes &amp; Data Pages">Dynamic Routes &amp; Data Pages</a></li>
+      <li><a href="#route-pagination" class="link-pageContents js--navLink reset" data-content="Route Pagination">Route Pagination</a></li>
       <li><a href="#data-transform" class="link-pageContents js--navLink reset" data-content="Data Transformation">Data Transformation</a></li>
-      <li><a href="#pagination" class="link-pageContents js--navLink reset" data-content="Pagination">Pagination</a></li>
       <li><a href="#template-engines" class="link-pageContents js--navLink reset" data-content="Template Engines">Template Engines</a></li>
       <li><a href="#handlebars" class="link-pageContents js--navLink reset" data-content="Handlebars">Handlebars</a></li>
       <li><a href="#nunjucks" class="link-pageContents js--navLink reset" data-content="Nunjucks">Nunjucks</a></li>
@@ -61,9 +61,9 @@
       <ul>
         <li><strong>Template Engine Agnostic:</strong> Handlebars, Nunjucks, Pug, Mustache, or custom.</li>
         <li><strong>Asset Processing:</strong> JavaScript bundling with esbuild, SCSS compilation, static asset copying.</li>
-        <li><strong>Development Server:</strong> Live reload with Browser‑Sync and file watching.</li>
-        <li><strong>Data-Driven Pages:</strong> Model system for dynamic page generation.</li>
-        <li><strong>Pagination Support:</strong> Built‑in pagination for data‑driven content.</li>
+        <li><strong>Development Server:</strong> Live reload with Express and file watching.</li>
+        <li><strong>Dynamic Routing:</strong> Powerful route system for both static and server-side page generation.</li>
+        <li><strong>Server-Side Rendering:</strong> Full Express applications with dynamic routes and API endpoints.</li>
       </ul>
     </section>
 
@@ -241,99 +241,99 @@
       
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 id="models" class="codeBlock-header-title">Data Models &amp; Dynamic Pages</h4>
+          <h4 id="routes" class="codeBlock-header-title">Dynamic Routes &amp; Data Pages</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
   data: {
     title: 'My Blog',
     posts: [
-      { id: 1, title: 'First Post', content: 'Hello World' },
-      { id: 2, title: 'Second Post', content: 'Another post' },
-      { id: 3, title: 'Third Post', content: 'Yet another' }
+      { id: 1, title: 'First Post', content: 'Hello World', slug: 'first-post' },
+      { id: 2, title: 'Second Post', content: 'Another post', slug: 'second-post' },
+      { id: 3, title: 'Third Post', content: 'Yet another', slug: 'third-post' }
     ]
   },
-  models: {
-    posts: {
-      template: '_post.html',        // Template to use
-      paginate: 2,                   // Posts per page (optional)
-      output: (post, index) => {     // Custom output filename
-        return `post-${post.id}.html`;
-      },
-      transform: (post, index) => {  // Transform data before rendering
-        return {
-          ...post,
-          excerpt: post.content.substring(0, 100) + '...',
-          date: new Date().toISOString()
-        };
-      }
-    }
-  }
+  routes: [{
+    name: 'Blog Posts',
+    path: '/posts/:slug',
+    template: 'post.html',
+    repeat: (state) => state.get(['posts']),
+    data: (state, post) => ({
+      ...post,
+      excerpt: post.content.substring(0, 100) + '...',
+      date: new Date().toISOString()
+    })
+  }]
 };
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 id="data-transform" class="codeBlock-header-title">Data Transformation</h4>
+          <h4 id="data-transform" class="codeBlock-header-title">Data Transformation in Routes</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
-  models: {
-    products: {
-      template: '_product.html',
-      transform: (product, index) => {
-        return {
-          ...product,
-          price: `$${product.price.toFixed(2)}`,
-          slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-          inStock: product.quantity > 0
-        };
-      }
-    }
-  }
+  routes: [{
+    name: 'Products',
+    path: '/products/:slug',
+    template: 'product.html',
+    repeat: (state) => state.get(['products']),
+    data: (state, product) => ({
+      ...product,
+      price: `$${product.price.toFixed(2)}`,
+      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+      inStock: product.quantity > 0,
+      relatedProducts: state.get(['products']).filter(p => 
+        p.category === product.category && p.id !== product.id
+      )
+    })
+  }]
 };
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 id="pagination" class="codeBlock-header-title">Pagination</h4>
+          <h4 id="route-pagination" class="codeBlock-header-title">Route Pagination</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>export default {
   // ... other config
-  models: {
-    blog: {
-      template: '_blog.html',
-      paginate: 5,  // 5 posts per page
-      output: (posts, pageNum) => {
-        return pageNum === 0 ? 'blog.html' : `blog-${pageNum + 1}.html`;
-      }
-    }
-  }
+  routes: [{
+    name: 'Blog Pagination',
+    path: '/blog/:page?',
+    template: 'blog.html',
+    paginate: 5,  // 5 posts per page
+    repeat: (state) => state.get(['posts']),
+    data: (state, posts, pageInfo) => ({
+      posts,
+      pagination: pageInfo,
+      title: `Blog - Page ${pageInfo.current}`
+    })
+  }]
 };
 </code></pre>
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
         <p><strong>Output:</strong></p>
         <ul>
-          <li><code>blog.html</code> – First 5 posts</li>
-          <li><code>blog-2.html</code> – Next 5 posts</li>
-          <li><code>blog-3.html</code> – Remaining posts</li>
+          <li><code>blog.html</code> – First 5 posts (page 1)</li>
+          <li><code>blog/2.html</code> – Next 5 posts (page 2)</li>
+          <li><code>blog/3.html</code> – Remaining posts (page 3)</li>
         </ul>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 class="codeBlock-header-title">Template (<code>_post.html</code>):</h4>
+          <h4 class="codeBlock-header-title">Template (<code>post.html</code>):</h4>
         </div>
         <pre class="codeBlock-code padding--all-md reset"><code>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;title&gt;{{local.title}} - {{title}}&lt;/title&gt;
+  &lt;title&gt;{{title}} - {{../title}}&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;article&gt;
-    &lt;h1&gt;{{local.title}}&lt;/h1&gt;
-    &lt;p&gt;{{local.excerpt}}&lt;/p&gt;
-    &lt;div&gt;{{local.content}}&lt;/div&gt;
+    &lt;h1&gt;{{title}}&lt;/h1&gt;
+    &lt;p&gt;{{excerpt}}&lt;/p&gt;
+    &lt;div&gt;{{content}}&lt;/div&gt;
   &lt;/article&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -341,9 +341,9 @@
       </div>
       <p class="margin--top-md"><strong>Output:</strong></p>
       <ul>
-        <li><code>post-1.html</code> – First post page</li>
-        <li><code>post-2.html</code> – Second post page</li>
-        <li><code>post-3.html</code> – Third post page</li>
+        <li><code>posts/first-post.html</code> – First post page</li>
+        <li><code>posts/second-post.html</code> – Second post page</li>
+        <li><code>posts/third-post.html</code> – Third post page</li>
       </ul>
 
       <h3 id="template-engines" class="margin--top-lg">Template Engines</h3>
@@ -463,10 +463,11 @@ export default {
       <h3 id="best-practices">Best Practices</h3>
       <ol>
         <li>Use partial templates (files starting with <code>_</code>) for reusable components.</li>
-        <li>Validate data structures before passing to models.</li>
-        <li>Handle async data with proper error catching.</li>
-        <li>Use meaningful output filenames for SEO and organization.</li>
-        <li>Transform data in the model configuration, not in templates.</li>
+        <li>Validate data structures before passing to routes.</li>
+        <li>Handle async data with proper error catching in route data functions.</li>
+        <li>Use meaningful route paths for SEO and organization.</li>
+        <li>Transform data in route data functions, not in templates.</li>
+        <li>Separate static and dynamic routes for better performance.</li>
       </ol>
       </div>
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
@@ -531,10 +532,10 @@ export default {
         <li>Ensure the <code>views</code> path in your config is correct.</li>
         <li>Create the <code>views</code> directory if it does not exist.</li>
       </ul>
-      <p><strong>"Data for model must be an array"</strong></p>
+      <p><strong>"Route repeat function must return an array"</strong></p>
       <ul>
-        <li>Check that your data structure matches the model configuration.</li>
-        <li>Ensure the referenced data key contains an array.</li>
+        <li>Check that your route's repeat function returns an array.</li>
+        <li>Ensure the data structure matches the route configuration.</li>
       </ul>
       <p><strong>"Maximum directory depth exceeded"</strong></p>
       <ul>
