@@ -53,7 +53,23 @@
   <main class="main padding--all-md js--scrollPosition">
     <section id="overview" class="margin--top-md margin--top-xl">
       <h2>Overview</h2>
-      <p>Clovie is a modern yet minimalist static site generator that emphasizes sensible defaults, modularity, and speed. It supports multiple template engines, bundles JavaScript, compiles SCSS, copies assets, and ships with a development server with live reload.</p>
+      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full Express server applications.</p>
+      
+      <h3 class="margin--top-md">Service Architecture</h3>
+      <p>All functionality is provided by services extending <code>ServiceProvider</code>:</p>
+      <ul>
+        <li><strong>File</strong> - File system operations</li>
+        <li><strong>Compiler</strong> - Template compilation with live reload</li>
+        <li><strong>Views</strong> - View discovery and processing</li>
+        <li><strong>Routes</strong> - Route generation (static & dynamic)</li>
+        <li><strong>Build</strong> - Static site generation orchestration</li>
+        <li><strong>Server</strong> - Express server management</li>
+        <li><strong>Cache</strong> - Build caching and incremental builds</li>
+      </ul>
+
+      <h3 class="margin--top-md">Two Operating Modes</h3>
+      <p><strong>Static Mode</strong> (<code>type: 'static'</code>): Traditional static site generation</p>
+      <p><strong>Server Mode</strong> (<code>type: 'server'</code>): Full Express applications with SSR</p>
     </section>
 
     <section  class="margin--top-md margin--top-xl">
@@ -124,38 +140,47 @@
       </div>
 </div>
       <h3 id="build-dev" class="margin--top-lg">Building and Development</h3>
+      
+      <h4 class="margin--top-md">Static Mode (Default)</h4>
       <div class="codeBlock">
         <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
-          <h4 class="codeBlock-header-title">Build the site</h4>
+          <h4 class="codeBlock-header-title">Build static files</h4>
         </div>
-      <div class="codeBlock-code padding--all-md reset">
-        <code># Global</code>
-        <br>
-        <code class="codeBlock-code-copy js--copyCode">clovie build</code>
-        <br>
-        <br>
-        <code># or</code>
-        <br>
-        <code class="codeBlock-code-copy js--copyCode">npm run build</code>
+        <div class="codeBlock-code padding--all-md reset">
+          <code class="codeBlock-code-copy js--copyCode">clovie build</code>
+          <br>
+          <code># or</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">npm run build</code>
+        </div>
       </div>
-</div>
 
-<div class="codeBlock">
-  <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
-    <h4 class="codeBlock-header-title">Dev/Watch</h4>
-  </div>
-<div class="codeBlock-code padding--all-md reset">
-  <code># Global</code>
-  <br>
-  <code class="codeBlock-code-copy js--copyCode">clovie watch</code>
-  <br>
-  <br>
-  <code># or</code>
-  <br>
-  <code class="codeBlock-code-copy js--copyCode">npm run dev</code>
-</div>
+      <div class="codeBlock">
+        <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Development server with live reload</h4>
+        </div>
+        <div class="codeBlock-code padding--all-md reset">
+          <code class="codeBlock-code-copy js--copyCode">clovie watch</code>
+          <br>
+          <code># or</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">npm run dev</code>
+        </div>
+      </div>
 
-</div>
+      <h4 class="margin--top-md">Server Mode</h4>
+      <div class="codeBlock">
+        <div class="codeBlock-header margin--top-md padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Run as Express server application</h4>
+        </div>
+        <div class="codeBlock-code padding--all-md reset">
+          <code class="codeBlock-code-copy js--copyCode">clovie server</code>
+          <br>
+          <code># or add to package.json:</code>
+          <br>
+          <code class="codeBlock-code-copy js--copyCode">"scripts": { "serve": "clovie server" }</code>
+        </div>
+      </div>
       <p class="type--align-right margin--top-md"><a href="#top" class="link-backToTop reset">Back to top</a></p>
     </section>
 
@@ -496,28 +521,28 @@ export default {
     </section>
 
     <section class="margin--top-xl">
-      <h2 id="project-structure" class="margin--top-md" >Project Structure</h2>
-      <pre class="codeBlock-code padding--all-md reset"><code>packages/clovie/
-├── __tests__/           # Test files
-│   └── index.test.js
-├── bin/                 # CLI executable
-│   └── cli.js
-├── config/              # Configuration files
-│   └── default.config.js
-├── lib/                 # Source code
-│   ├── core/           # Core functionality
-│   │   ├── index.js    # Main Clovie class
-│   │   ├── bundler.js  # JavaScript bundling
-│   │   ├── render.js   # Template rendering
-│   │   ├── write.js    # File writing
-│   │   ├── getViews.js # View processing
-│   │   ├── getData.js  # Data loading
-│   │   ├── getStyles.js # SCSS compilation
-│   │   └── getAssets.js # Asset processing
-│   └── utils/          # Utility functions
-│       ├── clean.js    # Directory cleaning
-│       └── create.js   # Project creation
-└── package.json
+      <h2 id="project-structure" class="margin--top-md" >Clovie Project Structure</h2>
+      <pre class="codeBlock-code padding--all-md reset"><code>clovie/
+├── __tests__/              # Test files
+├── bin/                    # CLI executable
+│   └── cli.js             # Command line interface
+├── config/                # Configuration files  
+│   └── clovie.config.js   # Default configuration
+├── lib/                   # Service-based architecture
+│   ├── createClovie.js    # Engine factory function
+│   ├── Build.js           # Build service
+│   ├── Cache.js           # Caching service
+│   ├── Compiler.js        # Template compilation service
+│   ├── File.js            # File system service
+│   ├── Routes.js          # Routing service  
+│   ├── Server.js          # Express server service
+│   ├── Views.js           # View processing service
+│   └── utils/             # Utility functions
+│       ├── clean.js       # Directory cleaning
+│       ├── discover.js    # Auto-discovery
+│       └── liveReloadScript.js # Live reload
+├── templates/             # Project templates
+└── examples/              # Configuration examples
 </code></pre>
       <p class="type--align-right margin--top-md"><a class="link-backToTop reset" href="#top">Back to top</a></p>
     </section>

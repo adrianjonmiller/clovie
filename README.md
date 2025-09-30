@@ -1,40 +1,105 @@
 # Clovie - Vintage Web Dev Tooling
 
-A Node.js-based static site generator designed to be simple, fast, and highly modular. The "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow.
+A Node.js-based static site generator and web framework designed to be simple, fast, and highly modular. Built on the **brickworks/engine** pattern for maximum flexibility and maintainability.
+
+## Architecture Overview
+
+Clovie uses a **service-oriented architecture** where all functionality is provided by services that extend `ServiceProvider` from the brickworks/engine framework. The engine orchestrates these services through dependency injection and provides stable state management.
+
+### Core Services
+
+- **File** - File system operations (reading, writing, watching)
+- **Compiler** - Template compilation with live reload injection  
+- **Views** - View discovery and processing
+- **Routes** - Route generation and processing (static & dynamic)
+- **Build** - Static site generation orchestration
+- **Server** - Express server management (conditionally loaded)
+- **Cache** - Build caching and incremental builds
+
+### Two Operating Modes
+
+**Static Mode (`type: 'static'`)**:
+- Generates static HTML files to output directory
+- Uses Express server only for development (live reload, file serving)
+- Traditional static site generator behavior
+
+**Server Mode (`type: 'server'`)**:
+- Builds a real Express application 
+- Serves static files + handles dynamic routes/API endpoints
+- Full web application server with server-side rendering
 
 ## Project Structure
 
 ```
-packages/clovie/
-├── __tests__/           # Test files
-│   └── index.test.js
-├── bin/                 # CLI executable
-│   └── cli.js
-├── config/              # Configuration files
-│   └── default.config.js
-├── lib/                 # Source code
-│   ├── core/           # Core functionality
-│   │   ├── index.js    # Main Clovie class
-│   │   ├── bundler.js  # JavaScript bundling
-│   │   ├── render.js   # Template rendering
-│   │   ├── write.js    # File writing
-│   │   ├── getViews.js # View processing
-│   │   ├── getData.js  # Data loading
-│   │   ├── getStyles.js # SCSS compilation
-│   │   └── getAssets.js # Asset processing
-│   └── utils/          # Utility functions
-│       ├── clean.js    # Directory cleaning
-│       └── create.js   # Project creation
-└── package.json
+clovie/
+├── __tests__/              # Test files
+├── bin/                    # CLI executable
+│   └── cli.js             # Command line interface
+├── config/                # Configuration files  
+│   └── clovie.config.js   # Default configuration
+├── lib/                   # Source code - Service-based architecture
+│   ├── createClovie.js    # Engine factory function
+│   ├── Build.js           # Build service
+│   ├── Cache.js           # Caching service
+│   ├── Compiler.js        # Template compilation service
+│   ├── File.js            # File system service
+│   ├── Routes.js          # Routing service  
+│   ├── Server.js          # Express server service
+│   ├── Views.js           # View processing service
+│   └── utils/             # Utility functions
+│       ├── clean.js       # Directory cleaning
+│       ├── discover.js    # Auto-discovery
+│       └── liveReloadScript.js # Live reload
+├── templates/             # Project templates
+└── examples/              # Configuration examples
+```
+
+## Service Architecture
+
+Each service in Clovie extends `ServiceProvider` and defines:
+
+- **Static manifest**: Name, namespace, version, and dependencies
+- **initialize()**: Setup phase with access to config and context
+- **actions()**: Methods exposed through the engine context
+
+### Service Dependencies
+
+Services declare their dependencies in their manifest:
+
+```javascript
+static manifest = {
+  name: 'Clovie Build',
+  namespace: 'build', 
+  version: '1.0.0',
+  dependencies: [Cache, Routes]  // Initialized first
+};
+```
+
+### State Management
+
+The engine provides two state stores:
+
+- **`state`**: Reactive store for build-time data (from config.data)
+- **`stable`**: Persistent storage (cache, build stats, etc.)
+
+Services access these via `useContext()`:
+
+```javascript
+actions(useContext) {
+  const { state, stable, file, compiler } = useContext();
+  // Service methods can access other services and state
+}
 ```
 
 ## Core Features
 
 - **Template Engine Agnostic**: Support for Handlebars, Nunjucks, Pug, Mustache, or custom engines
-- **Asset Processing**: JavaScript bundling with esbuild, SCSS compilation, static asset copying
-- **Development Server**: Live reload with Browser-Sync and file watching
-- **Data-Driven Pages**: Model system for dynamic page generation
-- **Pagination Support**: Built-in pagination for data-driven content
+- **Asset Processing**: JavaScript bundling with esbuild, SCSS compilation, static asset copying  
+- **Development Server**: Live reload with Express and file watching
+- **Data-Driven Pages**: Route system for dynamic page generation
+- **Server-Side Rendering**: Full Express applications with dynamic routes
+- **Incremental Builds**: Smart caching for faster rebuilds
+- **Auto-Discovery**: Intelligent project structure detection
 
 ## Usage
 
@@ -71,16 +136,25 @@ clovie create my-site
 
 ### Building and Development
 
+#### Static Mode (Default)
 ```bash
-# Build the site
+# Build static files
 clovie build
 # or
 npm run build
 
-# Start development server with file watching
+# Development server with live reload  
 clovie watch
 # or
 npm run dev
+```
+
+#### Server Mode
+```bash
+# Run as Express server application
+clovie server
+# or add to package.json:
+# "scripts": { "serve": "clovie server" }
 ```
 
 ## Configuration
@@ -103,28 +177,76 @@ Clovie will automatically detect:
 - `styles/main.scss` for SCSS entry point
 - `assets/` directory for static files
 
-### Full Configuration
-
-If you need custom paths or behavior:
+### Static Site Configuration
 
 ```javascript
 export default {
-  // Custom paths (optional - Clovie will auto-detect if not specified)
-  scripts: './src/js/app.js',
-  styles: './src/css/main.scss',
-  views: './templates',
-  assets: './public',
-  outputDir: './build',
+  type: 'static', // Default - generates static files
   
-  // Your data
-  data: {
-    title: 'My Site'
+  // Auto-detected paths (override if needed)
+  views: './src/views',
+  scripts: './src/js/app.js',
+  styles: './src/scss/main.scss', 
+  assets: './public',
+  outputDir: './dist',
+  
+  // Template compilation
+  templateCompiler: (template, data) => {
+    return yourTemplateEngine(template, data);
   },
   
-  // Custom compiler (optional - Clovie has a good default)
-  compiler: (template, data) => {
-    return yourTemplateEngine(template, data);
-  }
+  // Data for site generation
+  data: {
+    title: 'My Static Site',
+    posts: [/* blog posts */]
+  },
+  
+  // Routes for dynamic pages
+  routes: [{
+    path: '/posts/:slug',
+    template: 'post.html',
+    repeat: (state) => state.get(['posts']),
+    data: (state, post) => ({ ...post, title: post.title })
+  }]
+};
+```
+
+### Server Application Configuration  
+
+```javascript
+export default {
+  type: 'server', // Express application mode
+  
+  port: 3000,
+  outputDir: './dist', // Serve static files from here
+  
+  // Same view/asset processing as static mode
+  views: './src/views',
+  scripts: './src/js', 
+  styles: './src/scss',
+  
+  // Server-specific features
+  routes: [{
+    path: '/api/posts',
+    method: 'GET',
+    handler: async (req, res) => {
+      const posts = await getPosts();
+      res.json(posts);
+    }
+  }, {
+    path: '/posts/:slug',
+    template: 'post.html',
+    data: async (state, params) => {
+      const post = await getPost(params.slug);
+      return { post };
+    }
+  }],
+  
+  // Express middleware
+  middleware: [
+    express.json(),
+    cors()
+  ]
 };
 ```
 

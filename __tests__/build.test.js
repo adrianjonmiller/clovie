@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createClovie } from '../lib/createClove.js';
+import { createClovie } from '../lib/createClovie.js';
 import fs from 'fs';
 import path from 'path';
 
