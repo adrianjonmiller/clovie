@@ -49,8 +49,8 @@
     "test:watch": "vitest",
     "test:run": "vitest run",
     "build": "node build.config.js",
-    "docs:build": "cd docs && node ../dist/clovie.js build",
-    "docs:dev": "cd docs && node ../dist/clovie.js watch",
+    "docs:build": "cd docs && node ../bin/cli.js build",
+    "docs:dev": "cd docs && node ../bin/cli.js watch",
     "prepublishOnly": "npm test"
   },
   "dependencies": {
