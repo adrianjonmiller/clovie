@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { createClovie } from '../lib/createClove.js';
+import { createClovie } from '../lib/createClovie.js';
 
 const clovie = createClovie();
 

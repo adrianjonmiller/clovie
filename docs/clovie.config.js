@@ -9,7 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production' || process.env.CONTEX
 const isDevelopment = !isProduction;
 
 export default {
-  type: 'static',
+  type: 'statics',
   // Project structure
   views: './views',
   partials: './partials', 
