@@ -55,7 +55,6 @@
   "dependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-    "@codewerks/jucie-engine": "^1.0.3",
     "babelify": "^10.0.0",
     "chokidar": "^3.5.3",
     "command-line-args": "^5.2.1",
