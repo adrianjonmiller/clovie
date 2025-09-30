@@ -5,14 +5,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "clovie build",
-    "dev": "clovie watch",
+    "build": "node ../bin/cli.js build",
+    "dev": "node ../bin/cli.js watch",
     "link-local": "npm link clovie",
     "unlink-local": "npm unlink clovie && npm install clovie",
     "deploy": "npm run unlink-local && npm run build"
   },
   "dependencies": {
-    "clovie": "^0.1.4",
     "symbiotic": "^2.1.0"
   }
 }
