@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createClovie } from '../lib/createClove.js';
+import { createClovie } from '../lib/createClovie.js';
 
 describe('Compiler', () => {
   let clovie;
