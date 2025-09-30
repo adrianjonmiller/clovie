@@ -53,6 +53,7 @@ export default {
   // Script compilation - ESBuild
   scriptCompiler: async (content, filePath) => {
     try {
+      console.log(`🔧 Starting esbuild compilation for: ${filePath}`);
       const result = await esbuild.build({
         stdin: {
           contents: content,
@@ -66,9 +67,12 @@ export default {
         write: false, // Don't write to disk, return the result
       });
       
+      console.log(`✅ esbuild compilation successful for: ${filePath}`);
       return result.outputFiles[0].text;
     } catch (err) {
-      console.warn(`⚠️  Script compilation error in ${filePath}: ${err.message}`);
+      console.error(`❌ Script compilation error in ${filePath}: ${err.message}`);
+      console.error(`❌ Full error:`, err);
+      console.warn(`⚠️  Falling back to raw content for: ${filePath}`);
       return content; // Fallback to raw content
     }
   },
