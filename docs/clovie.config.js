@@ -1,5 +1,7 @@
 import Handlebars from 'handlebars';
 import * as sass from 'sass';
+import * as esbuild from 'esbuild';
+import path from 'path';
 
 // Detect environment
 const isNetlify = process.env.NETLIFY === 'true';
@@ -44,6 +46,29 @@ export default {
       return result.css;
     } catch (err) {
       console.warn(`⚠️  Sass compilation error in ${filePath}: ${err.message}`);
+      return content; // Fallback to raw content
+    }
+  },
+  
+  // Script compilation - ESBuild
+  scriptCompiler: async (content, filePath) => {
+    try {
+      const result = await esbuild.build({
+        stdin: {
+          contents: content,
+          resolveDir: path.dirname(filePath),
+        },
+        bundle: true,
+        format: 'iife', // Immediately Invoked Function Expression for browser
+        target: 'es2015', // Support modern browsers
+        minify: isProduction,
+        sourcemap: isDevelopment,
+        write: false, // Don't write to disk, return the result
+      });
+      
+      return result.outputFiles[0].text;
+    } catch (err) {
+      console.warn(`⚠️  Script compilation error in ${filePath}: ${err.message}`);
       return content; // Fallback to raw content
     }
   },
