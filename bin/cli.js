@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local
-import Clovie from "../lib/main.js";
+import { createClovie } from "../lib/createClovie.js";
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
@@ -114,18 +114,70 @@ async function main() {
     }
 
     // New Clovie instance
-    const site = new Clovie(config);
-
-    site.error(err => {
-      console.error(err);
-      process.exit(1);
-    });
+    const clovie = await createClovie(config);
 
     if (options.watch) {
-      await site.startWatch();
+      // Development mode with file watching
+      console.log('🏗️  Initial build...');
+      await clovie.build.static();
+      console.log('✅ Initial build completed\n');
+      
+      // Start development server
+      clovie.server.start();
+      
+      // Set up file watching
+      console.log('👀 Setting up file watching...');
+      const watchPaths = [
+        config.views,
+        config.partials,
+        config.styles,
+        config.scripts,
+      ].filter(Boolean); // Remove undefined paths
+      
+      const watchers = clovie.file.watch(watchPaths);
+      
+      // Set up event handlers for each watcher
+      watchers.forEach(watcher => {
+        watcher.on('change', async (filePath) => {
+          console.log(`🔄 File changed: ${filePath}`);
+          console.log('🔄 Triggering rebuild...');
+          
+          try {
+            const result = await clovie.build.static();
+            console.log(`✅ Rebuild completed in ${result.buildTime}ms`);
+            
+            // Notify live reload
+            if (clovie.server && clovie.server.notifyReload) {
+              clovie.server.notifyReload();
+            }
+          } catch (error) {
+            console.error('❌ Rebuild failed:', error.message);
+          }
+        });
+        
+        watcher.on('error', (error) => {
+          console.error('❌ File watcher error:', error);
+        });
+      });
+      
+      console.log(`🌐 Development server running at http://localhost:${config.port || 3000}`);
+      console.log('👀 Watching for file changes...');
+      console.log('Press Ctrl+C to stop the server\n');
+      
+      // Keep the process running
+      process.on('SIGINT', () => {
+        console.log('\n🛑 Stopping development server...');
+        if (clovie.file.isWatching()) {
+          clovie.file.stopWatching();
+        }
+        process.exit(0);
+      });
+      
     } else {
-      await site.build();
-      console.log('Build complete');
+      // Build mode
+      const result = await clovie.build.static();
+      console.log(`✅ Build completed in ${result.buildTime}ms`);
+      console.log(`📁 Generated ${result.filesGenerated} files`);
       process.exit(0);
     }
   } catch (err) {

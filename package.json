@@ -44,6 +44,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "dev": "node lib/main.js watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:run": "vitest run",
@@ -55,6 +56,7 @@
   "dependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
+    "@brickworks/engine": "^1.1.0",
     "babelify": "^10.0.0",
     "chokidar": "^3.5.3",
     "command-line-args": "^5.2.1",

@@ -31,5 +31,22 @@ export default {
   // Development options
   watch: false,
   port: 3000,
-  open: false
+  open: false,
+  routes: [
+    {
+      name: 'Products',
+      path: '/products/:slug',
+      template: 'index.html',
+      repeat: (state) => {
+        return state.get(['products'])
+      },
+      data: (item, ) => {
+        return {
+          ...item,
+          slug: item.name,
+          title: item.name
+        }
+      }
+    }
+  ]
 }
