@@ -1,5 +1,5 @@
 {
-  "name": "clovie",
+  "name": "@brickworks/clovie",
   "version": "0.1.5",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
@@ -30,13 +30,23 @@
   "bugs": {
     "url": "https://github.com/adrianjonmiller/clovie/issues"
   },
-  "main": "lib/main.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./cli": "./bin/cli.js"
+  },
   "bin": {
     "clovie": "bin/cli.js"
   },
   "files": [
-    "lib/**/*",
+    "dist/",
     "bin/**/*",
     "config/**/*",
     "templates/**/*",
@@ -44,15 +54,28 @@
     "LICENSE"
   ],
   "scripts": {
-    "dev": "node lib/main.js watch",
+    "build": "npm run clean && rollup -c && npm run build:types",
+    "build:types": "node scripts/build-types.js",
+    "clean": "rm -rf dist",
+    "dev": "rollup -c -w",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:run": "vitest run",
-    "build": "node build.config.js",
+    "test:coverage": "vitest --coverage",
+    "size-check": "npm run build && du -sh dist/*",
     "docs:build": "cd docs && npm install && npm run build",
     "docs:dev": "cd docs && npm install && npm run dev",
     "docs:serve": "cd docs && npm install && npm run serve",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm run build && npm test",
+    "publish:build": "node scripts/publish.js build",
+    "publish:test": "node scripts/publish.js test",
+    "publish:docs": "node scripts/publish.js docs",
+    "publish:dry-run": "node scripts/publish.js dry-run",
+    "publish:patch": "node scripts/publish.js patch",
+    "publish:minor": "node scripts/publish.js minor",
+    "publish:major": "node scripts/publish.js major",
+    "publish:beta": "node scripts/publish.js beta",
+    "publish:do": "node scripts/publish.js do",
+    "publish:info": "node scripts/publish.js info"
   },
   "dependencies": {
     "@babel/core": "^7.23.7",
@@ -70,6 +93,12 @@
     "type-detect": "^4.0.8"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.52.2",
+    "rollup-plugin-cleanup": "^3.2.1",
     "vitest": "^1.0.4"
   },
   "engines": {
