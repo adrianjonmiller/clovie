@@ -49,8 +49,8 @@
     "test:watch": "vitest",
     "test:run": "vitest run",
     "build": "node build.config.js",
-    "docs:build": "cd docs && node ../bin/cli.js build",
-    "docs:dev": "cd docs && node ../bin/cli.js watch",
+    "docs:build": "cd docs && npm run build",
+    "docs:dev": "cd docs && npm run dev",
     "prepublishOnly": "npm test"
   },
   "dependencies": {
