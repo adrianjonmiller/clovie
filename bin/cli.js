@@ -91,6 +91,11 @@ if (mainOptions.command === 'watch') {
   options.watch = true;
 }
 
+// Handle server command
+if (mainOptions.command === 'server') {
+  options.server = true;
+}
+
 // Config path
 const configPath = path.resolve(process.cwd(), options.config);
 
@@ -113,10 +118,42 @@ async function main() {
       }
     }
 
+    // Override config type if server command is used
+    if (options.server) {
+      config.type = 'server';
+    }
+
     // New Clovie instance
     const clovie = await createClovie(config);
 
-    if (options.watch) {
+    if (options.server) {
+      // Server mode - run as Express server
+      console.log('🌐 Starting server mode...');
+      
+      // Load data into state first
+      if (config.data) {
+        console.log('📊 Loading data into state...');
+        let loadedData = {};
+        if (typeof config.data === 'function') {
+          loadedData = await config.data();
+        } else if (typeof config.data === 'object') {
+          loadedData = config.data;
+        }
+        clovie.state.load(loadedData);
+        console.log(`   Loaded ${Object.keys(loadedData).length} data sources into state`);
+      }
+      
+      // Start server
+      clovie.server.start();
+      
+      // Keep the process running
+      process.on('SIGINT', () => {
+        console.log('\n🛑 Stopping server...');
+        clovie.server.stop();
+        process.exit(0);
+      });
+      
+    } else if (options.watch) {
       // Development mode with file watching
       console.log('🏗️  Initial build...');
       await clovie.build.static();

@@ -40,7 +40,7 @@ export default {
       repeat: (state) => {
         return state.get(['products'])
       },
-      data: (item, ) => {
+      data: (state, item) => {
         return {
           ...item,
           slug: item.name,

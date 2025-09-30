@@ -9,6 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production' || process.env.CONTEX
 const isDevelopment = !isProduction;
 
 export default {
+  type: 'server',
   // Project structure
   views: './views',
   partials: './partials', 
@@ -85,5 +86,20 @@ export default {
     environment: isProduction ? 'production' : 'development',
     isNetlify,
     buildTime: new Date().toISOString()
-  }
+  },
+  routes: [{
+    name: 'Home',
+    path: '/',
+    template: 'routes/index.html',
+    data: (state, item) => {
+      return state.get()
+    }
+  },{
+    name: 'Build with Clovie',
+    path: '/build-with-clovie',
+    template: 'routes/built-with-clovie.html',
+    data: (state, item) => {
+      return state.get()
+    }
+  }]
 };
