@@ -26,7 +26,7 @@ describe('Build Service', () => {
   });
 
   it('should build static site with data', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: viewsDir,
       outputDir: outputDir,
       data: {
@@ -63,7 +63,7 @@ describe('Build Service', () => {
   });
 
   it('should handle build without data', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: viewsDir,
       outputDir: outputDir,
       compiler: (template, data) => template,
@@ -78,7 +78,7 @@ describe('Build Service', () => {
   });
 
   it('should handle missing views directory', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: '/non-existent',
       outputDir: outputDir,
       compiler: (template, data) => template,

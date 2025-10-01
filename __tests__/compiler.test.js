@@ -6,7 +6,7 @@ describe('Compiler', () => {
   let mockCompiler;
   let mockRegister;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Create mock compiler function
     mockCompiler = vi.fn((template, data) => {
       // Simple template replacement for testing
@@ -20,7 +20,7 @@ describe('Compiler', () => {
     mockRegister = vi.fn();
 
     // Create clovie instance with test config
-    clovie = createClovie({
+    clovie = await createClovie({
       compiler: mockCompiler,
       register: mockRegister,
       mode: 'development'
@@ -94,7 +94,7 @@ describe('Compiler', () => {
 
   it('should not register partials when register function is not provided', async () => {
     // Create clovie without register function
-    const clovieNoRegister = createClovie({
+    const clovieNoRegister = await createClovie({
       compiler: mockCompiler,
       mode: 'development'
     });
@@ -131,7 +131,7 @@ describe('Compiler', () => {
   });
 
   it('should not inject live reload script in production mode', async () => {
-    const clovieProd = createClovie({
+    const clovieProd = await createClovie({
       compiler: mockCompiler,
       register: mockRegister,
       mode: 'production'
@@ -192,7 +192,7 @@ describe('Compiler', () => {
       return template.replace(/\{\{title\}\}/g, data.title || '');
     });
 
-    const clovieAsync = createClovie({
+    const clovieAsync = await createClovie({
       compiler: asyncCompiler,
       register: mockRegister,
       mode: 'development'
@@ -215,7 +215,7 @@ describe('Compiler', () => {
       throw new Error('Compilation failed');
     });
 
-    const clovieError = createClovie({
+    const clovieError = await createClovie({
       compiler: errorCompiler,
       register: mockRegister,
       mode: 'development'
@@ -237,7 +237,7 @@ describe('Compiler', () => {
       throw new Error('Registration failed');
     });
 
-    const clovieError = createClovie({
+    const clovieError = await createClovie({
       compiler: mockCompiler,
       register: errorRegister,
       mode: 'development'

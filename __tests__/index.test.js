@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import Clovie from '../lib/main.js';
+import { createClovie } from '../lib/createClovie.js';
 import { vi } from 'vitest';
 
-const TEST_DIR = path.join(__dirname, '../test-output');
+const TEST_DIR = path.join(process.cwd(), 'test-output');
 const TEST_CONFIG = {
   views: path.join(TEST_DIR, 'views'),
-  scripts: path.join(TEST_DIR, 'scripts/main.js'),
-  styles: path.join(TEST_DIR, 'styles/main.scss'),
+  scripts: path.join(TEST_DIR, 'scripts'),
+  styles: path.join(TEST_DIR, 'styles'),
   assets: path.join(TEST_DIR, 'assets'),
   partials: path.join(TEST_DIR, 'partials'),
   outputDir: path.join(TEST_DIR, 'dist'),
@@ -83,8 +83,8 @@ describe('Clovie', () => {
   });
 
   it('should build a site with default config', async () => {
-    const site = new Clovie(TEST_CONFIG);
-    await site.build();
+    const site = await createClovie(TEST_CONFIG);
+    await site.build.static();
 
     // Check if output directory was created
     expect(fs.existsSync(TEST_CONFIG.outputDir)).toBe(true);
@@ -105,8 +105,8 @@ describe('Clovie', () => {
       compiler: (template, data) => `<div>${data.title}</div>`
     };
 
-    const site = new Clovie(customConfig);
-    await site.build();
+    const site = await createClovie(customConfig);
+    await site.build.static();
 
     const html = fs.readFileSync(path.join(TEST_CONFIG.outputDir, 'index.html'), 'utf8');
     expect(html).toBe('<div>Test Site</div>');
@@ -118,16 +118,16 @@ describe('Clovie', () => {
       data: Promise.resolve({ title: 'Async Site' })
     };
 
-    const site = new Clovie(asyncConfig);
-    await site.build();
+    const site = await createClovie(asyncConfig);
+    await site.build.static();
 
     const html = fs.readFileSync(path.join(TEST_CONFIG.outputDir, 'index.html'), 'utf8');
     expect(html).toContain('Async Site');
   }, 10000);
 
   it('should handle ES6 imports', async () => {
-    const site = new Clovie(TEST_CONFIG);
-    await site.build();
+    const site = await createClovie(TEST_CONFIG);
+    await site.build.static();
 
     // Check if bundle was created
     const bundlePath = path.join(TEST_CONFIG.outputDir, 'main.js');
@@ -158,8 +158,8 @@ describe('Clovie', () => {
     // Clear any existing test partials
     global.testPartials = {};
     
-    const site = new Clovie(TEST_CONFIG);
-    await site.build();
+    const site = await createClovie(TEST_CONFIG);
+    await site.build.static();
 
     // Check if partials were registered
     expect(global.testPartials).toHaveProperty('header');
@@ -181,8 +181,8 @@ describe('Clovie', () => {
       }
     };
 
-    const site = new Clovie(customPartialsConfig);
-    await site.build();
+    const site = await createClovie(customPartialsConfig);
+    await site.build.static();
 
     // Check if partials were registered with custom register function
     expect(global.testPartials).toHaveProperty('custom_header');
@@ -211,10 +211,10 @@ describe('Clovie', () => {
         }
       };
 
-      const site = new Clovie(configWithoutPartials);
+      const site = await createClovie(configWithoutPartials);
       
       // Should not throw an error
-      await expect(site.build()).resolves.not.toThrow();
+      await expect(site.build.static()).resolves.not.toThrow();
       
       // Should not register any partials
       expect(global.testPartials || {}).toEqual({});

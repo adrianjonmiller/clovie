@@ -3,9 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { createClovie } from '../lib/createClovie.js';
 
-const clovie = createClovie();
-
 describe('File', () => {
+  let clovie;
+
+  beforeEach(async () => {
+    clovie = await createClovie();
+  });
   const testDir = path.join(process.cwd(), '__tests__', 'temp');
   const testFile = path.join(testDir, 'test.txt');
   const testContent = 'Hello, World!';

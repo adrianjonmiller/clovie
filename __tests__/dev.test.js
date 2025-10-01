@@ -4,9 +4,12 @@ import path from 'path';
 import { vi } from 'vitest';
 import { createClovie } from '../lib/createClovie.js';
 
-const clovie = createClovie();
-
 describe('Dev', () => {
+  let clovie;
+
+  beforeEach(async () => {
+    clovie = await createClovie();
+  });
   it('should start the development server', () => {
     expect(clovie).toBeDefined();
   });

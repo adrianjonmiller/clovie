@@ -33,7 +33,7 @@ describe('Views Service', () => {
   });
 
   it('should process views directory', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: viewsDir,
       partials: partialsDir,
       outputDir: outputDir,
@@ -54,7 +54,7 @@ describe('Views Service', () => {
   });
 
   it('should handle missing views directory', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: '/non-existent',
       outputDir: outputDir,
       compiler: () => '',
@@ -69,7 +69,7 @@ describe('Views Service', () => {
   });
 
   it('should skip files starting with underscore', async () => {
-    const clovie = createClovie({
+    const clovie = await createClovie({
       views: viewsDir,
       outputDir: outputDir,
       compiler: () => '',
