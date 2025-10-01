@@ -209,17 +209,34 @@ async function main() {
       
       // Set up file watching
       console.log('👀 Setting up file watching...');
+      
+      // Debug: Check if config service is available
+      console.log('   Debug: config service available:', !!clovie.config);
+      console.log('   Debug: getWatchPaths available:', !!clovie.config?.getWatchPaths);
+      
       // Use discovered config paths from Config service
-      const watchPaths = clovie.config.getWatchPaths();
+      let watchPaths;
+      try {
+        watchPaths = clovie.config.getWatchPaths();
+      } catch (error) {
+        console.error('   Error getting watch paths:', error.message);
+        // Fallback to manual discovery for debugging
+        const discoveredConfig = clovie.config.get();
+        watchPaths = [
+          discoveredConfig?.views,
+          discoveredConfig?.partials,
+          discoveredConfig?.styles,
+          discoveredConfig?.scripts,
+          discoveredConfig?.assets
+        ].filter(Boolean);
+        console.log('   Using fallback watch paths:', watchPaths);
+      }
       
       console.log(`   Watching ${watchPaths.length} directories:`, watchPaths);
       
-      const watchers = clovie.file.watch(watchPaths);
-      
-      // Set up event handlers for each watcher
-      watchers.forEach(watcher => {
-        watcher.on('change', async (filePath) => {
-          console.log(`🔄 File changed: ${filePath}`);
+      // Set up file watchers with change handler
+      const watchers = clovie.file.watch(watchPaths, {}, {
+        onChange: async (filePath) => {
           console.log('🔄 Triggering rebuild...');
           
           try {
@@ -233,11 +250,7 @@ async function main() {
           } catch (error) {
             console.error('❌ Rebuild failed:', error.message);
           }
-        });
-        
-        watcher.on('error', (error) => {
-          console.error('❌ File watcher error:', error);
-        });
+        }
       });
       
       console.log(`🌐 Development server running at http://localhost:${config.port || 3000}`);
