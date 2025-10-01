@@ -9,7 +9,7 @@
     "preview": "clovie serve dist"
   },
   "devDependencies": {
-    "@brickworks/clovie": "^0.1.5"
+    "clovie": "^0.1.5"
   },
   "keywords": [
     "static-site",

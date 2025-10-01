@@ -13,49 +13,39 @@
   <main class="container">
     <section class="hero">
       <h1 class="hero__title">{{title}}</h1>
-      <p class="hero__subtitle">Full-stack web application powered by Clovie</p>
-      <div class="hero__actions">
-        <a href="/dashboard.html" class="btn btn--primary">Go to Dashboard</a>
-        <a href="/api" class="btn btn--secondary">Explore API</a>
-      </div>
+      <p class="hero__subtitle">Welcome to your new Clovie server application!</p>
+      <a href="/about.html" class="btn btn--primary">Learn More</a>
     </section>
 
     <section class="features">
-      <h2>Server Features</h2>
       <div class="features__grid">
         <div class="feature">
           <h3>🔌 API Ready</h3>
-          <p>RESTful API endpoints with authentication</p>
+          <p>RESTful API endpoints with state management</p>
         </div>
         <div class="feature">
-          <h3>🔐 Authentication</h3>
-          <p>Built-in user management and JWT tokens</p>
+          <h3>📄 Server Rendering</h3>
+          <p>Dynamic pages with data from your API</p>
         </div>
         <div class="feature">
-          <h3>📊 Database</h3>
-          <p>Support for PostgreSQL, MySQL, MongoDB</p>
+          <h3>🔄 Live Reload</h3>
+          <p>Development server with WebSocket updates</p>
         </div>
         <div class="feature">
-          <h3>⚡ Real-time</h3>
-          <p>WebSocket support for live updates</p>
+          <h3>⚡ Modern Stack</h3>
+          <p>Express.js with Clovie's simplified architecture</p>
         </div>
       </div>
     </section>
 
-    <section class="api-status" id="api-status">
-      <h2>API Status</h2>
-      <div class="status-grid">
-        <div class="status-item">
-          <span class="status-dot status-dot--loading"></span>
-          <span class="status-label">Server Status</span>
-          <span class="status-value" id="server-status">Checking...</span>
-        </div>
-        <div class="status-item">
-          <span class="status-dot status-dot--loading"></span>
-          <span class="status-label">Database</span>
-          <span class="status-value" id="db-status">Checking...</span>
-        </div>
+    <section class="api-demo">
+      <h2>API Demo</h2>
+      <p>Try out the built-in API endpoints:</p>
+      <div class="demo-actions">
+        <button class="btn btn--outline" onclick="checkServerStatus()">Check Server Status</button>
+        <button class="btn btn--outline" onclick="getUserCount()">Get User Count</button>
       </div>
+      <pre id="api-result" class="api-result" style="display: none;"></pre>
     </section>
   </main>
 

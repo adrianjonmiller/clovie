@@ -7,8 +7,8 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Local
-import { createClovie } from "../lib/createClovie.js";
+// Local - import from compiled dist for published package
+import { createClovie } from "../dist/index.js";
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
@@ -94,8 +94,8 @@ if (process.argv.includes('create') && process.argv.length > 2) {
     if (templateType === 'server') {
       console.log('\n🌐 Server template features:');
       console.log('  • API endpoints ready at /api/*');
-      console.log('  • Admin dashboard at /dashboard.html');
-      console.log('  • User profiles at /user/:id');
+      console.log('  • Dynamic user profiles at /user/:id');
+      console.log('  • Interactive API demos on homepage');
       console.log('  • Use "npm run start" for production server');
     } else if (templateType === 'static') {
       console.log('\n📄 Static template features:');

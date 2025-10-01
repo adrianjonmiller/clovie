@@ -1,26 +1,10 @@
 <header class="header">
-  <div class="container">
-    <div class="header__content">
-      <a href="/" class="header__brand">
-        <span class="brand-icon">⚡</span>
-        {{title}}
-      </a>
-      
-      <div class="header__actions">
-        <button class="btn btn--small btn--outline" onclick="toggleTheme()">🌙</button>
-        <div class="user-menu" id="user-menu">
-          <button class="user-avatar" onclick="toggleUserMenu()">
-            <img src="https://ui-avatars.com/api/?name=User&background=2563eb&color=fff" alt="User Avatar">
-          </button>
-          <div class="user-dropdown" id="user-dropdown">
-            <a href="/dashboard.html">Dashboard</a>
-            <a href="/profile">Profile</a>
-            <a href="/settings">Settings</a>
-            <hr>
-            <a href="#" onclick="logout()">Sign Out</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <nav class="nav container">
+    <a href="/" class="nav__brand">{{title}}</a>
+    <ul class="nav__menu">
+      <li><a href="/" class="nav__link">Home</a></li>
+      <li><a href="/about.html" class="nav__link">About</a></li>
+      <li><a href="/api/status" class="nav__link">API</a></li>
+    </ul>
+  </nav>
 </header>

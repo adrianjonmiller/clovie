@@ -29,19 +29,17 @@ npm start
 
 ```
 ├── views/              # Server-rendered templates
-│   ├── index.html      # Homepage
-│   ├── dashboard.html  # Admin dashboard
-│   ├── login.html      # Login page
-│   └── profile.html    # User profile page
+│   ├── index.html      # Homepage  
+│   ├── about.html      # About page
+│   └── profile.html    # User profile page (dynamic route)
 ├── scripts/            # Client-side JavaScript
-│   └── app.js          # Main application logic
+│   └── app.js          # Main application logic with API helpers
 ├── styles/             # SCSS stylesheets
-│   └── main.scss       # Main styles with dashboard UI
+│   └── main.scss       # Clean, modern styles
 ├── partials/           # Reusable template components
-│   ├── header.html     # Site header with user menu
-│   ├── nav.html        # Sidebar navigation
+│   ├── header.html     # Site header with navigation
 │   └── footer.html     # Site footer
-└── clovie.config.js    # Server configuration
+└── clovie.config.js    # Server configuration with API routes
 ```
 
 ## Available API Endpoints
@@ -55,9 +53,8 @@ This template includes these working API endpoints:
 
 ## Server Routes
 
-- `/` - Homepage
-- `/dashboard.html` - Admin dashboard  
-- `/login.html` - Login page
+- `/` - Homepage with API demos
+- `/about.html` - About page explaining server features  
 - `/user/:id` - Dynamic user profile page (server-rendered)
 
 ## Configuration

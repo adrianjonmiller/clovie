@@ -10,7 +10,7 @@
     "build": "clovie build"
   },
   "dependencies": {
-    "@brickworks/clovie": "^0.1.5",
+    "clovie": "^0.1.5",
     "express": "^4.18.2"
   },
   "keywords": [

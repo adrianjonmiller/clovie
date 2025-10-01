@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="About {{title}} - {{description}}">
+  <title>About - {{title}}</title>
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+  {{> header}}
+  
+  <main class="container">
+    <article class="content">
+      <h1>About</h1>
+      
+      <p>This is your server-side web application built with <strong>Clovie</strong>. It combines the simplicity of static site generation with the power of a full Express.js server.</p>
+      
+      <h2>Server Features</h2>
+      <p>This template includes:</p>
+      <ul>
+        <li><strong>API Endpoints</strong> - Ready-to-use REST API with state management</li>
+        <li><strong>Server-Side Rendering</strong> - Dynamic pages with real-time data</li>
+        <li><strong>Live Development</strong> - Hot reload with WebSocket integration</li>
+        <li><strong>Express.js Integration</strong> - Full middleware and routing support</li>
+      </ul>
+
+      <h2>Available API Endpoints</h2>
+      <ul>
+        <li><code>GET /api/status</code> - Server status and uptime</li>
+        <li><code>GET /api/users</code> - List all users</li>
+        <li><code>POST /api/users</code> - Create a new user</li>
+        <li><code>GET /api/users/:id</code> - Get user by ID</li>
+      </ul>
+
+      <h2>Dynamic Routes</h2>
+      <ul>
+        <li><code>/user/:id</code> - Server-rendered user profile pages</li>
+      </ul>
+
+      <h2>Getting Started</h2>
+      <p>To customize this server:</p>
+      <ul>
+        <li>Edit templates in the <code>views/</code> directory</li>
+        <li>Add API endpoints in <code>clovie.config.js</code> api array</li>
+        <li>Create dynamic routes in the routes array</li>
+        <li>Modify styles in <code>styles/main.scss</code></li>
+        <li>Add client-side features in <code>scripts/app.js</code></li>
+      </ul>
+
+      <h2>Example API Usage</h2>
+      <p>Try these commands in your browser's console:</p>
+      <pre><code>// Get server status
+fetch('/api/status').then(r => r.json()).then(console.log)
+
+// Create a user  
+fetch('/api/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'John', email: 'john@example.com' })
+}).then(r => r.json()).then(console.log)</code></pre>
+    </article>
+  </main>
+
+  {{> footer}}
+  
+  <script src="/app.js"></script>
+</body>
+</html>
