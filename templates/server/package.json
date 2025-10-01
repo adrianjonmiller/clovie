@@ -1,0 +1,24 @@
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "description": "Server-side web application built with Clovie",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "clovie watch",
+    "start": "clovie server", 
+    "build": "clovie build"
+  },
+  "dependencies": {
+    "@brickworks/clovie": "^0.1.5",
+    "express": "^4.18.2"
+  },
+  "keywords": [
+    "server",
+    "web-app",
+    "clovie",
+    "full-stack",
+    "api"
+  ],
+  "license": "MIT"
+}

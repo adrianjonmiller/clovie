@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - {{title}}</title>
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+  {{> header}}
+  {{> nav}}
+  
+  <main class="container dashboard">
+    <header class="dashboard__header">
+      <h1>Dashboard</h1>
+      <p>Welcome back! Here's what's happening with your application.</p>
+    </header>
+
+    <div class="dashboard__grid">
+      <div class="card">
+        <h3>📊 Analytics</h3>
+        <div class="metric">
+          <span class="metric__value" id="user-count">Loading...</span>
+          <span class="metric__label">Total Users</span>
+        </div>
+        <div class="metric">
+          <span class="metric__value" id="server-uptime">Loading...</span>
+          <span class="metric__label">Server Uptime</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔄 Recent Activity</h3>
+        <ul class="activity-list" id="recent-activity">
+          <li class="activity-item loading">Loading activity...</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>⚡ Quick Actions</h3>
+        <div class="actions">
+          <button class="btn btn--small" onclick="createUser()">Add User</button>
+          <button class="btn btn--small btn--secondary" onclick="refreshData()">Refresh Data</button>
+          <button class="btn btn--small btn--secondary" onclick="checkApiStatus()">API Status</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>💾 Data Management</h3>
+        <div class="data-actions">
+          <button class="btn btn--small" onclick="exportData()">Export Data</button>
+          <button class="btn btn--small btn--secondary" onclick="backupData()">Backup DB</button>
+        </div>
+        <div class="file-upload">
+          <input type="file" id="import-file" accept=".json,.csv" style="display: none;">
+          <button class="btn btn--small btn--outline" onclick="document.getElementById('import-file').click()">Import Data</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {{> footer}}
+  
+  <script src="/app.js"></script>
+  <script>
+    // Dashboard-specific functionality
+    loadDashboardData();
+  </script>
+</body>
+</html>

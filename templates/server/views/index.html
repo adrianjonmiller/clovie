@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{description}}">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+  {{> header}}
+  
+  <main class="container">
+    <section class="hero">
+      <h1 class="hero__title">{{title}}</h1>
+      <p class="hero__subtitle">Full-stack web application powered by Clovie</p>
+      <div class="hero__actions">
+        <a href="/dashboard.html" class="btn btn--primary">Go to Dashboard</a>
+        <a href="/api" class="btn btn--secondary">Explore API</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Server Features</h2>
+      <div class="features__grid">
+        <div class="feature">
+          <h3>🔌 API Ready</h3>
+          <p>RESTful API endpoints with authentication</p>
+        </div>
+        <div class="feature">
+          <h3>🔐 Authentication</h3>
+          <p>Built-in user management and JWT tokens</p>
+        </div>
+        <div class="feature">
+          <h3>📊 Database</h3>
+          <p>Support for PostgreSQL, MySQL, MongoDB</p>
+        </div>
+        <div class="feature">
+          <h3>⚡ Real-time</h3>
+          <p>WebSocket support for live updates</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="api-status" id="api-status">
+      <h2>API Status</h2>
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="status-dot status-dot--loading"></span>
+          <span class="status-label">Server Status</span>
+          <span class="status-value" id="server-status">Checking...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-dot status-dot--loading"></span>
+          <span class="status-label">Database</span>
+          <span class="status-value" id="db-status">Checking...</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {{> footer}}
+  
+  <script src="/app.js"></script>
+</body>
+</html>

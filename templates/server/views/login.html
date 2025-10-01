@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - {{title}}</title>
+  <link rel="stylesheet" href="/main.css">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <header class="auth-header">
+        <h1>Sign In</h1>
+        <p>Welcome back to {{title}}</p>
+      </header>
+
+      <form class="auth-form" id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            placeholder="Enter your email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            required 
+            placeholder="Enter your password"
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox">
+            <input type="checkbox" name="remember">
+            <span class="checkmark"></span>
+            Remember me
+          </label>
+          <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">
+          <span class="btn__text">Sign In</span>
+          <span class="btn__loading" style="display: none;">Signing in...</span>
+        </button>
+
+        <div class="auth-divider">
+          <span>Don't have an account?</span>
+        </div>
+
+        <a href="/register.html" class="btn btn--outline btn--full">Create Account</a>
+      </form>
+
+      <div class="auth-error" id="auth-error" style="display: none;">
+        <p id="error-message"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script>
+    // Login form handling
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+  </script>
+</body>
+</html>

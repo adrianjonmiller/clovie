@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="About {{title}} - {{description}}">
+  <meta name="author" content="{{author}}">
+  
+  <title>About - {{title}}</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  {{> header}}
+  
+  <main class="container">
+    <article class="content">
+      <h1>About</h1>
+      
+      <p>This is your about page. Customize this content to tell your story, explain your project, or share information about your organization.</p>
+      
+      <h2>Getting Started</h2>
+      <p>To customize this site:</p>
+      <ul>
+        <li>Edit templates in the <code>views/</code> directory</li>
+        <li>Modify styles in <code>styles/main.scss</code></li>
+        <li>Add interactive features in <code>scripts/main.js</code></li>
+        <li>Update configuration in <code>clovie.config.js</code></li>
+      </ul>
+
+      <h2>Features</h2>
+      <p>This static site template includes:</p>
+      <ul>
+        <li>Modern, responsive design</li>
+        <li>SEO optimization</li>
+        <li>Fast build process</li>
+        <li>Live reload in development</li>
+        <li>Production-ready optimization</li>
+      </ul>
+    </article>
+  </main>
+
+  {{> footer}}
+  
+  <script src="main.js"></script>
+</body>
+</html>

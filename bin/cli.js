@@ -12,11 +12,31 @@ import { createClovie } from "../lib/createClovie.js";
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
-  const projectName = process.argv[3]; // The name after 'create'
+  const createArgIndex = process.argv.indexOf('create');
+  const projectName = process.argv[createArgIndex + 1];
   
   if (!projectName) {
     console.error('Error: Please provide a project name');
-    console.error('Usage: clovie create <project-name>');
+    console.error('Usage: clovie create <project-name> [--template <template-type>]');
+    console.error('Available templates: default, static, server');
+    process.exit(1);
+  }
+  
+  // Parse arguments to get template option
+  const createArgs = process.argv.slice(createArgIndex + 2);
+  let templateType = 'default';
+  
+  // Look for --template or -t flag
+  const templateIndex = createArgs.findIndex(arg => arg === '--template' || arg === '-t');
+  if (templateIndex !== -1 && createArgs[templateIndex + 1]) {
+    templateType = createArgs[templateIndex + 1];
+  }
+  
+  // Validate template type
+  const validTemplates = ['default', 'static', 'server'];
+  if (!validTemplates.includes(templateType)) {
+    console.error(`Error: Invalid template type '${templateType}'`);
+    console.error(`Available templates: ${validTemplates.join(', ')}`);
     process.exit(1);
   }
   
@@ -28,8 +48,8 @@ if (process.argv.includes('create') && process.argv.length > 2) {
     process.exit(1);
   }
   
-  // Copy template files
-  const templateDir = path.join(__dirname, '../templates/default');
+  // Copy template files from the specified template
+  const templateDir = path.join(__dirname, `../templates/${templateType}`);
   
   // Create project directory first
   fs.mkdirSync(projectPath, { recursive: true });
@@ -54,12 +74,37 @@ if (process.argv.includes('create') && process.argv.length > 2) {
   };
   
   try {
+    // Check if template directory exists
+    if (!fs.existsSync(templateDir)) {
+      console.error(`Error: Template '${templateType}' not found at ${templateDir}`);
+      console.error(`Available templates: ${validTemplates.join(', ')}`);
+      process.exit(1);
+    }
+    
     await copyDir(templateDir, projectPath);
-    console.log(`✅ Clovie project created successfully at ${projectPath}`);
+    console.log(`✅ Clovie ${templateType} project created successfully!`);
+    console.log(`📁 Project location: ${projectPath}`);
+    console.log(`🎨 Template: ${templateType}`);
     console.log('\nNext steps:');
     console.log(`  cd ${projectName}`);
     console.log('  npm install');
     console.log('  npm run dev');
+    
+    // Show template-specific next steps
+    if (templateType === 'server') {
+      console.log('\n🌐 Server template features:');
+      console.log('  • API endpoints ready at /api/*');
+      console.log('  • Admin dashboard at /dashboard.html');
+      console.log('  • User profiles at /user/:id');
+      console.log('  • Use "npm run start" for production server');
+    } else if (templateType === 'static') {
+      console.log('\n📄 Static template features:');
+      console.log('  • SEO optimized pages');
+      console.log('  • Modern responsive design');
+      console.log('  • Ready for JAMstack deployment');
+      console.log('  • Use "npm run build" to generate static files');
+    }
+    
     process.exit(0);
   } catch (err) {
     console.error('Error creating project:', err);
