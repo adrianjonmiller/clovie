@@ -209,12 +209,10 @@ async function main() {
       
       // Set up file watching
       console.log('👀 Setting up file watching...');
-      const watchPaths = [
-        config.views,
-        config.partials,
-        config.styles,
-        config.scripts,
-      ].filter(Boolean); // Remove undefined paths
+      // Use discovered config paths from Config service
+      const watchPaths = clovie.config.getWatchPaths();
+      
+      console.log(`   Watching ${watchPaths.length} directories:`, watchPaths);
       
       const watchers = clovie.file.watch(watchPaths);
       

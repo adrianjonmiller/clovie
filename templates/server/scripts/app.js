@@ -25,8 +25,8 @@ const api = {
   }
 };
 
-// API Demo functions for homepage
-async function checkServerStatus() {
+// API Demo functions for homepage (attach to window for HTML onclick access)
+window.checkServerStatus = async function() {
   const resultEl = document.getElementById('api-result');
   try {
     const status = await api.get('/api/status');
@@ -36,9 +36,9 @@ async function checkServerStatus() {
     resultEl.textContent = `Error: ${error.message}`;
     resultEl.style.display = 'block';
   }
-}
+};
 
-async function getUserCount() {
+window.getUserCount = async function() {
   const resultEl = document.getElementById('api-result');
   try {
     const usersData = await api.get('/api/users');
@@ -48,24 +48,24 @@ async function getUserCount() {
     resultEl.textContent = `Error: ${error.message}`;
     resultEl.style.display = 'block';
   }
-}
+};
 
-// Profile functions (for user profile pages)
-function editProfile() {
+// Profile functions (for user profile pages) - attach to window for HTML access
+window.editProfile = function() {
   alert('Edit profile functionality would go here');
-}
+};
 
-function viewActivity() {
+window.viewActivity = function() {
   alert('User activity view would go here');
-}
+};
 
-function downloadData() {
+window.downloadData = function() {
   alert('Data download functionality would go here');
-}
+};
 
-function loadUserActivity(userId) {
+window.loadUserActivity = function(userId) {
   console.log(`Loading activity for user ${userId}`);
-}
+};
 
 // Active navigation highlighting
 document.addEventListener('DOMContentLoaded', () => {
