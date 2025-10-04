@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{site.title}}</title>
+    <meta name="description" content="{{site.description}}">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    {{> header}}
+    
+    <main>
+        <h1>Welcome to {{site.title}}</h1>
+        <p>{{site.description}}</p>
+        
+        <h2>Changes</h2>
+        <ul>
+            {{#each pages}}
+            <li><a href="{{url}}">{{title}}</a></li>
+            {{/each}}
+        </ul>
+    </main>
+    
+    {{> footer}}
+    
+    <script src="main.js"></script>
+</body>
+</html>

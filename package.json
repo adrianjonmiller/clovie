@@ -57,7 +57,7 @@
     "build": "npm run clean && rollup -c && npm run build:types",
     "build:types": "node scripts/build-types.js",
     "clean": "rm -rf dist",
-    "dev": "rollup -c -w",
+    "dev": "node ./bin/cli.js watch --config ./__dev__/clovie.config.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
@@ -80,7 +80,8 @@
   "dependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-    "@brickworks/engine": "^1.1.3",
+    "@brickworks/database-ext": "^1.0.3",
+    "@brickworks/engine": "^1.1.8",
     "babelify": "^10.0.0",
     "chokidar": "^3.5.3",
     "command-line-args": "^5.2.1",

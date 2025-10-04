@@ -9,9 +9,9 @@ const isProduction = process.env.NODE_ENV === 'production' || process.env.CONTEX
 const isDevelopment = !isProduction;
 
 export default {
-  type: 'statics',
+  type: 'server',
   // Project structure
-  views: './views',
+  // views: './views', // Not needed when using routes configuration
   partials: './partials', 
   scripts: './scripts',
   styles: './styles',
@@ -90,14 +90,14 @@ export default {
   routes: [{
     name: 'Home',
     path: '/',
-    template: 'routes/index.html',
+    template: './routes/index.html',
     data: (state, item) => {
       return state.get()
     }
   },{
     name: 'Build with Clovie',
-    path: '/build-with-clovie',
-    template: 'routes/built-with-clovie.html',
+    path: '/built-with-clovie',
+    template: './routes/built-with-clovie.html',
     data: (state, item) => {
       return state.get()
     }

@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local - import from compiled dist for published package
-import { createClovie } from "../dist/index.js";
+import { createClovie } from "../lib/createClovie.js";
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
@@ -147,11 +147,14 @@ const configPath = path.resolve(process.cwd(), options.config);
 // Main function
 async function main() {
   try {
-    // Config file - use default if not found
+    console.log('🚀 Starting Clovie...');
+    
+    // Step 1: Load config file (with fallback to default)
     let config;
     try {
       const configModule = await import(configPath);
       config = configModule.default || configModule;
+      console.log(`📁 Using config: ${options.config}`);
     } catch (err) {
       if (err.code === 'ERR_MODULE_NOT_FOUND') {
         // Use default config if clovie.config.js not found
@@ -163,118 +166,36 @@ async function main() {
       }
     }
 
-    // Override config type if server command is used
+    // Step 2: Apply CLI overrides
     if (options.server) {
       config.type = 'server';
+      console.log('🌐 CLI override: Setting type to server');
+    }
+    
+    if (options.watch) {
+      config.watch = true;
+      console.log('👀 CLI override: Enabling watch mode');
     }
 
-    // New Clovie instance
-    const clovie = await createClovie(config);
+    // Step 3: Pass everything to Clovie
+    console.log('⚙️  Creating Clovie instance...');
+    const clovie = await createClovie({
+      ...config,
+      configPath: configPath
+    });
 
-    if (options.server) {
-      // Server mode - run as Express server
-      console.log('🌐 Starting server mode...');
-      
-      // Load data into state first
-      if (config.data) {
-        console.log('📊 Loading data into state...');
-        let loadedData = {};
-        if (typeof config.data === 'function') {
-          loadedData = await config.data();
-        } else if (typeof config.data === 'object') {
-          loadedData = config.data;
-        }
-        clovie.state.load(loadedData);
-        console.log(`   Loaded ${Object.keys(loadedData).length} data sources into state`);
-      }
-      
-      // Start server
-      clovie.server.start();
-      
-      // Keep the process running
-      process.on('SIGINT', () => {
-        console.log('\n🛑 Stopping server...');
-        clovie.server.stop();
-        process.exit(0);
-      });
-      
-    } else if (options.watch) {
-      // Development mode with file watching
-      console.log('🏗️  Initial build...');
-      await clovie.build.static();
-      console.log('✅ Initial build completed\n');
-      
-      // Start development server
-      clovie.server.start();
-      
-      // Set up file watching
-      console.log('👀 Setting up file watching...');
-      
-      // Debug: Check if config service is available
-      console.log('   Debug: config service available:', !!clovie.config);
-      console.log('   Debug: getWatchPaths available:', !!clovie.config?.getWatchPaths);
-      
-      // Use discovered config paths from Config service
-      let watchPaths;
-      try {
-        watchPaths = clovie.config.getWatchPaths();
-      } catch (error) {
-        console.error('   Error getting watch paths:', error.message);
-        // Fallback to manual discovery for debugging
-        const discoveredConfig = clovie.config.get();
-        watchPaths = [
-          discoveredConfig?.views,
-          discoveredConfig?.partials,
-          discoveredConfig?.styles,
-          discoveredConfig?.scripts,
-          discoveredConfig?.assets
-        ].filter(Boolean);
-        console.log('   Using fallback watch paths:', watchPaths);
-      }
-      
-      console.log(`   Watching ${watchPaths.length} directories:`, watchPaths);
-      
-      // Set up file watchers with change handler
-      const watchers = clovie.file.watch(watchPaths, {}, {
-        onChange: async (filePath) => {
-          console.log('🔄 Triggering rebuild...');
-          
-          try {
-            const result = await clovie.build.static();
-            console.log(`✅ Rebuild completed in ${result.buildTime}ms`);
-            
-            // Notify live reload
-            if (clovie.server && clovie.server.notifyReload) {
-              clovie.server.notifyReload();
-            }
-          } catch (error) {
-            console.error('❌ Rebuild failed:', error.message);
-          }
-        }
-      });
-      
-      console.log(`🌐 Development server running at http://localhost:${config.port || 3000}`);
-      console.log('👀 Watching for file changes...');
-      console.log('Press Ctrl+C to stop the server\n');
-      
-      // Keep the process running
-      process.on('SIGINT', () => {
-        console.log('\n🛑 Stopping development server...');
-        if (clovie.file.isWatching()) {
-          clovie.file.stopWatching();
-        }
-        process.exit(0);
-      });
-      
-    } else {
-      // Build mode
-      const result = await clovie.build.static();
-      console.log(`✅ Build completed in ${result.buildTime}ms`);
-      console.log(`📁 Generated ${result.filesGenerated} files`);
+    // Step 4: Let Clovie handle the rest
+    console.log('🎯 Handing control to Clovie...');
+    
+    // Clovie will handle all the logic based on the config
+    // We just need to keep the process alive
+    process.on('SIGINT', () => {
+      console.log('\n🛑 Shutting down...');
       process.exit(0);
-    }
+    });
+
   } catch (err) {
-    console.error(err);
+    console.error('❌ Error starting Clovie:', err);
     process.exit(1);
   }
 }
