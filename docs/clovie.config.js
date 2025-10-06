@@ -2,82 +2,36 @@ import Handlebars from 'handlebars';
 import * as sass from 'sass';
 import * as esbuild from 'esbuild';
 import path from 'path';
+import url from 'url';
 
 // Detect environment
 const isNetlify = process.env.NETLIFY === 'true';
 const isProduction = process.env.NODE_ENV === 'production' || process.env.CONTEXT === 'production';
 const isDevelopment = !isProduction;
 
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+console.log('__dirname', __dirname);
+console.log('__filename', __filename);
+console.log('path.join(__dirname, "partials")', path.join(__dirname, "partials"));
+console.log('path.join(__dirname, "scripts")', path.join(__dirname, "scripts"));
+console.log('path.join(__dirname, "styles")', path.join(__dirname, "styles"));
+console.log('path.join(__dirname, "dist")', path.join(__dirname, "dist"));
+
 export default {
   type: 'server',
   // Project structure
   // views: './views', // Not needed when using routes configuration
-  partials: './partials', 
-  scripts: './scripts',
-  styles: './styles',
-  outputDir: './dist',
+  partials: path.join(__dirname, 'partials'), 
+  scripts: path.join(__dirname, 'scripts'),
+  styles: path.join(__dirname, 'styles'),
+  outputDir: path.join(__dirname, 'dist'),
   
   // Environment-aware settings
   mode: isDevelopment ? 'development' : 'production',
   port: isDevelopment ? 3002 : 3000, // Different port for development
-  
-  // Template compilation - Handlebars
-  templateCompiler: (template, data) => {
-    try {
-      const compiled = Handlebars.compile(template);
-      return compiled(data);
-    } catch (err) {
-      console.warn(`⚠️  Handlebars compilation error: ${err.message}`);
-      return template;
-    }
-  },
-  
-  templateRegister: (name, template) => {
-    Handlebars.registerPartial(name, template);
-  },
-  
-  // Style compilation - Sass
-  styleCompiler: async (content, filePath) => {
-    try {
-      const result = sass.compileString(content, {
-        style: isProduction ? 'compressed' : 'expanded',
-        sourceMap: isDevelopment,
-        verbose: isDevelopment
-      });
-      return result.css;
-    } catch (err) {
-      console.warn(`⚠️  Sass compilation error in ${filePath}: ${err.message}`);
-      return content; // Fallback to raw content
-    }
-  },
-  
-  // Script compilation - ESBuild
-  scriptCompiler: async (content, filePath) => {
-    try {
-      console.log(`🔧 Starting esbuild compilation for: ${filePath}`);
-      const result = await esbuild.build({
-        stdin: {
-          contents: content,
-          resolveDir: path.dirname(filePath),
-        },
-        bundle: true,
-        format: 'iife', // Immediately Invoked Function Expression for browser
-        target: 'es2015', // Support modern browsers
-        minify: isProduction,
-        sourcemap: isDevelopment,
-        write: false, // Don't write to disk, return the result
-      });
-      
-      console.log(`✅ esbuild compilation successful for: ${filePath}`);
-      return result.outputFiles[0].text;
-    } catch (err) {
-      console.error(`❌ Script compilation error in ${filePath}: ${err.message}`);
-      console.error(`❌ Full error:`, err);
-      console.warn(`⚠️  Falling back to raw content for: ${filePath}`);
-      return content; // Fallback to raw content
-    }
-  },
-  
+    
   // Site data
   data: {
     title: 'Clovie Documentation',

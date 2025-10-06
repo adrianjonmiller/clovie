@@ -50,12 +50,13 @@ export default {
   type: 'static',
   routes: [
     {
-      path: 'procucts/:slug',
-      template: 'index.html',
-      repeat: (state) => state.get(['pages']),
-      data: (state, item) => {
-        return state.get()
-      }
+      name: 'Test',
+      path: '/test/:slug',
+      template: path.join(__dirname, 'views/index.html'), // Use existing template
+      data: (state) => ({
+        ...state.get(),
+        slug: 'hello-world'
+      })
     }
   ]
 };

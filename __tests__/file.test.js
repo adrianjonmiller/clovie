@@ -34,12 +34,12 @@ describe('File', () => {
   });
 
   it('should read a single file', () => {
-    const content = clovie.file.readFile(testFile);
+    const content = clovie.file.read(testFile);
     expect(content).toBe(testContent);
   });
 
   it('should return null for non-existent file', () => {
-    const content = clovie.file.readFile('non-existent.txt');
+    const content = clovie.file.read('non-existent.txt');
     expect(content).toBe(null);
   });
 

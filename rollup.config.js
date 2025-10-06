@@ -9,10 +9,12 @@ export default [
   {
     input: 'lib/createClovie.js',
     output: {
-      file: 'dist/index.js',
+      dir: 'dist',
       format: 'es',
       sourcemap: true,
       compact: false,
+      entryFileNames: 'index.js',
+      chunkFileNames: '[name]-[hash].js',
     },
     external: [
       // Keep Node.js built-ins external
@@ -72,11 +74,13 @@ export default [
   {
     input: 'lib/createClovie.js',
     output: {
-      file: 'dist/index.cjs',
+      dir: 'dist/cjs',
       format: 'cjs',
       sourcemap: true,
       compact: false,
       exports: 'named',
+      entryFileNames: 'index.cjs',
+      chunkFileNames: '[name]-[hash].cjs',
     },
     external: [
       // Keep Node.js built-ins external
