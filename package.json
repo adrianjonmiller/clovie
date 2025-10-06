@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -30,14 +30,14 @@
   "bugs": {
     "url": "https://github.com/adrianjonmiller/clovie/issues"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/cjs/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
+      "require": "./dist/cjs/index.cjs",
       "types": "./dist/index.d.ts"
     },
     "./cli": "./bin/cli.js"

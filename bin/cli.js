@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local - import from compiled dist for published package
-import { createClovie } from "../lib/createClovie.js";
+import { createClovie } from "../dist/index.js";
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
