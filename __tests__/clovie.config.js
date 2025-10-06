@@ -7,6 +7,9 @@ export default {
   outputDir: './dist',
   port: 3000,
   type: 'static',
+  mode: 'production', // Explicitly set to production for tests
   watch: false,
-  data: {}
+  data: {},
+  register: () => {}, // Add empty register function to avoid errors
+  compiler: (template, data) => template // Add simple compiler function
 };

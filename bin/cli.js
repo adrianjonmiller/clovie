@@ -131,14 +131,13 @@ const options = commandLineArgs(optionDefinitions, { argv });
 
 
 
-// Handle watch command
+// Handle legacy command mappings
 if (mainOptions.command === 'watch') {
-  options.watch = true;
+  mainOptions.command = 'dev'; // Map watch to dev
 }
 
-// Handle server command
 if (mainOptions.command === 'server') {
-  options.server = true;
+  mainOptions.command = 'serve'; // Map server to serve
 }
 
 // Config path
@@ -147,57 +146,106 @@ const configPath = path.resolve(process.cwd(), options.config);
 // Main function
 async function main() {
   try {
-    console.log('🚀 Starting Clovie...');
+    const command = mainOptions.command || 'dev'; // Default to dev
+    console.log(`🚀 Starting Clovie ${command}...`);
     
     // Step 1: Load config file (with fallback to default)
-    let config;
-    try {
-      const configModule = await import(configPath);
-      config = configModule.default || configModule;
-      console.log(`📁 Using config: ${options.config}`);
-    } catch (err) {
-      if (err.code === 'ERR_MODULE_NOT_FOUND') {
-        // Use default config if clovie.config.js not found
-        const defaultConfigModule = await import('../config/clovie.config.js');
-        config = defaultConfigModule.default;
-        console.log('📁 Using default Clovie configuration');
-      } else {
-        throw err;
-      }
-    }
-
-    // Step 2: Apply CLI overrides
-    if (options.server) {
-      config.type = 'server';
-      console.log('🌐 CLI override: Setting type to server');
-    }
+    const config = await loadConfig(options.config);
     
-    if (options.watch) {
-      config.watch = true;
-      console.log('👀 CLI override: Enabling watch mode');
-    }
-
-    // Step 3: Pass everything to Clovie
+    // Step 2: Determine mode based on command
+    const mode = determineMode(command, config);
+    
+    // Step 3: Create Clovie instance with explicit mode
     console.log('⚙️  Creating Clovie instance...');
     const clovie = await createClovie({
       ...config,
-      configPath: configPath
+      configPath: configPath,
+      mode: mode
     });
-
-    // Step 4: Let Clovie handle the rest
-    console.log('🎯 Handing control to Clovie...');
     
-    // Clovie will handle all the logic based on the config
-    // We just need to keep the process alive
-    process.on('SIGINT', () => {
-      console.log('\n🛑 Shutting down...');
-      process.exit(0);
-    });
+    // Step 4: Execute specific command
+    await executeCommand(clovie, command, options);
 
   } catch (err) {
-    console.error('❌ Error starting Clovie:', err);
+    console.error('❌ Error:', err.message || err);
     process.exit(1);
   }
+}
+
+// Load configuration with fallback
+async function loadConfig(configPath) {
+  try {
+    const configModule = await import(configPath);
+    const config = configModule.default || configModule;
+    console.log(`📁 Using config: ${options.config}`);
+    return config;
+  } catch (err) {
+    if (err.code === 'ERR_MODULE_NOT_FOUND') {
+      // Use default config if clovie.config.js not found
+      const defaultConfigModule = await import('../config/clovie.config.js');
+      const config = defaultConfigModule.default;
+      console.log('📁 Using default Clovie configuration');
+      return config;
+    } else {
+      throw err;
+    }
+  }
+}
+
+// Determine mode based on command and config
+function determineMode(command, config) {
+  // If config explicitly sets mode, use it unless overridden by command
+  if (config.mode && !['build', 'serve', 'dev', 'watch'].includes(command)) {
+    return config.mode;
+  }
+  
+  // Command-based mode determination
+  switch (command) {
+    case 'build': 
+      return 'production';
+    case 'serve': 
+      return 'production';
+    case 'dev':
+    case 'watch': 
+      return 'development';
+    default: 
+      return 'development';
+  }
+}
+
+// Execute the specific command
+async function executeCommand(clovie, command, options) {
+  switch (command) {
+    case 'build':
+      console.log('🔨 Building project...');
+      await clovie.run.build();
+      console.log('✅ Build completed successfully');
+      process.exit(0);
+      
+    case 'serve':
+      console.log('🌐 Starting production server...');
+      await clovie.run.serve();
+      // Keep process alive for server
+      break;
+      
+    case 'dev':
+    case 'watch':
+      console.log('🚀 Starting development server...');
+      await clovie.run.dev();
+      // Keep process alive for dev server
+      break;
+      
+    default:
+      console.error(`❌ Unknown command: ${command}`);
+      console.error('Available commands: build, serve, dev, watch');
+      process.exit(1);
+  }
+  
+  // Setup graceful shutdown for long-running processes
+  process.on('SIGINT', () => {
+    console.log('\n🛑 Shutting down...');
+    process.exit(0);
+  });
 }
 
 // Run main function

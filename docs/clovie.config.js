@@ -12,15 +12,8 @@ const isDevelopment = !isProduction;
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('__dirname', __dirname);
-console.log('__filename', __filename);
-console.log('path.join(__dirname, "partials")', path.join(__dirname, "partials"));
-console.log('path.join(__dirname, "scripts")', path.join(__dirname, "scripts"));
-console.log('path.join(__dirname, "styles")', path.join(__dirname, "styles"));
-console.log('path.join(__dirname, "dist")', path.join(__dirname, "dist"));
-
 export default {
-  type: 'server',
+  type: 'static',
   // Project structure
   // views: './views', // Not needed when using routes configuration
   partials: path.join(__dirname, 'partials'), 
@@ -31,7 +24,7 @@ export default {
   // Environment-aware settings
   mode: isDevelopment ? 'development' : 'production',
   port: isDevelopment ? 3002 : 3000, // Different port for development
-    
+
   // Site data
   data: {
     title: 'Clovie Documentation',

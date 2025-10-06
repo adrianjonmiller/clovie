@@ -23,19 +23,27 @@ describe('Server', () => {
       clovie.server.add('GET', '/test', handler);
       const routes = clovie.server.getRoutes();
       
-      expect(routes).toHaveLength(1);
-      expect(routes[0].method).toBe('GET');
-      expect(routes[0].path).toBe('/test');
-      expect(typeof routes[0].handler).toBe('function');
+      // Should have default routes (health, api/info) plus our test route
+      // Static route is only added if outputDir is configured
+      expect(routes.length).toBeGreaterThanOrEqual(3);
+      
+      // Find our test route
+      const testRoute = routes.find(route => route.path === '/test');
+      expect(testRoute).toBeDefined();
+      expect(testRoute.method).toBe('GET');
+      expect(typeof testRoute.handler).toBe('function');
     });
 
     it('should parse route parameters correctly', () => {
       clovie.server.add('GET', '/users/:id', () => ({}));
       const routes = clovie.server.getRoutes();
       
-      expect(routes[0].params).toHaveLength(1);
-      expect(routes[0].params[0].name).toBe('id');
-      expect(routes[0].params[0].optional).toBe(false);
+      // Find our test route with parameters
+      const userRoute = routes.find(route => route.path === '/users/:id');
+      expect(userRoute).toBeDefined();
+      expect(userRoute.params).toHaveLength(1);
+      expect(userRoute.params[0].name).toBe('id');
+      expect(userRoute.params[0].optional).toBe(false);
     });
   });
 
