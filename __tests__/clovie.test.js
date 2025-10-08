@@ -9,7 +9,7 @@ describe('ClovieConfig', () => {
 
   beforeEach(async () => {
     clovie = await createClovie({
-      configPath: path.resolve(process.cwd(), '__tests__', 'clovie.config.js'),
+      optsPath: path.resolve(process.cwd(), '__tests__', 'clovie.config.js'),
       mode: 'production' // Use production mode to avoid dev server
     });
     
@@ -22,11 +22,11 @@ describe('ClovieConfig', () => {
       await pause();
       
       // Check basic config values
-      expect(clovie.configurator.get('views')).toBe('./views');
-      expect(clovie.configurator.get('outputDir')).toBe('./dist');
-      expect(clovie.configurator.get('port')).toBe(3000);
-      expect(clovie.configurator.get('type')).toBe('static');
-      expect(clovie.configurator.get('watch')).toBe(false);
+      expect(clovie.configurator.opts.views).toBe('./views');
+      expect(clovie.configurator.opts.outputDir).toBe('./dist');
+      expect(clovie.configurator.opts.port).toBe(3000);
+      expect(clovie.configurator.opts.type).toBe('static');
+      expect(clovie.configurator.opts.watch).toBe(false);
       
       // Note: data field might be undefined due to config processing
       // This is a known issue that needs to be investigated separately

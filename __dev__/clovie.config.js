@@ -27,36 +27,80 @@ export default {
       { title: 'About', url: '/about.html' },
     ]
   },
-  
-  // Template compiler
-  templateCompiler: (template, data) => {
-    try {
-      const compiled = Handlebars.compile(template);
-      return compiled(data);
-    } catch (err) {
-      console.warn(`Template compilation error: ${err.message}`);
-      return template;
-    }
-  },
-  
-  templateRegister: (name, template) => {
-    Handlebars.registerPartial(name, template);
-  },
+
+  dbPath: path.join(__dirname, 'db'),
+  walPath: path.join(__dirname, 'db'),
   
   // Development settings
   watch: true,
   port: 3000,
   mode: 'development',
-  type: 'static',
+  type: 'server',
+  hooks: {
+    preHandler: (ctx, route) => {
+      if (!route.meta.auth) {
+        return;
+      }
+      const token = ctx.req.headers['authorization']?.split(' ')[1];
+      if (!token) {
+        return ctx.respond.redirect('/login', 302);
+      }
+    }
+  },
   routes: [
     {
-      name: 'Test',
-      path: '/test/:slug',
-      template: path.join(__dirname, 'views/index.html'), // Use existing template
-      data: (state) => ({
-        ...state.get(),
-        slug: 'hello-world'
-      })
+      path: '/posts',
+      template: path.join(__dirname, './routes/posts.html'), // Use existing template
+      data: ({req}, database) => {
+        return {
+          posts: database.collection('posts').get()
+        }
+      },
+    },{
+      path: '/posts/:slug',
+      template: path.join(__dirname, './routes/post.html'), // Use existing template
+      data: ({req}, database) => {
+        const post = database.collection('posts').get([req.params.slug]);
+        if (!post) {
+          return {
+            slug: req.params.slug,
+            title: 'Post not found'
+          }
+        }
+        return {
+          slug: req.params.slug,
+          title: post.title,
+          body: post.body
+        }
+      }, 
+      meta: {
+        auth: true
+      }
+    }
+  ],
+  api: [
+    {
+      method: 'GET',
+      path: '/api/test',
+      handler: async (context) => {
+        return context.respond.json({
+          name: 'Clovie',
+          version: '1.0.0',
+        });
+      },
+      params: []
+    },{
+      method: 'POST',
+      path: '/api/post/create',
+      handler: async (context, database) => {
+        const posts = database.collection('posts');
+        const id = posts.add({
+          title: 'This is a post',
+          body: 'Here is my post'
+        })
+        return context.respond.json({id});
+      },
+      params: []
     }
   ]
 };

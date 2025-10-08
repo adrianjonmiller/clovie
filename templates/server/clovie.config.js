@@ -21,7 +21,6 @@ export default {
   // API routes configuration
   api: [
     {
-      name: 'API Status',
       path: '/api/status',
       method: 'GET',
       action: async (state, event) => {
@@ -33,7 +32,6 @@ export default {
       }
     },
     {
-      name: 'Get Users',
       path: '/api/users',
       method: 'GET', 
       action: async (state, event) => {
@@ -46,7 +44,6 @@ export default {
       }
     },
     {
-      name: 'Create User',
       path: '/api/users',
       method: 'POST',
       action: async (state, event) => {

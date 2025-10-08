@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.14",
+  "version": "0.1.16",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -62,6 +62,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
     "size-check": "npm run build && du -sh dist/*",
+    "kill:port": "node ./bin/kill-port.js",
+    "kill:3000": "node ./bin/kill-port.js 3000",
+    "kill:common": "node ./bin/kill-port.js --common",
+    "kill:check": "node ./bin/kill-port.js --check",
     "docs:build": "cd docs && npm install && npm run build",
     "docs:dev": "cd docs && npm install && npm run dev",
     "docs:serve": "cd docs && npm install && npm run serve",
@@ -93,7 +97,8 @@
     "istextorbinary": "^9.5.0",
     "sass": "^1.69.5",
     "socket.io": "^4.7.4",
-    "type-detect": "^4.0.8"
+    "type-detect": "^4.0.8",
+    "urlpattern-polyfill": "^10.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",

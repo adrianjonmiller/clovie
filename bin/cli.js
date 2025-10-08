@@ -8,8 +8,98 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local - import from compiled dist for published package
-// import { createClovie } from "../lib/createClovie.js";
-import { createClovie } from "../dist/index.js";
+import { createClovie } from "../lib/createClovie.js";
+// import { createClovie } from "../dist/index.js";
+import { killPort, checkPorts, killCommonPorts } from "../scripts/killPort.js";
+
+// Check for kill command first (before any argument parsing)
+if (process.argv.includes('kill')) {
+  const killArgIndex = process.argv.indexOf('kill');
+  const killArgs = process.argv.slice(killArgIndex + 1);
+  
+  // Parse kill command options
+  const killOptions = commandLineArgs([
+    { name: 'port', alias: 'p', type: Number, multiple: true },
+    { name: 'common', alias: 'c', type: Boolean },
+    { name: 'check', alias: 'k', type: Boolean },
+    { name: 'verbose', alias: 'v', type: Boolean }
+  ], { argv: killArgs });
+  
+  try {
+    if (killOptions.check) {
+      // Check ports
+      const ports = killOptions.port || [3000, 3001, 5000, 8000, 8080];
+      console.log('🔍 Checking ports...');
+      const results = await checkPorts(ports);
+      
+      for (const [port, info] of Object.entries(results)) {
+        if (info.inUse) {
+          console.log(`🔴 Port ${port}: Process ${info.pid} is running`);
+        } else {
+          console.log(`🟢 Port ${port}: Available`);
+        }
+      }
+    } else if (killOptions.common) {
+      // Kill common development ports
+      console.log('💀 Killing processes on common development ports...');
+      const results = await killCommonPorts({ verbose: true });
+      
+      console.log(`\n📊 Results:`);
+      console.log(`  ✅ Killed: ${results.killed.length} processes`);
+      console.log(`  ⚪ Not found: ${results.notFound.length} ports`);
+      console.log(`  ❌ Errors: ${results.errors.length} failures`);
+      
+      if (results.killed.length > 0) {
+        console.log('\n💀 Killed processes:');
+        results.killed.forEach(({ port, pid }) => {
+          console.log(`  Port ${port}: Process ${pid}`);
+        });
+      }
+    } else if (killOptions.port && killOptions.port.length > 0) {
+      // Kill specific ports
+      console.log(`💀 Killing processes on ports: ${killOptions.port.join(', ')}`);
+      const results = await killPort(killOptions.port, { verbose: true });
+      
+      console.log(`\n📊 Results:`);
+      console.log(`  ✅ Killed: ${results.killed.length} processes`);
+      console.log(`  ⚪ Not found: ${results.notFound.length} ports`);
+      console.log(`  ❌ Errors: ${results.errors.length} failures`);
+      
+      if (results.killed.length > 0) {
+        console.log('\n💀 Killed processes:');
+        results.killed.forEach(({ port, pid }) => {
+          console.log(`  Port ${port}: Process ${pid}`);
+        });
+      }
+    } else {
+      // Show help for kill command
+      console.log('💀 Clovie Kill Command');
+      console.log('');
+      console.log('Usage:');
+      console.log('  clovie kill --port 3000           Kill process on port 3000');
+      console.log('  clovie kill --port 3000 3001      Kill processes on ports 3000 and 3001');
+      console.log('  clovie kill --common              Kill processes on common dev ports (3000, 3001, 5000, 8000, 8080)');
+      console.log('  clovie kill --check               Check which ports are in use');
+      console.log('  clovie kill --check --port 3000   Check specific port');
+      console.log('');
+      console.log('Options:');
+      console.log('  -p, --port <port>     Port number(s) to kill/check');
+      console.log('  -c, --common          Kill common development ports');
+      console.log('  -k, --check           Check ports instead of killing');
+      console.log('  -v, --verbose         Show verbose output');
+      console.log('');
+      console.log('Examples:');
+      console.log('  clovie kill --port 3000');
+      console.log('  clovie kill --common');
+      console.log('  clovie kill --check');
+    }
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Kill command error:', error.message);
+    process.exit(1);
+  }
+}
 
 // Check for create command first (before any argument parsing)
 if (process.argv.includes('create') && process.argv.length > 2) {
@@ -142,7 +232,7 @@ if (mainOptions.command === 'server') {
 }
 
 // Config path
-const configPath = path.resolve(process.cwd(), options.config);
+const optsPath = path.resolve(process.cwd(), options.config);
 
 // Main function
 async function main() {
@@ -160,7 +250,7 @@ async function main() {
     console.log('⚙️  Creating Clovie instance...');
     const clovie = await createClovie({
       ...config,
-      configPath: configPath,
+      optsPath: optsPath,
       mode: mode
     });
     
@@ -174,9 +264,9 @@ async function main() {
 }
 
 // Load configuration with fallback
-async function loadConfig(configPath) {
+async function loadConfig(optsPath) {
   try {
-    const configModule = await import(configPath);
+    const configModule = await import(optsPath);
     const config = configModule.default || configModule;
     console.log(`📁 Using config: ${options.config}`);
     return config;
@@ -227,6 +317,7 @@ async function executeCommand(clovie, command, options) {
       console.log('🌐 Starting production server...');
       await clovie.run.serve();
       // Keep process alive for server
+      setupGracefulShutdown(clovie);
       break;
       
     case 'dev':
@@ -234,6 +325,7 @@ async function executeCommand(clovie, command, options) {
       console.log('🚀 Starting development server...');
       await clovie.run.dev();
       // Keep process alive for dev server
+      setupGracefulShutdown(clovie);
       break;
       
     default:
@@ -241,11 +333,70 @@ async function executeCommand(clovie, command, options) {
       console.error('Available commands: build, serve, dev, watch');
       process.exit(1);
   }
+}
+
+// Setup graceful shutdown handlers
+function setupGracefulShutdown(clovie) {
+  let isShuttingDown = false;
   
-  // Setup graceful shutdown for long-running processes
-  process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down...');
-    process.exit(0);
+  const gracefulShutdown = async (signal) => {
+    if (isShuttingDown) {
+      console.log('⚠️  Shutdown already in progress...');
+      return;
+    }
+    
+    isShuttingDown = true;
+    console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+    
+    // Set a timeout to force exit if shutdown hangs
+    const forceExitTimeout = setTimeout(() => {
+      console.log('⚠️  Shutdown timeout - forcing exit');
+      process.exit(1);
+    }, 5000); // 5 second timeout
+    
+    try {
+      // Close database if it exists and is initialized
+      const database = clovie.database;
+      if (database && database.isInitialized && database.isInitialized()) {
+        console.log('💾 Closing database...');
+        if (typeof database.checkpoint === 'function') {
+          await database.checkpoint();
+          console.log('✅ Database written successfully');
+        }
+      }
+      
+      // Stop server if it's running
+      const server = clovie.server;
+      if (server && server.isRunning && server.isRunning()) {
+        console.log('🔌 Stopping server...');
+        await server.stop();
+        console.log('✅ Server stopped');
+      }
+      
+      clearTimeout(forceExitTimeout);
+      console.log('✅ Graceful shutdown complete');
+      process.exit(0);
+    } catch (error) {
+      clearTimeout(forceExitTimeout);
+      console.error('❌ Error during shutdown:', error.message);
+      process.exit(1);
+    }
+  };
+  
+  // Handle multiple termination signals (using once to prevent duplicates)
+  process.once('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.once('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.once('SIGQUIT', () => gracefulShutdown('SIGQUIT'));
+  
+  // Handle uncaught exceptions and unhandled rejections
+  process.once('uncaughtException', async (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    await gracefulShutdown('uncaughtException');
+  });
+  
+  process.once('unhandledRejection', async (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+    await gracefulShutdown('unhandledRejection');
   });
 }
 
