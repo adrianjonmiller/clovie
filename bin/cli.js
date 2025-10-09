@@ -8,8 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local - import from compiled dist for published package
-import { createClovie } from "../lib/createClovie.js";
-// import { createClovie } from "../dist/index.js";
+// import { createClovie } from "../lib/createClovie.js";
+import { createClovie } from "../dist/index.js";
 import { killPort, checkPorts, killCommonPorts } from "../scripts/killPort.js";
 
 // Check for kill command first (before any argument parsing)
@@ -109,13 +109,13 @@ if (process.argv.includes('create') && process.argv.length > 2) {
   if (!projectName) {
     console.error('Error: Please provide a project name');
     console.error('Usage: clovie create <project-name> [--template <template-type>]');
-    console.error('Available templates: default, static, server');
+    console.error('Available templates: static (default), server');
     process.exit(1);
   }
   
   // Parse arguments to get template option
   const createArgs = process.argv.slice(createArgIndex + 2);
-  let templateType = 'default';
+  let templateType = 'static';  // Default to static template
   
   // Look for --template or -t flag
   const templateIndex = createArgs.findIndex(arg => arg === '--template' || arg === '-t');
@@ -124,7 +124,7 @@ if (process.argv.includes('create') && process.argv.length > 2) {
   }
   
   // Validate template type
-  const validTemplates = ['default', 'static', 'server'];
+  const validTemplates = ['static', 'server'];
   if (!validTemplates.includes(templateType)) {
     console.error(`Error: Invalid template type '${templateType}'`);
     console.error(`Available templates: ${validTemplates.join(', ')}`);
@@ -173,7 +173,7 @@ if (process.argv.includes('create') && process.argv.length > 2) {
     }
     
     await copyDir(templateDir, projectPath);
-    console.log(`✅ Clovie ${templateType} project created successfully!`);
+    console.log(`✅ Clovie project created successfully!`);
     console.log(`📁 Project location: ${projectPath}`);
     console.log(`🎨 Template: ${templateType}`);
     console.log('\nNext steps:');
@@ -184,13 +184,13 @@ if (process.argv.includes('create') && process.argv.length > 2) {
     // Show template-specific next steps
     if (templateType === 'server') {
       console.log('\n🌐 Server template features:');
-      console.log('  • API endpoints ready at /api/*');
-      console.log('  • Dynamic user profiles at /user/:id');
-      console.log('  • Interactive API demos on homepage');
-      console.log('  • Use "npm run start" for production server');
+      console.log('  • API endpoints with collection-based database');
+      console.log('  • Dynamic routes with server-side rendering');
+      console.log('  • Native Node.js HTTP server (Express adapter available)');
+      console.log('  • Use "npm start" for production server');
     } else if (templateType === 'static') {
-      console.log('\n📄 Static template features:');
-      console.log('  • SEO optimized pages');
+      console.log('\n📄 Static site features:');
+      console.log('  • SEO optimized pages with semantic HTML');
       console.log('  • Modern responsive design');
       console.log('  • Ready for JAMstack deployment');
       console.log('  • Use "npm run build" to generate static files');

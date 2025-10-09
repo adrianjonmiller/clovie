@@ -5,14 +5,14 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "clovie watch",
-    "start": "clovie server", 
+    "dev": "clovie dev",
+    "start": "clovie serve", 
     "build": "clovie build"
   },
   "dependencies": {
-    "clovie": "^0.1.5",
-    "express": "^4.18.2"
+    "clovie": "^0.1.16"
   },
+  "devDependencies": {},
   "keywords": [
     "server",
     "web-app",

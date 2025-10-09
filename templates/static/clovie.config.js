@@ -2,6 +2,9 @@ export default {
   // 🗂️ Static site generation mode
   type: 'static',
   
+  // 🎨 Template engine (Nunjucks is default)
+  renderEngine: 'nunjucks',  // or 'handlebars', 'pug', 'eta'
+  
   // Site metadata and global data
   data: {
     site: {
@@ -36,7 +39,7 @@ export default {
   //     path: '/posts/:slug',
   //     template: 'post.html',
   //     repeat: (data) => data.posts,
-  //     data: (globalData, post) => ({
+  //     data: (globalData, post, key) => ({
   //       ...globalData,
   //       post,
   //       title: `${post.title} - ${globalData.site.title}`
@@ -47,7 +50,7 @@ export default {
   //     path: '/category/:category',  
   //     template: 'category.html',
   //     repeat: (data) => data.categories,
-  //     data: (globalData, category) => ({
+  //     data: (globalData, category, key) => ({
   //       ...globalData,
   //       category,
   //       posts: globalData.posts.filter(p => p.category === category)

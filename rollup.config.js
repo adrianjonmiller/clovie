@@ -32,7 +32,12 @@ export default [
       'express',
       'socket.io',
       'chokidar',
+      // Template engines
       'handlebars',
+      'nunjucks',
+      'pug',
+      'eta',
+      // Build tools
       'sass',
       'esbuild',
       'command-line-args',
@@ -98,7 +103,12 @@ export default [
       'express',
       'socket.io',
       'chokidar',
+      // Template engines
       'handlebars',
+      'nunjucks',
+      'pug',
+      'eta',
+      // Build tools
       'sass',
       'esbuild',
       'command-line-args',

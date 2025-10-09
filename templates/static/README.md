@@ -13,15 +13,12 @@ npm run dev
 
 # Build static files for deployment
 npm run build
-
-# Preview production build
-npm run preview
 ```
 
 ## ✨ Features
 
 - **⚡ Lightning Fast**: Generates optimized static HTML files
-- **🎨 Modern CSS**: SCSS compilation with auto-prefixing
+- **🎨 Nunjucks Templates**: Powerful Jinja2-like templating (Handlebars, Pug, Eta also supported)
 - **📱 Responsive**: Mobile-first responsive design
 - **🔍 SEO Ready**: Semantic HTML and meta tags
 - **📦 Optimized**: Minified assets and smart caching
@@ -32,7 +29,7 @@ npm run preview
 ```
 {{projectName}}/
 ├── clovie.config.js    # Static site configuration
-├── views/              # HTML templates
+├── views/              # Nunjucks templates
 │   ├── index.html     # Homepage
 │   └── about.html     # About page
 ├── partials/           # Reusable components
@@ -62,6 +59,7 @@ This template is configured for optimal static site generation:
 // clovie.config.js
 export default {
   type: 'static',
+  renderEngine: 'nunjucks',
   
   data: async () => {
     const posts = await loadMarkdownFiles('./content/posts/');
@@ -76,7 +74,7 @@ export default {
     path: '/posts/:slug',
     template: 'post.html',
     repeat: (data) => data.posts,
-    data: (globalData, post) => ({
+    data: (globalData, post, key) => ({
       ...globalData,
       post,
       title: `${post.title} - ${globalData.site.title}`
@@ -85,114 +83,79 @@ export default {
 };
 ```
 
-### Add Multiple Page Types
+### Generate Category Pages
 ```javascript
-export default {
-  data: {
-    posts: [...],
-    projects: [...],
-    categories: [...]
-  },
-  
-  routes: [
-    // Blog posts
-    {
-      path: '/blog/:slug',
-      template: 'post.html',
-      repeat: (data) => data.posts,
-      data: (globalData, post) => ({ ...globalData, post })
-    },
-    
-    // Project pages
-    {
-      path: '/projects/:slug',
-      template: 'project.html', 
-      repeat: (data) => data.projects,
-      data: (globalData, project) => ({ ...globalData, project })
-    },
-    
-    // Category listing pages
-    {
-      path: '/category/:category',
-      template: 'category.html',
-      repeat: (data) => data.categories,
-      data: (globalData, category) => ({
-        ...globalData,
-        category,
-        posts: globalData.posts.filter(p => p.category === category)
-      })
-    }
-  ]
-};
+routes: [
+  {
+    name: 'Category Pages',
+    path: '/category/:slug',
+    template: 'category.html',
+    repeat: (data) => data.categories,
+    data: (globalData, category, key) => ({
+      ...globalData,
+      category,
+      posts: globalData.posts.filter(p => p.category === category.slug)
+    })
+  }
+]
 ```
 
-### Environment-Specific Configuration
+## 🎨 Template Engine
+
+Uses **Nunjucks** by default (Jinja2-like syntax):
+
+```html
+{% extends "layout.html" %}
+
+{% block content %}
+  <h1>{{ site.title }}</h1>
+  
+  {% for post in posts %}
+    <article>
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.excerpt }}</p>
+    </article>
+  {% endfor %}
+{% endblock %}
+```
+
+Switch to Handlebars, Pug, or Eta:
 ```javascript
-export default {
-  type: 'static',
-  
-  data: {
-    site: {
-      title: '{{projectName}}',
-      url: process.env.NODE_ENV === 'production' 
-        ? 'https://your-domain.com'
-        : 'http://localhost:3000'
-    }
-  },
-  
-  // Production optimizations
-  ...(process.env.NODE_ENV === 'production' && {
-    minify: true,
-    generateSitemap: true
-  })
-};
+renderEngine: 'handlebars'  // or 'pug', 'eta'
 ```
 
 ## 🌐 Deployment
 
-### Netlify (Recommended)
-1. Push your code to GitHub/GitLab
-2. Connect repository to Netlify
-3. Set build command: `npm run build`
-4. Set publish directory: `dist`
+This is a static site that can be deployed anywhere:
+
+### Netlify
+```bash
+npm run build
+# Drag and drop the dist/ folder to Netlify
+```
 
 ### Vercel
 ```bash
-npm install -g vercel
-vercel --prod
+# Connect your Git repository
+# Build command: npm run build
+# Output directory: dist
 ```
 
 ### GitHub Pages
 ```bash
 npm run build
-# Push dist/ contents to gh-pages branch
+git subtree push --prefix dist origin gh-pages
 ```
 
-### Manual Deployment
-Upload the entire `dist/` folder to your web server.
-
-## 🔧 Available Commands
-
-```bash
-npm run dev      # Development server with live reload
-npm run build    # Build static files for production
-npm run preview  # Preview production build locally
-npm run clean    # Clean build output
-```
-
-## 📊 Performance Tips
-
-- **Images**: Optimize images before adding to `assets/`
-- **Fonts**: Use web fonts or system fonts for best performance
-- **JavaScript**: Keep client-side JS minimal for static sites
-- **CSS**: Use SCSS features for maintainable stylesheets
+### Any Static Host
+Just upload the `dist/` folder contents to your hosting provider.
 
 ## 📚 Learn More
 
 - [Clovie Documentation](https://github.com/adrianjonmiller/clovie)
-- [Static Site Best Practices](https://web.dev/static-site-generation/)
-- [JAMstack Resources](https://jamstack.org/resources/)
+- [Nunjucks Template Guide](https://mozilla.github.io/nunjucks/)
+- [Configuration Guide](https://github.com/adrianjonmiller/clovie#configuration)
 
 ---
 
-*Static sites done right with Clovie ⚡*
+*Built with ❤️ using Clovie*

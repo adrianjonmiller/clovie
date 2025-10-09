@@ -28,10 +28,11 @@ describe('CLI', () => {
     expect(result.stdout + result.stderr).toContain('Clovie');
   });
 
-  it('should create a new project with default template', async () => {
+  it('should create a new project with static template (default)', async () => {
     const result = await runCli(['create', 'test-project']);
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain('✅ Clovie default project created successfully!');
+    expect(result.stdout).toContain('✅ Clovie project created successfully!');
+    expect(result.stdout).toContain('Template: static');
     
     // Check that project files were created
     expect(fs.existsSync(path.join(testDir, 'test-project'))).toBe(false); // Should be in current dir
@@ -43,10 +44,10 @@ describe('CLI', () => {
     }
   });
 
-  it('should create a new project with static template', async () => {
+  it('should create a new project with static template explicitly', async () => {
     const result = await runCli(['create', 'test-static', '--template', 'static']);
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain('✅ Clovie static project created successfully!');
+    expect(result.stdout).toContain('✅ Clovie project created successfully!');
     
     // Check that project files were created
     expect(fs.existsSync(path.join(process.cwd(), 'test-static'))).toBe(true);

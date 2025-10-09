@@ -465,7 +465,8 @@ Clovie includes powerful CLI tools for development and deployment:
 
 ```bash
 # Project creation
-clovie create <name> [--template static|server|default]
+clovie create <name>                    # Creates static site (default)
+clovie create <name> --template server  # Creates server application
 
 # Development
 clovie dev              # Start development server with live reload

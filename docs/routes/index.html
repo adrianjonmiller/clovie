@@ -104,7 +104,7 @@
           </h4>
             </div>
               <div class="codeBlock-code padding--all-md reset">
-                <code># Create a new project (default template)</code>
+                <code># Create a new static site (default)</code>
                 <br>
                 <code class="codeBlock-code-copy js--copyCode">npx clovie create my-site</code>
                 <br>
@@ -114,19 +114,16 @@
                 <code class="codeBlock-code-copy js--copyCode">clovie create my-site</code>
                 <br>
                 <br>
-                <code># Use a specific template</code>
+                <code># Create a server application</code>
                 <br>
-                <code class="codeBlock-code-copy js--copyCode">clovie create my-site --template static</code>
-                <br>
-                <code class="codeBlock-code-copy js--copyCode">clovie create my-blog --template server</code>
+                <code class="codeBlock-code-copy js--copyCode">clovie create my-app --template server</code>
               </div>
         </div>
     
       <div class="commentBlock margin--top-md padding--all-md pattern-slash-grid">
         <p><strong>Available Templates:</strong></p>
         <ul>
-          <li><code>default</code> - Basic static site with minimal setup</li>
-          <li><code>static</code> - Full-featured static site with navigation and multiple pages</li>
+          <li><code>static</code> - Static site with SEO, responsive design (default)</li>
           <li><code>server</code> - Full-stack server application with API routes, database, and SSR</li>
         </ul>
       </div>
@@ -704,9 +701,10 @@ export default {
     name: 'Blog Posts',
     path: '/posts/:slug',
     template: 'post.html',
-    repeat: (state) => state.get(['posts']),  // Array of items to create pages for
-    data: (state, post) => ({
-      ...post,
+    repeat: (data) => data.posts,  // Array of items to create pages for
+    data: (globalData, post, key) => ({
+      ...globalData,
+      post,
       excerpt: post.content.substring(0, 100) + '...',
       date: new Date().toISOString()
     })
@@ -716,6 +714,12 @@ export default {
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
         <p><strong>Static Mode Routes:</strong> Generate HTML files at build time using the <code>repeat</code> function to create multiple pages from data.</p>
+        <p><strong>Data Function Signature:</strong> <code>(globalData, item, key)</code></p>
+        <ul>
+          <li><code>globalData</code> - The data object from your config</li>
+          <li><code>item</code> - Current item from the repeat array</li>
+          <li><code>key</code> - Index or key of the current item</li>
+        </ul>
         <p><strong>Output:</strong></p>
         <ul>
           <li><code>posts/first-post.html</code></li>
@@ -753,12 +757,17 @@ export default {
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
         <p><strong>Server Mode Routes:</strong> Rendered on each request with access to database and request context. Results are cached for performance.</p>
-        <p><strong>Key Differences:</strong></p>
+        <p><strong>Data Function Signature:</strong> <code>(ctx, database)</code></p>
+        <ul>
+          <li><code>ctx</code> - Request context (params, query, body, req)</li>
+          <li><code>database</code> - Collection-based database instance</li>
+        </ul>
+        <p><strong>Key Differences from Static Mode:</strong></p>
         <ul>
           <li>No <code>repeat</code> function - routes match dynamically</li>
-          <li><code>data</code> receives <code>(ctx, database)</code> instead of <code>(state, item)</code></li>
           <li>Access to request parameters, query strings, and database</li>
           <li>Rendered on-demand with intelligent caching</li>
+          <li>Must return data via <code>ctx.respond</code> methods</li>
         </ul>
       </div>
       <div class="codeBlock margin--top-md">
@@ -771,13 +780,16 @@ export default {
     name: 'Products',
     path: '/products/:slug',
     template: 'product.html',
-    repeat: (state) => state.get(['products']),
-    data: (state, product) => ({
-      ...product,
-      price: `$${product.price.toFixed(2)}`,
-      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-      inStock: product.quantity > 0,
-      relatedProducts: state.get(['products']).filter(p => 
+    repeat: (data) => data.products,
+    data: (globalData, product, key) => ({
+      ...globalData,
+      product: {
+        ...product,
+        price: `$${product.price.toFixed(2)}`,
+        slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+        inStock: product.quantity > 0
+      },
+      relatedProducts: globalData.products.filter(p => 
         p.category === product.category && p.id !== product.id
       )
     })
@@ -796,8 +808,9 @@ export default {
     path: '/blog/:page?',
     template: 'blog.html',
     paginate: 5,  // 5 posts per page
-    repeat: (state) => state.get(['posts']),
-    data: (state, posts, pageInfo) => ({
+    repeat: (data) => data.posts,
+    data: (globalData, posts, pageInfo) => ({
+      ...globalData,
       posts,
       pagination: pageInfo,
       title: `Blog - Page ${pageInfo.current}`
@@ -821,13 +834,13 @@ export default {
         <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;title&gt;{{title}} - {{../title}}&lt;/title&gt;
+  &lt;title&gt;{{ post.title }} - {{ title }}&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;article&gt;
-    &lt;h1&gt;{{title}}&lt;/h1&gt;
-    &lt;p&gt;{{excerpt}}&lt;/p&gt;
-    &lt;div&gt;{{content}}&lt;/div&gt;
+    &lt;h1&gt;{{ post.title }}&lt;/h1&gt;
+    &lt;p&gt;{{ post.excerpt }}&lt;/p&gt;
+    &lt;div&gt;{{ post.content }}&lt;/div&gt;
   &lt;/article&gt;
 &lt;/body&gt;
 &lt;/html&gt;{% endraw %}

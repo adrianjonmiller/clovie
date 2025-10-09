@@ -1,9 +1,10 @@
-import express from 'express';
-
 export default {
-  // 🌐 Server application mode - full Express.js app
+  // 🌐 Server application mode - uses Node.js HTTP server by default
   type: 'server',
   port: 3000,
+  
+  // 🎨 Template engine (Nunjucks is default)
+  renderEngine: 'nunjucks',  // or 'handlebars', 'pug', 'eta'
   
   // Application data and configuration
   data: {
@@ -19,129 +20,146 @@ export default {
     ]
   },
 
-  // 💾 Database configuration (SQLite)
-  dbPath: './data/app.db',
+  // 💾 Database configuration (document-oriented with WAL)
+  dbPath: './data',      // Directory for database files
+  walPath: './data',     // Directory for WAL files
   
-  // Express middleware setup
-  middleware: [
-    express.json(),                    // Parse JSON bodies
-    express.urlencoded({ extended: true }) // Parse form data
-  ],
-
-  // 🛣️ API endpoints
+  // 🛣️ API endpoints (RESTful JSON APIs)
   api: [
     {
       path: '/api/status',
       method: 'GET',
-      action: async (state, event) => {
-        return {
+      handler: async (ctx, database) => {
+        return ctx.respond.json({
           status: 'ok',
           timestamp: new Date().toISOString(),
           uptime: process.uptime(),
           version: '1.0.0'
-        };
+        });
       }
     },
     {
       path: '/api/users',
       method: 'GET', 
-      action: async (state, event) => {
-        // Get users from state/database
-        const users = state.get('users') || [
-          { id: 1, name: 'John Doe', email: 'john@example.com' },
-          { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
-        ];
-        return { users, total: users.length };
+      handler: async (ctx, database) => {
+        const users = database.collection('users');
+        
+        // Get all users from database
+        const allUsers = users.keys().map(id => ({
+          id,
+          ...users.get([id])
+        }));
+        
+        return ctx.respond.json({ 
+          users: allUsers,
+          total: allUsers.length 
+        });
       }
     },
     {
       path: '/api/users',
       method: 'POST',
-      action: async (state, event) => {
-        const { name, email } = event.body;
+      handler: async (ctx, database) => {
+        const { name, email } = ctx.body;
         
         if (!name || !email) {
-          return { error: 'Name and email are required', status: 400 };
+          return ctx.respond.json(
+            { error: 'Name and email are required' },
+            400
+          );
         }
         
-        const newUser = {
-          id: Date.now(), // Simple ID generation
+        const users = database.collection('users');
+        
+        // Add user (auto-generates unique ID)
+        const userId = users.add({
           name,
           email,
           createdAt: new Date().toISOString()
-        };
+        });
         
-        // Save to state (in production, use database)
-        const users = state.get('users') || [];
-        users.push(newUser);
-        state.set('users', users);
-        
-        return { success: true, user: newUser };
+        return ctx.respond.json({ 
+          success: true,
+          user: { id: userId, ...users.get([userId]) }
+        });
       }
     },
     {
       path: '/api/users/:id',
       method: 'GET',
-      action: async (state, event) => {
-        const userId = parseInt(event.params.id);
-        const users = state.get('users') || [];
-        const user = users.find(u => u.id === userId);
+      handler: async (ctx, database) => {
+        const userId = ctx.params.id;
+        const users = database.collection('users');
+        const user = users.get([userId]);
         
         if (!user) {
-          return { error: 'User not found', status: 404 };
+          return ctx.respond.json(
+            { error: 'User not found' },
+            404
+          );
         }
         
-        return { user };
+        return ctx.respond.json({ user: { id: userId, ...user } });
       }
     }
   ],
 
-  // 📄 Server-rendered routes (dynamic pages)
+  // 📄 Server-rendered routes (dynamic pages with SSR)
   routes: [
     {
       name: 'User Profile',
       path: '/user/:id',
-      template: 'profile.html',
-      data: async (state, params) => {
-        const userId = parseInt(params.id);
-        const users = state.get('users') || [];
-        const user = users.find(u => u.id === userId) || {
-          id: userId,
-          name: 'Unknown User',
-          email: 'unknown@example.com'
-        };
+      template: './views/profile.html',
+      data: async (ctx, database) => {
+        const userId = ctx.params.id;
+        const users = database.collection('users');
+        const user = users.get([userId]);
         
         return {
-          user,
-          title: `${user.name}'s Profile`
+          user: user || { 
+            name: 'Unknown User',
+            email: 'unknown@example.com'
+          },
+          title: `${user?.name || 'Unknown'}'s Profile`
         };
       }
     }
   ]
 
-  // 🚀 Ready for production? Add these:
+  // 🚀 Advanced features:
   
-  // Database integration
-  // api: [{
-  //   path: '/api/posts',
-  //   method: 'GET',
-  //   action: async (state, event) => {
-  //     const posts = await state.db.query('SELECT * FROM posts ORDER BY created_at DESC');
-  //     return { posts };
-  //   }
-  // }],
-  
-  // Authentication middleware
+  // Use Express adapter for middleware
+  // adapter: 'express',
   // middleware: [
   //   express.json(),
-  //   authenticateUser,
-  //   authorizeRequest
+  //   express.urlencoded({ extended: true })
   // ],
   
-  // WebSocket support
-  // websocket: {
-  //   onConnection: (socket) => {
-  //     socket.emit('welcome', { message: 'Connected to server' });
+  // Server lifecycle hooks
+  // hooks: {
+  //   onRequest: async (ctx) => {
+  //     console.log(ctx.req.method, ctx.req.url);
+  //   },
+  //   preHandler: async (ctx) => {
+  //     // Auth logic, etc.
+  //   },
+  //   onError: async (ctx, error) => {
+  //     console.error('Error:', error);
   //   }
-  // }
+  // },
+  
+  // Query database with filters
+  // const admin = users.findWhere('role', '===', 'admin');
+  // const allAdmins = users.findAllWhere('role', '===', 'admin');
+  
+  // Update documents
+  // users.update([userId], user => ({
+  //   ...user,
+  //   lastSeen: new Date().toISOString()
+  // }));
+  
+  // Nested collections
+  // const posts = database.collection('posts');
+  // const comments = posts.collection('comments');
+  // comments.set([postId, 'comment1'], { text: 'Great!' });
 };

@@ -2,14 +2,14 @@
   "name": "{{projectName}}",
   "version": "1.0.0",
   "description": "Static site built with Clovie",
+  "type": "module",
   "scripts": {
     "build": "clovie build",
-    "dev": "clovie watch",
-    "deploy": "npm run build && npm run upload",
-    "preview": "clovie serve dist"
+    "dev": "clovie dev",
+    "deploy": "npm run build && npm run upload"
   },
   "devDependencies": {
-    "clovie": "^0.1.5"
+    "clovie": "^0.1.16"
   },
   "keywords": [
     "static-site",
