@@ -10,7 +10,7 @@
     "build": "clovie build"
   },
   "dependencies": {
-    "clovie": "^0.1.16"
+    "clovie": "^{{clovieVersion}}"
   },
   "devDependencies": {},
   "keywords": [

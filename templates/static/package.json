@@ -9,7 +9,7 @@
     "deploy": "npm run build && npm run upload"
   },
   "devDependencies": {
-    "clovie": "^0.1.16"
+    "clovie": "^{{clovieVersion}}"
   },
   "keywords": [
     "static-site",

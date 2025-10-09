@@ -3,9 +3,14 @@ import path from "path";
 import commandLineArgs from "command-line-args";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { readFileSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Read package version
+const packageJson = JSON.parse(readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+const CLOVIE_VERSION = packageJson.version;
 
 // Local - import from compiled dist for published package
 // import { createClovie } from "../lib/createClovie.js";
@@ -159,6 +164,7 @@ if (process.argv.includes('create') && process.argv.length > 2) {
         let content = fs.readFileSync(srcPath, 'utf8');
         // Replace template variables
         content = content.replace(/\{\{projectName\}\}/g, projectName);
+        content = content.replace(/\{\{clovieVersion\}\}/g, CLOVIE_VERSION);
         fs.writeFileSync(destPath, content);
       }
     }
