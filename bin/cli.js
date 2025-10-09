@@ -8,8 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Local - import from compiled dist for published package
-// import { createClovie } from "../lib/createClovie.js";
-import { createClovie } from "../dist/index.js";
+import { createClovie } from "../lib/createClovie.js";
+// import { createClovie } from "../dist/index.js";
 import { killPort, checkPorts, killCommonPorts } from "../scripts/killPort.js";
 
 // Check for kill command first (before any argument parsing)

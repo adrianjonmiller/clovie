@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="About {{title}} - {{description}}">
-  <meta name="author" content="{{author}}">
+  <meta name="description" content="About {{ site.title }} - {{ site.description }}">
+  <meta name="author" content="{{ site.author }}">
   
-  <title>About - {{title}}</title>
+  <title>About - {{ site.title }}</title>
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  {{> header}}
+  {% include 'header' %}
   
   <main class="container">
     <article class="content">
@@ -39,7 +39,7 @@
     </article>
   </main>
 
-  {{> footer}}
+  {% include 'footer' %}
   
   <script src="main.js"></script>
 </body>

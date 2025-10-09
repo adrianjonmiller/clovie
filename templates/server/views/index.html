@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{{description}}">
-  <title>{{title}}</title>
+  <meta name="description" content="{{ app.description }}">
+  <title>{{ app.name }}</title>
   <link rel="stylesheet" href="/main.css">
 </head>
 <body>
-  {{> header}}
+  {% include 'header' %}
   
   <main class="container">
     <section class="hero">
-      <h1 class="hero__title">{{title}}</h1>
+      <h1 class="hero__title">{{ app.name }}</h1>
       <p class="hero__subtitle">Welcome to your new Clovie server application!</p>
       <a href="/about.html" class="btn btn--primary">Learn More</a>
     </section>
@@ -21,19 +21,19 @@
       <div class="features__grid">
         <div class="feature">
           <h3>🔌 API Ready</h3>
-          <p>RESTful API endpoints with state management</p>
+          <p>RESTful API endpoints with collection-based database</p>
         </div>
         <div class="feature">
           <h3>📄 Server Rendering</h3>
-          <p>Dynamic pages with data from your API</p>
+          <p>Dynamic pages with data from your database</p>
         </div>
         <div class="feature">
           <h3>🔄 Live Reload</h3>
           <p>Development server with WebSocket updates</p>
         </div>
         <div class="feature">
-          <h3>⚡ Modern Stack</h3>
-          <p>Express.js with Clovie's simplified architecture</p>
+          <h3>⚡ Fast & Lightweight</h3>
+          <p>Native Node.js HTTP server with zero overhead</p>
         </div>
       </div>
     </section>
@@ -49,7 +49,7 @@
     </section>
   </main>
 
-  {{> footer}}
+  {% include 'footer' %}
   
   <script src="/app.js"></script>
 </body>
