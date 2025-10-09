@@ -22,9 +22,9 @@ export default {
       description: 'Testing Clovie in development',
       author: 'Developer'
     },
-    pages: [
-      { title: 'Home', url: '/' },
-      { title: 'About', url: '/about.html' },
+    posts: [
+      { title: 'Post 1', body: 'Post 1 body', slug: 'post-1' },
+      { title: 'Post 2', body: 'Post 2 body', slug: 'post-2' },
     ]
   },
 
@@ -35,7 +35,7 @@ export default {
   watch: true,
   port: 3000,
   mode: 'development',
-  type: 'server',
+  type: 'static',
   hooks: {
     preHandler: (ctx, route) => {
       if (!route.meta.auth) {
@@ -51,24 +51,20 @@ export default {
     {
       path: '/posts',
       template: path.join(__dirname, './routes/posts.html'), // Use existing template
-      data: ({req}, database) => {
+      data: (data) => {
         return {
-          posts: database.collection('posts').get()
+          posts: data.posts
         }
       },
     },{
       path: '/posts/:slug',
       template: path.join(__dirname, './routes/post.html'), // Use existing template
-      data: ({req}, database) => {
-        const post = database.collection('posts').get([req.params.slug]);
-        if (!post) {
-          return {
-            slug: req.params.slug,
-            title: 'Post not found'
-          }
-        }
+      repeat: (data) => {
+        return data.posts
+      },
+      data: (data, post, key) => {
         return {
-          slug: req.params.slug,
+          slug: post.slug,
           title: post.title,
           body: post.body
         }

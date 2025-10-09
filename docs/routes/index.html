@@ -15,7 +15,7 @@
   </header>
 
   <div class="fixed--top-right padding--all-md flex">
-    {{> nav }}
+    {% include 'nav' %}
   </div>
   
   <nav class="nav fixed--left-center" aria-label="Table of contents">
@@ -193,11 +193,11 @@
           <p class="margin--top-xs type--size-v-1 codeBlock-header-title">Clovie uses smart defaults and auto‑detection, so you can start with just:</p>
         </div>
         <button class="button layout--top-right">Copy</button>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   data: {
     title: 'My Site'
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="commentBlock margin--top-md padding--all-md pattern-slash-grid">
@@ -214,7 +214,7 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="full-config" class="codeBlock-header-title">Full Configuration</h4>
         </div>
-<pre class="codeBlock-code padding--all-md reset"><code class="codeBlock-code-copy js--copyCode">export default {
+<pre class="codeBlock-code padding--all-md reset"><code class="codeBlock-code-copy js--copyCode">{% raw %}export default {
   // Custom paths (optional - Clovie will auto-detect if not specified)
   scripts: './src/js/app.js',
   styles: './src/css/main.scss',
@@ -231,7 +231,7 @@
   compiler: (template, data) => {
     return yourTemplateEngine(template, data);
   }
-};
+};{% endraw %}
 </code>
 </pre>
       </div>
@@ -246,7 +246,7 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="async-data" class="codeBlock-header-title">Async Data Loading</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   // ... other config
   data: async () => {
     // Fetch data from API
@@ -259,7 +259,7 @@
       timestamp: new Date().toISOString()
     };
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
 
@@ -268,7 +268,7 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="routes" class="codeBlock-header-title">Dynamic Routes &amp; Data Pages</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   // ... other config
   data: {
     title: 'My Blog',
@@ -289,14 +289,14 @@
       date: new Date().toISOString()
     })
   }]
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="data-transform" class="codeBlock-header-title">Data Transformation in Routes</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   // ... other config
   routes: [{
     name: 'Products',
@@ -313,14 +313,14 @@
       )
     })
   }]
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="route-pagination" class="codeBlock-header-title">Route Pagination</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   // ... other config
   routes: [{
     name: 'Blog Pagination',
@@ -334,7 +334,7 @@
       title: `Blog - Page ${pageInfo.current}`
     })
   }]
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
@@ -349,7 +349,7 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 class="codeBlock-header-title">Template (<code>post.html</code>):</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>&lt;!DOCTYPE html&gt;
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
   &lt;title&gt;{{title}} - {{../title}}&lt;/title&gt;
@@ -361,7 +361,7 @@
     &lt;div&gt;{{content}}&lt;/div&gt;
   &lt;/article&gt;
 &lt;/body&gt;
-&lt;/html&gt;
+&lt;/html&gt;{% endraw %}
 </code></pre>
       </div>
       <p class="margin--top-md"><strong>Output:</strong></p>
@@ -378,7 +378,7 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="handlebars" class="codeBlock-header-title">Handlebars</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>import Handlebars from 'handlebars';
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import Handlebars from 'handlebars';
 
 export default {
   // ... other config
@@ -386,42 +386,42 @@ export default {
     const compiled = Handlebars.compile(template);
     return compiled(data);
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="nunjucks" class="codeBlock-header-title">Nunjucks</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>import nunjucks from 'nunjucks';
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import nunjucks from 'nunjucks';
 
 export default {
   // ... other config
   compiler: (template, data) => {
     return nunjucks.renderString(template, data);
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="pug" class="codeBlock-header-title">Pug</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>import pug from 'pug';
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import pug from 'pug';
 
 export default {
   // ... other config
   compiler: (template, data) => {
     return pug.render(template, { ...data, pretty: true });
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 id="custom-engine" class="codeBlock-header-title">Custom Engine</h4>
         </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>export default {
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
   // ... other config
   compiler: (template, data) => {
     // Simple variable replacement
@@ -429,7 +429,7 @@ export default {
       return data[key] || match;
     });
   }
-};
+};{% endraw %}
 </code></pre>
       </div>
 

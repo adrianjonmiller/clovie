@@ -39,7 +39,7 @@ export interface ClovieConfig {
   port?: number;
   
   /** Template compiler function */
-  templateCompiler?: (template: string, data: any) => string | Promise<string>;
+  renderEngine?: (template: string, data: any) => string | Promise<string>;
   
   /** Template compiler function (legacy alias) */
   compiler?: (template: string, data: any) => string | Promise<string>;

@@ -35,18 +35,12 @@ export default {
     buildTime: new Date().toISOString()
   },
   routes: [{
-    name: 'Home',
     path: '/',
     template: './routes/index.html',
-    data: (state, item) => {
-      return state.get()
-    }
+    data: data => data
   },{
-    name: 'Build with Clovie',
     path: '/built-with-clovie',
     template: './routes/built-with-clovie.html',
-    data: (state, item) => {
-      return state.get()
-    }
+    data: data => data
   }]
 };

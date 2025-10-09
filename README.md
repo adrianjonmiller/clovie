@@ -191,7 +191,7 @@ export default {
   outputDir: './dist',
   
   // Template compilation
-  templateCompiler: (template, data) => {
+  renderEngine: (template, data) => {
     return yourTemplateEngine(template, data);
   },
   

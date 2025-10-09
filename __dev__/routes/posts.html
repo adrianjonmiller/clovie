@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
+    <title>{{ title }}</title>
 </head>
 <body>
     <h1>All posts</h1>
     <ul>
-        {{#each posts}}
-            <li><a href="/posts/{{@key}}">{{title}}</a></li>
-        {{/each}}
+        {% for post in posts %}
+            <li><a href="/posts/{{ post.slug }}">{{ post.title }}</a></li>
+        {% endfor %}
     </ul>
 </body>
 </html>
