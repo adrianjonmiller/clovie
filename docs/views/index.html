@@ -33,7 +33,6 @@
       <li><a href="#database" class="link-pageContents js--navLink reset" data-content="Database (Server Mode)">Database (Server Mode)</a></li>
       <li><a href="#api-routes" class="link-pageContents js--navLink reset" data-content="API Routes">API Routes</a></li>
       <li><a href="#system-routes" class="link-pageContents js--navLink reset" data-content="System Routes">System Routes</a></li>
-      <li><a href="#server-adapters" class="link-pageContents js--navLink reset" data-content="Server Adapters">Server Adapters</a></li>
       <li><a href="#async-data" class="link-pageContents js--navLink reset" data-content="Async Data Loading">Async Data Loading</a></li>
       <li><a href="#routes" class="link-pageContents js--navLink reset" data-content="Dynamic Routes">Dynamic Routes</a></li>
       <li><a href="#route-pagination" class="link-pageContents js--navLink reset" data-content="Route Pagination">Route Pagination</a></li>
@@ -57,7 +56,7 @@
   <main class="main padding--all-md js--scrollPosition">
     <section id="overview" class="margin--top-md margin--top-xl">
       <h2>Overview</h2>
-      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full-featured server applications using vanilla Node.js HTTP (Express adapter available).</p>
+      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full Express server applications.</p>
       
       <h3 class="margin--top-md">Service Architecture</h3>
       <p>All functionality is provided by services extending <code>ServiceProvider</code>:</p>
@@ -66,7 +65,7 @@
         <li><strong>Compile</strong> - Template compilation, asset bundling, and live reload injection</li>
         <li><strong>Run</strong> - Build orchestration and command execution</li>
         <li><strong>Route</strong> - Dynamic routing, SSR caching, and route handlers</li>
-        <li><strong>Server</strong> - HTTP server management with adapter pattern (conditionally loaded)</li>
+        <li><strong>Server</strong> - HTTP/Express server management (conditionally loaded)</li>
         <li><strong>Cache</strong> - Build caching and incremental builds</li>
         <li><strong>Configurator</strong> - Configuration loading and validation</li>
         <li><strong>LiveReload</strong> - File watching and browser refresh (development only)</li>
@@ -75,7 +74,7 @@
 
       <h3 class="margin--top-md">Two Operating Modes</h3>
       <p><strong>Static Mode</strong> (<code>type: 'static'</code>): Traditional static site generation</p>
-      <p><strong>Server Mode</strong> (<code>type: 'server'</code>): Full web applications with SSR using Node.js HTTP server (Express adapter available)</p>
+      <p><strong>Server Mode</strong> (<code>type: 'server'</code>): Full Express applications with SSR</p>
     </section>
 
     <section  class="margin--top-md margin--top-xl">
@@ -83,10 +82,9 @@
       <ul>
         <li><strong>Template Engine Agnostic:</strong> Handlebars, Nunjucks, Pug, Mustache, or custom.</li>
         <li><strong>Asset Processing:</strong> JavaScript bundling with esbuild, SCSS compilation, static asset copying.</li>
-        <li><strong>Development Server:</strong> Live reload with file watching and hot module replacement.</li>
+        <li><strong>Development Server:</strong> Live reload with Express and file watching.</li>
         <li><strong>Dynamic Routing:</strong> Powerful route system for both static and server-side page generation.</li>
-        <li><strong>Server-Side Rendering:</strong> Native Node.js HTTP server with dynamic routes and API endpoints.</li>
-        <li><strong>Adapter Pattern:</strong> Default HTTP server with optional Express adapter for advanced middleware.</li>
+        <li><strong>Server-Side Rendering:</strong> Full Express applications with dynamic routes and API endpoints.</li>
         <li><strong>Database Integration:</strong> Document-oriented database with Write-Ahead Logging for server applications.</li>
         <li><strong>API Routes:</strong> Create RESTful APIs with collection-based data storage and automatic persistence.</li>
         <li><strong>Port Management:</strong> Integrated utilities for managing development server ports.</li>
@@ -319,8 +317,10 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 class="codeBlock-header-title">Server Mode Configuration</h4>
         </div>
-<pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
-  type: 'server',  // Server-side application (uses Node.js HTTP server)
+<pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import express from 'express';
+
+export default {
+  type: 'server',  // Server-side application
   port: 3000,
   host: '0.0.0.0',
   
@@ -334,12 +334,11 @@
     version: '1.0.0'
   },
   
-  // Optional: Use Express adapter with middleware
-  // adapter: 'express',  // Use Express instead of default HTTP server
-  // middleware: [
-  //   express.json(),
-  //   express.urlencoded({ extended: true })
-  // ],
+  // Express middleware (runs before all routes)
+  middleware: [
+    express.json(),
+    express.urlencoded({ extended: true })
+  ],
   
   // Server lifecycle hooks
   hooks: {
@@ -589,78 +588,6 @@ comments.set([postId, 'comment1'], {
           <li><code>GET /health</code> - Health check endpoint</li>
           <li><code>GET /api/info</code> - Server information and route count</li>
         </ul>
-      </div>
-
-      <h3 id="server-adapters" class="margin--top-md">Server Adapters</h3>
-      <p>Clovie uses a vanilla Node.js HTTP server by default. You can optionally use Express for advanced middleware features.</p>
-      
-      <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 class="codeBlock-header-title">Default HTTP Server</h4>
-        </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
-  type: 'server',
-  // Uses Node.js http.createServer by default
-  // No dependencies required - fast and lightweight
-  
-  api: [{
-    path: '/api/hello',
-    method: 'GET',
-    handler: async (ctx, database) => {
-      return ctx.respond.json({ message: 'Hello!' });
-    }
-  }]
-};{% endraw %}
-</code></pre>
-      </div>
-
-      <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 class="codeBlock-header-title">Using Express Adapter</h4>
-        </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import express from 'express';
-import { ExpressAdapter } from 'clovie/adapters';
-
-export default {
-  type: 'server',
-  
-  // Use Express adapter for advanced middleware
-  adapter: 'express',  // or new ExpressAdapter()
-  
-  // Express middleware
-  middleware: [
-    express.json(),
-    express.urlencoded({ extended: true }),
-    express.static('public')
-  ],
-  
-  api: [{
-    path: '/api/hello',
-    method: 'POST',
-    handler: async (ctx, database) => {
-      // ctx.body parsed by Express middleware
-      const { name } = ctx.body;
-      return ctx.respond.json({ message: `Hello ${name}!` });
-    }
-  }]
-};{% endraw %}
-</code></pre>
-      </div>
-
-      <div class="commentBlock margin--top-md padding--all-md">
-        <p><strong>When to use Express adapter:</strong></p>
-        <ul>
-          <li>Need Express-specific middleware (sessions, compression, etc.)</li>
-          <li>Integrating with existing Express ecosystem</li>
-          <li>Using third-party Express middleware</li>
-        </ul>
-        <p class="margin--top-sm"><strong>Default HTTP adapter is recommended for:</strong></p>
-        <ul>
-          <li>Maximum performance (no framework overhead)</li>
-          <li>Minimal dependencies</li>
-          <li>Most common use cases (JSON APIs, SSR)</li>
-        </ul>
-        <p class="margin--top-sm"><strong>Note:</strong> Install Express if using the Express adapter: <code>npm install express</code></p>
       </div>
       
       <div class="codeBlock margin--top-md">

@@ -33,14 +33,5 @@ export default {
     environment: isProduction ? 'production' : 'development',
     isNetlify,
     buildTime: new Date().toISOString()
-  },
-  routes: [{
-    path: '/',
-    template: './routes/index.html',
-    data: data => data
-  },{
-    path: '/built-with-clovie',
-    template: './routes/built-with-clovie.html',
-    data: data => data
-  }]
+  }
 };
