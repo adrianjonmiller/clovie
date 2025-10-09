@@ -78,6 +78,9 @@ describe('Server', () => {
     let server;
 
     beforeEach(async () => {
+      // Clear routes from previous tests
+      clovie.server.clearRoutes();
+      
       // Add test routes
       clovie.server.add('GET', '/test', (ctx) => {
         return ctx.respond.json({ 
@@ -98,6 +101,8 @@ describe('Server', () => {
 
       // Start server on random port
       server = await clovie.server.listen({ port: 0 });
+      // Small delay to ensure server is fully ready
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
     afterEach(async () => {
@@ -105,6 +110,8 @@ describe('Server', () => {
         await clovie.server.stop();
         server = null;
       }
+      // Small delay to ensure port is released
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
     async function makeRequest(method, path, headers = {}, body = null) {
@@ -180,6 +187,9 @@ describe('Server', () => {
     let server;
 
     beforeEach(async () => {
+      // Clear routes from previous tests
+      clovie.server.clearRoutes();
+      
       // Add routes BEFORE starting server
       clovie.server.add('GET', '/json', (ctx) => {
         return ctx.respond.json({ message: 'Hello JSON' });
@@ -201,6 +211,8 @@ describe('Server', () => {
       });
 
       server = await clovie.server.listen({ port: 0 });
+      // Small delay to ensure server is fully ready
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
     afterEach(async () => {
@@ -208,6 +220,8 @@ describe('Server', () => {
         await clovie.server.stop();
         server = null;
       }
+      // Small delay to ensure port is released
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
     async function makeRequest(path) {
@@ -271,6 +285,9 @@ describe('Server', () => {
   describe('Hooks', () => {
     it('should execute hooks correctly', async () => {
       let hookCalls = [];
+      
+      // Clear routes from previous tests
+      clovie.server.clearRoutes();
       
       clovie.server.hooks({
         onRequest: async (ctx) => {
