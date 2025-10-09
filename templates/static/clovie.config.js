@@ -1,40 +1,61 @@
 export default {
-  // Static site optimized configuration
+  // 🗂️ Static site generation mode
   type: 'static',
   
+  // Site metadata and global data
   data: {
-    title: '{{projectName}}',
-    description: 'A fast static site built with Clovie',
-    author: 'Your Name',
-    url: 'https://your-domain.com',
+    site: {
+      title: '{{projectName}}',
+      description: 'A fast static site built with Clovie',
+      author: 'Your Name',
+      url: 'https://your-domain.com'
+    },
+    nav: [
+      { title: 'Home', url: '/' },
+      { title: 'About', url: '/about' }
+    ],
     buildDate: new Date().toISOString()
   },
   
-  // Example blog/content models (uncomment to use):
-  // models: {
-  //   posts: {
-  //     template: '_post.html',
-  //     output: 'posts/{slug}.html',
-  //     transform: (post) => ({
-  //       ...post,
-  //       excerpt: post.content.substring(0, 150) + '...',
-  //       readingTime: Math.ceil(post.content.split(' ').length / 200)
+  // 🚀 Ready for more? Uncomment these examples:
+  
+  // Load data from external source
+  // data: async () => {
+  //   const posts = await loadPostsFromMarkdown('./content/posts/');
+  //   return {
+  //     site: { title: '{{projectName}}', url: 'https://your-domain.com' },
+  //     posts,
+  //     categories: [...new Set(posts.map(p => p.category))]
+  //   };
+  // },
+  
+  // Generate pages from data
+  // routes: [
+  //   {
+  //     name: 'Blog Posts',
+  //     path: '/posts/:slug',
+  //     template: 'post.html',
+  //     repeat: (data) => data.posts,
+  //     data: (globalData, post) => ({
+  //       ...globalData,
+  //       post,
+  //       title: `${post.title} - ${globalData.site.title}`
   //     })
   //   },
-  //   pages: {
-  //     template: '_page.html', 
-  //     output: '{slug}.html'
+  //   {
+  //     name: 'Category Pages',
+  //     path: '/category/:category',  
+  //     template: 'category.html',
+  //     repeat: (data) => data.categories,
+  //     data: (globalData, category) => ({
+  //       ...globalData,
+  //       category,
+  //       posts: globalData.posts.filter(p => p.category === category)
+  //     })
   //   }
-  // },
-
-  // SEO and performance optimizations
-  minify: true,
-  generateSitemap: true,
+  // ],
   
-  // Custom compiler with SEO enhancements
-  // compiler: (template, data) => {
-  //   return template.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
-  //     return data[key] || match;
-  //   });
-  // }
+  // Build optimizations
+  // minify: true,
+  // generateSitemap: true
 };

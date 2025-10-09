@@ -1,32 +1,62 @@
-# Clovie - Vintage Web Dev Tooling
+# Clovie - Vintage Web Dev Tooling with Modern QoL
 
-A Node.js-based static site generator and web framework designed to be simple, fast, and highly modular. Built on the **brickworks/engine** pattern for maximum flexibility and maintainability.
+> *"The Hollow Knight of Web Dev"* - Simple but deep, easy to start but room to grow.
 
-## Architecture Overview
+A powerful Node.js-based **static site generator** and **full-stack web framework** that bridges the gap between simple static sites and complex web applications. Built on the **@brickworks/engine** service architecture for maximum flexibility and maintainability.
 
-Clovie uses a **service-oriented architecture** where all functionality is provided by services that extend `ServiceProvider` from the brickworks/engine framework. The engine orchestrates these services through dependency injection and provides stable state management.
+## 🚀 Quick Start
+
+```bash
+# Create a new project
+npx clovie create my-site
+
+# Start development
+cd my-site
+npm install
+npm run dev
+```
+
+## ✨ Key Features
+
+- **🎯 Dual Mode**: Static site generation OR full Express server applications
+- **🔄 Zero Config**: Smart auto-detection of project structure
+- **⚡ Fast Builds**: Incremental builds with intelligent caching
+- **🎨 Template Agnostic**: Handlebars, Nunjucks, Pug, Mustache, or custom engines
+- **📦 Asset Pipeline**: SCSS compilation, JavaScript bundling with esbuild
+- **🔄 Live Reload**: WebSocket-based live reload during development
+- **🗄️ Database Ready**: SQLite integration for server mode applications
+- **🛣️ Dynamic Routing**: Data-driven page generation and API endpoints
+- **🔧 Service Architecture**: Modular, extensible service-oriented design
+
+## 🏗️ Architecture Overview
+
+Clovie uses a **service-oriented architecture** built on `@brickworks/engine`. All functionality is provided by services that extend `ServiceProvider`, orchestrated through dependency injection with reactive state management.
 
 ### Core Services
 
-- **File** - File system operations (reading, writing, watching)
-- **Compiler** - Template compilation with live reload injection  
-- **Views** - View discovery and processing
-- **Routes** - Route generation and processing (static & dynamic)
-- **Build** - Static site generation orchestration
-- **Server** - Express server management (conditionally loaded)
-- **Cache** - Build caching and incremental builds
+- **🗂️ File** - File system operations with intelligent watching
+- **⚙️ Compile** - Asset compilation with progress tracking
+- **📝 Configurator** - Configuration management with hot-reloading
+- **🏃 Run** - Build orchestration and task execution  
+- **🌐 Server** - Express server with kernel-based request handling
+- **🔄 LiveReload** - Development live-reload with WebSocket
+- **🛣️ Router** - Route processing for both static and dynamic content
+- **💾 Cache** - Smart caching for incremental builds
 
-### Two Operating Modes
+### Operating Modes
 
-**Static Mode (`type: 'static'`)**:
-- Generates static HTML files to output directory
-- Uses Express server only for development (live reload, file serving)
-- Traditional static site generator behavior
+**🗂️ Static Mode (`type: 'static'`)**:
+- Generates optimized static HTML files
+- Perfect for blogs, documentation, marketing sites
+- Uses development server only for live reload
+- Deployable to any static hosting (Netlify, Vercel, GitHub Pages)
 
-**Server Mode (`type: 'server'`)**:
-- Builds a real Express application 
-- Serves static files + handles dynamic routes/API endpoints
-- Full web application server with server-side rendering
+**🌐 Server Mode (`type: 'server'`)**:
+- Full Express.js web application
+- API endpoints with state management
+- Server-side rendering with dynamic routes  
+- Database integration and real-time features
+- Perfect for web apps, dashboards, APIs
 
 ## Project Structure
 
@@ -101,289 +131,327 @@ actions(useContext) {
 - **Incremental Builds**: Smart caching for faster rebuilds
 - **Auto-Discovery**: Intelligent project structure detection
 
-## Usage
-
-### Installation
-
-#### Option 1: Local Installation (Recommended)
-```bash
-# Install as dev dependency in your project
-npm install --save-dev clovie
-
-# Use via npm scripts
-npm run build
-npm run dev
-```
-
-#### Option 2: Global Installation
-```bash
-# Install globally
-npm install -g clovie
-```
+## 📦 Installation & Usage
 
 ### Creating New Projects
 
-#### Using Clovie CLI (Recommended)
+#### Quick Start with Templates
 ```bash
-# Create a new project
+# Static site (blogs, docs, marketing)
+npx clovie create my-blog --template static
+
+# Server application (APIs, web apps)
+npx clovie create my-app --template server
+
+# Default (auto-detected)
 npx clovie create my-site
-
-# Or with global install
-clovie create my-site
 ```
 
-
-
-### Building and Development
-
-#### Static Mode (Default)
+#### Manual Installation
 ```bash
-# Build static files
-clovie build
-# or
-npm run build
+# Install in existing project
+npm install --save-dev clovie
 
-# Development server with live reload  
-clovie watch
-# or
+# Or globally
+npm install -g clovie
+```
+
+### Development Workflow
+
+#### 🗂️ Static Site Development
+```bash
+# Start development server with live reload
 npm run dev
+# or
+clovie dev
+
+# Build optimized static files
+npm run build  
+# or
+clovie build
+
+# Preview production build
+clovie serve --static
 ```
 
-#### Server Mode
+#### 🌐 Server Application Development
 ```bash
-# Run as Express server application
-clovie server
-# or add to package.json:
-# "scripts": { "serve": "clovie server" }
+# Start development server with live reload
+npm run dev
+# or  
+clovie dev
+
+# Start production server
+npm start
+# or
+clovie serve
+
+# Build assets only (server handles routing)
+clovie build
 ```
 
-## Configuration
+## ⚙️ Configuration
 
-### Minimal Configuration (Recommended)
+### Zero Config Start
 
-Clovie uses smart defaults and auto-detection, so you can start with just:
+Clovie uses **smart auto-detection** - just create your files and start:
 
 ```javascript
+// clovie.config.js (minimal)
 export default {
   data: {
-    title: 'My Site'
+    title: 'My Site',
+    description: 'Built with Clovie'
   }
 };
 ```
 
-Clovie will automatically detect:
-- `views/` directory for HTML templates
-- `scripts/main.js` for JavaScript entry point
-- `styles/main.scss` for SCSS entry point
-- `assets/` directory for static files
+Automatically detects:
+- `views/` → HTML templates
+- `scripts/main.js` → JavaScript entry  
+- `styles/main.scss` → SCSS entry
+- `assets/` → Static assets
+- `partials/` → Reusable components
 
-### Static Site Configuration
+### 🗂️ Static Site Configuration
+
+Perfect for blogs, documentation, and marketing sites:
 
 ```javascript
 export default {
-  type: 'static', // Default - generates static files
+  type: 'static', // Generate static HTML files
   
-  // Auto-detected paths (override if needed)
-  views: './src/views',
-  scripts: './src/js/app.js',
-  styles: './src/scss/main.scss', 
-  assets: './public',
-  outputDir: './dist',
-  
-  // Template compilation
-  renderEngine: (template, data) => {
-    return yourTemplateEngine(template, data);
+  // Data available in all templates
+  data: {
+    site: {
+      title: 'My Blog',
+      url: 'https://myblog.com',
+      description: 'A fast static blog'
+    },
+    nav: [
+      { title: 'Home', url: '/' },
+      { title: 'About', url: '/about' },
+      { title: 'Blog', url: '/blog' }
+    ]
   },
   
-  // Routes for dynamic pages from data
+  // Template engine (auto-detected from usage)
+  renderEngine: 'handlebars', // or nunjucks, pug, custom function
+  
+  // Dynamic pages from data
   routes: [{
     name: 'Blog Posts',
     path: '/posts/:slug',
     template: 'post.html',
-    repeat: (state) => state.get(['posts']),
-    data: (state, post) => ({ 
-      ...post, 
-      title: post.title,
-      slug: post.slug 
+    repeat: (data) => data.posts, // Generate page for each post
+    data: (globalData, post) => ({
+      ...globalData,
+      post,
+      title: `${post.title} - ${globalData.site.title}`
     })
-  }]
+  }],
+  
+  // Build optimizations
+  minify: true,
+  generateSitemap: true
 };
 ```
 
-### Server Application Configuration  
+### 🌐 Server Application Configuration
+
+Full-stack web applications with APIs and dynamic content:
 
 ```javascript
+import express from 'express';
+
 export default {
   type: 'server', // Express application mode
-  
   port: 3000,
-  outputDir: './dist', // Serve static files from here
   
-  // Same view/asset processing as static mode
-  views: './src/views',
-  scripts: './src/js', 
-  styles: './src/scss',
+  // Shared data and configuration
+  data: {
+    app: {
+      name: 'My App',
+      version: '1.0.0'
+    }
+  },
   
-  // Server-specific routes
-  routes: [{
-    name: 'Posts API',
-    path: '/api/posts',
-    method: 'GET',
-    handler: async (req, res) => {
-      const posts = await getPosts();
-      res.json(posts);
-    }
-  }, {
-    name: 'Post Pages',
-    path: '/posts/:slug',
-    template: 'post.html',
-    data: async (state, params) => {
-      const post = await getPost(params.slug);
-      return { post };
-    }
-  }],
-  
-  // API routes
-  api: [{
-    path: '/api/users',
-    method: 'POST',
-    handler: async (req, res) => {
-      const user = await createUser(req.body);
-      res.json(user);
-    }
-  }],
+  // Database configuration (optional)
+  dbPath: './data/app.db',
   
   // Express middleware
   middleware: [
     express.json(),
-    cors()
+    express.urlencoded({ extended: true }),
+    // Add CORS, authentication, etc.
+  ],
+  
+  // API endpoints
+  api: [
+    {
+      path: '/api/users',
+      method: 'GET',
+      action: async (state, event) => {
+        const users = await state.db.query('SELECT * FROM users');
+        return { users, total: users.length };
+      }
+    },
+    {
+      path: '/api/users',
+      method: 'POST', 
+      action: async (state, event) => {
+        const { name, email } = event.body;
+        const user = await state.db.insert('users', { name, email });
+        return { success: true, user };
+      }
+    },
+    {
+      path: '/api/users/:id',
+      method: 'GET',
+      action: async (state, event) => {
+        const user = await state.db.findById('users', event.params.id);
+        return user ? { user } : { error: 'User not found', status: 404 };
+      }
+    }
+  ],
+  
+  // Server-rendered routes
+  routes: [
+    {
+      name: 'User Dashboard',
+      path: '/dashboard/:userId',
+      template: 'dashboard.html',
+      data: async (state, params) => {
+        const user = await state.db.findById('users', params.userId);
+        const stats = await getUserStats(params.userId);
+        return { user, stats, title: `Dashboard - ${user.name}` };
+      }
+    }
   ]
 };
 ```
 
-## Advanced Features
+## 🚀 Advanced Features
 
-### Async Data Loading
+### 📊 Database Integration (Server Mode)
 
-Clovie supports asynchronous data loading for dynamic content:
-
-```javascript
-// clovie.config.js
-export default {
-  // ... other config
-  data: async () => {
-    // Fetch data from API
-    const response = await fetch('https://api.example.com/posts');
-    const posts = await response.json();
-    
-    return {
-      title: 'My Blog',
-      posts: posts,
-      timestamp: new Date().toISOString()
-    };
-  }
-};
-```
-
-### Dynamic Routes & Data-Driven Pages
-
-Create multiple pages from data arrays using the routes system:
+Clovie includes built-in SQLite database support for server applications:
 
 ```javascript
-// clovie.config.js
 export default {
-  // ... other config
-  data: {
-    title: 'My Blog',
-    posts: [
-      { id: 1, title: 'First Post', content: 'Hello World', slug: 'first-post' },
-      { id: 2, title: 'Second Post', content: 'Another post', slug: 'second-post' },
-      { id: 3, title: 'Third Post', content: 'Yet another', slug: 'third-post' }
-    ]
-  },
-  routes: [{
-    name: 'Blog Posts',
-    path: '/posts/:slug',
-    template: 'post.html',
-    repeat: (state) => state.get(['posts']),
-    data: (state, post) => ({
-      ...post,
-      excerpt: post.content.substring(0, 100) + '...',
-      date: new Date().toISOString()
-    })
+  type: 'server',
+  dbPath: './data/app.db', // SQLite database path
+  
+  // Database is available in API actions and routes
+  api: [{
+    path: '/api/posts',
+    method: 'GET',
+    action: async (state, event) => {
+      // Access database through state.db
+      const posts = await state.db.query('SELECT * FROM posts ORDER BY created_at DESC');
+      return { posts };
+    }
   }]
 };
 ```
 
-**Template (`post.html`):**
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{{title}} - {{../title}}</title>
-</head>
-<body>
-  <article>
-    <h1>{{title}}</h1>
-    <p>{{excerpt}}</p>
-    <div>{{content}}</div>
-  </article>
-</body>
-</html>
+### 🔄 Async Data Loading
+
+Load data dynamically at build time or runtime:
+
+```javascript
+export default {
+  // Static: Load data at build time
+  data: async () => {
+    const posts = await fetch('https://api.example.com/posts').then(r => r.json());
+    const authors = await loadAuthorsFromFile('./data/authors.json');
+    
+    return {
+      site: { title: 'My Blog' },
+      posts,
+      authors,
+      buildTime: new Date().toISOString()
+    };
+  },
+  
+  // Server: Load data per request
+  routes: [{
+    path: '/posts/:slug',
+    template: 'post.html',
+    data: async (state, params) => {
+      const post = await fetchPostBySlug(params.slug);
+      const comments = await fetchComments(post.id);
+      return { post, comments };
+    }
+  }]
+};
 ```
 
-**Output:**
-- `posts/first-post.html` - First post page
-- `posts/second-post.html` - Second post page  
-- `posts/third-post.html` - Third post page
+### 🎯 Dynamic Route Generation
 
-### Custom Template Engines
+Generate pages from data with powerful routing:
 
-Clovie is template-engine agnostic. Here are examples for popular engines:
-
-#### Handlebars
 ```javascript
-import Handlebars from 'handlebars';
-
 export default {
-  // ... other config
-  compiler: (template, data) => {
+  data: {
+    posts: [
+      { id: 1, title: 'Getting Started', slug: 'getting-started', category: 'tutorial' },
+      { id: 2, title: 'Advanced Usage', slug: 'advanced-usage', category: 'guide' }
+    ],
+    categories: ['tutorial', 'guide', 'news']
+  },
+  
+  routes: [
+    // Individual post pages
+    {
+      name: 'Blog Posts',
+      path: '/posts/:slug',
+      template: 'post.html',
+      repeat: (data) => data.posts,
+      data: (globalData, post) => ({ ...globalData, post })
+    },
+    
+    // Category pages
+    {
+      name: 'Category Pages', 
+      path: '/category/:category',
+      template: 'category.html',
+      repeat: (data) => data.categories,
+      data: (globalData, category) => ({
+        ...globalData,
+        category,
+        posts: globalData.posts.filter(p => p.category === category)
+      })
+    }
+  ]
+};
+```
+
+### 🎨 Template Engine Support
+
+Use any template engine or create custom ones:
+
+```javascript
+// Handlebars
+import Handlebars from 'handlebars';
+export default {
+  renderEngine: (template, data) => {
     const compiled = Handlebars.compile(template);
     return compiled(data);
   }
 };
-```
 
-#### Nunjucks
-```javascript
+// Nunjucks
 import nunjucks from 'nunjucks';
-
 export default {
-  // ... other config
-  compiler: (template, data) => {
+  renderEngine: (template, data) => {
     return nunjucks.renderString(template, data);
   }
 };
-```
 
-#### Pug
-```javascript
-import pug from 'pug';
-
+// Custom engine
 export default {
-  // ... other config
-  compiler: (template, data) => {
-    return pug.render(template, { ...data, pretty: true });
-  }
-};
-```
-
-#### Custom Engine
-```javascript
-export default {
-  // ... other config
-  compiler: (template, data) => {
-    // Simple variable replacement
+  renderEngine: (template, data) => {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return data[key] || match;
     });
@@ -391,185 +459,183 @@ export default {
 };
 ```
 
-### Route Pagination
+### 🛠️ CLI Commands
 
-Routes support built-in pagination for large datasets:
-
-```javascript
-export default {
-  // ... other config
-  routes: [{
-    name: 'Blog Pagination',
-    path: '/blog/:page?',
-    template: 'blog.html',
-    paginate: 5,  // 5 posts per page
-    repeat: (state) => state.get(['posts']),
-    data: (state, posts, pageInfo) => ({
-      posts,
-      pagination: pageInfo,
-      title: `Blog - Page ${pageInfo.current}`
-    })
-  }]
-};
-```
-
-**Output:**
-- `blog.html` - First 5 posts (page 1)
-- `blog/2.html` - Next 5 posts (page 2)
-- `blog/3.html` - Remaining posts (page 3)
-
-### Data Transformation in Routes
-
-Transform data before rendering using the `data` function:
-
-```javascript
-export default {
-  // ... other config
-  routes: [{
-    name: 'Products',
-    path: '/products/:slug',
-    template: 'product.html',
-    repeat: (state) => state.get(['products']),
-    data: (state, product) => ({
-      ...product,
-      price: `$${product.price.toFixed(2)}`,
-      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-      inStock: product.quantity > 0,
-      relatedProducts: state.get(['products']).filter(p => 
-        p.category === product.category && p.id !== product.id
-      )
-    })
-  }]
-};
-```
-
-## Error Handling & Best Practices
-
-### Error Handling
-
-Clovie includes robust error handling for common issues:
-
-- **Missing directories**: Gracefully handles missing views, scripts, or assets folders
-- **File read errors**: Continues processing even if individual files fail
-- **Template errors**: Provides clear error messages for compilation failures
-- **Data validation**: Warns about invalid data structures
-
-### Progress Indicators
-
-Clovie provides clear feedback during builds:
-
-```
-🚀 Starting build...
-🧹 Cleaning output directory...
-📊 Loading data...
-   Loaded 2 data sources
-📝 Processing views...
-   Processed 5 views
-🎨 Rendering templates...
-   Rendered 5 templates
-⚡ Bundling scripts...
-   Bundled 1 script files
-🎨 Compiling styles...
-   Compiled 1 style files
-📦 Processing assets...
-   Processed 3 asset files
-💾 Writing files...
-✅ Build completed in 45ms
-```
-
-### Auto-Discovery
-
-Clovie automatically detects common project structures:
-
-```
-🔍 Auto-detected views directory: views
-🔍 Auto-detected scripts entry: scripts/main.js
-🔍 Auto-detected styles entry: styles/main.scss
-🔍 Auto-detected assets directory: assets
-```
-
-### Best Practices
-
-1. **Use partial templates** (files starting with `_`) for reusable components
-2. **Validate data structures** before passing to routes
-3. **Handle async data** with proper error catching in route data functions
-4. **Use meaningful route paths** for SEO and organization
-5. **Transform data** in route data functions, not in templates
-6. **Separate static and dynamic routes** for better performance
-
-### Project Structure
-
-When you create a new project with `clovie create`, you get this structure:
-
-```
-my-site/
-├── clovie.config.js          # Configuration
-├── package.json           # Dependencies and scripts
-├── README.md              # Project documentation
-├── views/                 # HTML templates
-│   └── index.html        # Home page template
-├── scripts/              # JavaScript
-│   └── main.js          # Main script file
-├── styles/               # SCSS
-│   └── main.scss        # Main stylesheet
-└── assets/               # Static files (images, etc.)
-```
-
-#### Custom Project Structure
-You can also create your own structure:
-
-```
-my-site/
-├── clovie.config.js          # Configuration
-├── views/                 # Templates
-│   ├── _base.html        # Base template (partial)
-│   ├── _header.html      # Header partial
-│   ├── index.html        # Home page
-│   └── _post.html        # Post template (partial)
-├── scripts/              # JavaScript
-│   └── main.js
-├── styles/               # SCSS
-│   └── main.scss
-├── assets/               # Static files
-│   └── images/
-└── data/                 # Data files (optional)
-    └── posts.json
-```
-
-## Development
+Clovie includes powerful CLI tools for development and deployment:
 
 ```bash
+# Project creation
+clovie create <name> [--template static|server|default]
+
+# Development
+clovie dev              # Start development server with live reload
+clovie watch            # Alias for dev
+
+# Building  
+clovie build            # Build for production
+clovie serve            # Start production server
+
+# Utilities
+clovie kill --port 3000         # Kill process on port 3000
+clovie kill --common            # Kill processes on common dev ports
+clovie kill --check             # Check which ports are in use
+```
+
+### 📁 Project Structure
+
+When you create a new project, you get a clean, organized structure:
+
+```
+my-site/
+├── clovie.config.js    # Configuration file
+├── package.json        # Dependencies and scripts
+├── views/              # HTML templates
+│   ├── index.html     # Homepage
+│   └── about.html     # Additional pages
+├── partials/           # Reusable components (optional)
+│   ├── header.html    # Site header
+│   └── footer.html    # Site footer  
+├── scripts/            # JavaScript
+│   └── main.js        # Main JS entry point
+├── styles/             # SCSS/CSS
+│   └── main.scss      # Main stylesheet
+├── assets/             # Static files
+│   └── images/        # Images, fonts, etc.
+└── dist/               # Build output (generated)
+```
+
+### 🚀 Performance Features
+
+- **⚡ Incremental Builds**: Only rebuilds changed files
+- **📦 Smart Caching**: Content-based cache invalidation  
+- **🔄 Live Reload**: WebSocket-based for instant updates
+- **📊 Progress Tracking**: Real-time build progress
+- **🗜️ Asset Optimization**: Minification and optimization
+- **🌐 Static + Server**: Best of both worlds
+
+## 💡 Best Practices & Tips
+
+### 🎯 Development Best Practices
+
+**Static Sites:**
+- Use `partials/` for reusable components (header, footer, nav)
+- Organize data in the config file or external JSON files
+- Use semantic HTML and meaningful route paths for SEO
+- Test builds regularly with `npm run build`
+
+**Server Applications:**
+- Validate input data in API actions
+- Use middleware for authentication and request parsing
+- Handle errors gracefully in API endpoints
+- Implement proper database migrations and seeding
+
+### 🔧 Configuration Tips
+
+```javascript
+export default {
+  // Environment-specific config
+  ...(process.env.NODE_ENV === 'production' && {
+    baseUrl: 'https://mysite.com',
+    minify: true
+  }),
+  
+  // Async data with error handling
+  data: async () => {
+    try {
+      const posts = await fetchPosts();
+      return { posts, lastUpdated: Date.now() };
+    } catch (error) {
+      console.warn('Failed to fetch posts:', error);
+      return { posts: [], lastUpdated: Date.now() };
+    }
+  }
+};
+```
+
+### 📊 Performance Optimization
+
+- **Use incremental builds**: Clovie's caching handles this automatically
+- **Optimize images**: Place optimized images in `assets/`
+- **Minimize JavaScript**: Use esbuild's built-in minification
+- **Cache API responses**: Implement caching in server mode API actions
+- **Static generation**: Use static mode for content that doesn't change often
+
+### 🔄 Development Workflow
+
+```bash
+# Recommended development flow
+npm run dev          # Start with live reload
+# Edit files and see changes instantly
+npm run build        # Test production build
+npm run serve        # Test production serving (server mode)
+```
+
+## 🛠️ Development & Contributing
+
+```bash
+# Clone repository
+git clone https://github.com/adrianjonmiller/clovie.git
+cd clovie
+
 # Install dependencies
 npm install
 
-# Run tests
+# Run tests  
 npm test
+npm run test:watch    # Watch mode
+npm run test:coverage # Coverage report
 
-# Run tests in watch mode
-npm run test:watch
+# Build package
+npm run build
+
+# Test with example projects
+npm run dev           # Uses __dev__ example
 ```
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-**"Views directory does not exist"**
-- Ensure the `views` path in your config is correct
-- Create the views directory if it doesn't exist
+**Port Already in Use**  
+```bash
+clovie kill --port 3000     # Kill specific port
+clovie kill --common        # Kill common dev ports  
+clovie kill --check         # Check port status
+```
 
-**"Route repeat function must return an array"**
-- Check that your route's repeat function returns an array
-- Ensure the data structure matches the route configuration
+**Build Errors**
+- Check that all file paths in config exist
+- Verify template syntax matches your render engine
+- Ensure async data functions handle errors properly
+- Check console output for detailed error messages
 
-**"Maximum directory depth exceeded"**
-- Check for circular symlinks or extremely deep directory structures
-- The limit is 50 levels deep (configurable in code)
+**Template Not Found**
+- Verify the `views` directory path in your config
+- Check that template files have correct extensions
+- Ensure partial files are in the `partials` directory
 
-**Build failures**
-- Check console output for specific error messages
-- Verify all referenced files exist
-- Ensure template syntax matches your compiler
+**Database Connection Issues (Server Mode)**
+- Check that `dbPath` in config points to a writable directory
+- Ensure SQLite is properly installed 
+- Verify database initialization in your API actions
 
-## License
+**Live Reload Not Working**
+- Check that you're in development mode (`npm run dev`)
+- Verify WebSocket connection in browser dev tools
+- Try refreshing the page manually
 
-MIT
+### Getting Help
+
+- 📚 [Documentation](https://github.com/adrianjonmiller/clovie)
+- 🐛 [Issue Tracker](https://github.com/adrianjonmiller/clovie/issues)  
+- 💬 [Discussions](https://github.com/adrianjonmiller/clovie/discussions)
+
+## 📄 License
+
+MIT - see [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ by [Adrian Miller](https://github.com/adrianjonmiller)**
+
+*Clovie: Vintage web dev tooling with modern quality of life.*
