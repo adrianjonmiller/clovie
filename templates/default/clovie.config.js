@@ -1,26 +1,27 @@
 export default {
-  // Clovie will auto-detect these paths!
-  // Just add your data and models below
+  // Zero config - Clovie auto-detects your project structure!
+  // views/, scripts/, styles/, assets/, partials/ all detected automatically
   
   data: {
-    title: '{{projectName}}'
-  },
+    title: '{{projectName}}',
+    description: 'A modern website built with Clovie',
+    author: 'Your Name'
+  }
   
-  // Example models (uncomment to use):
-  // models: {
-  //   posts: {
-  //     template: '_post.html',
-  //     output: 'post-{slug}.html',
-  //     transform: (post) => ({
-  //       ...post,
-  //       excerpt: post.content.substring(0, 100) + '...'
-  //     })
-  //   }
-  // }
+  // 🎯 Ready to add more? Uncomment these examples:
   
-  // Custom compiler (optional - Clovie has a good default)
-  // compiler: (template, data) => {
-  //   return template.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
+  // Dynamic pages from data
+  // routes: [{
+  //   name: 'Blog Posts',
+  //   path: '/posts/:slug',
+  //   template: 'post.html',
+  //   repeat: (data) => data.posts, // Generate page for each post
+  //   data: (globalData, post) => ({ ...globalData, post })
+  // }],
+  
+  // Custom template engine
+  // renderEngine: (template, data) => {
+  //   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
   //     return data[key] || match;
   //   });
   // }
