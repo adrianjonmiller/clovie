@@ -440,32 +440,95 @@ Templates receive data from route handlers and can use any supported template en
 
 ## Advanced Features
 
-### Express Adapter
+### Middleware Support
 
-For advanced middleware support:
+Clovie automatically uses the Express adapter when middleware is configured, providing full Express middleware compatibility:
 
 ```javascript
 import express from 'express';
+import cors from 'cors';
 
 export default {
   type: 'server',
-  adapter: 'express',              // Use Express adapter
+  // adapter: 'express' - Auto-selected when middleware is present
   
   middleware: [
-    express.json(),                // Parse JSON bodies
+    // Standard Express middleware
+    express.json(),                
     express.urlencoded({ extended: true }),
-    express.static('public'),      // Serve static files
     cors({ origin: 'http://localhost:3000' }),
     
-    // Custom middleware
+    // Custom authentication middleware
     (req, res, next) => {
-      console.log(`${req.method} ${req.url}`);
+      // Skip auth for public routes
+      const publicPaths = ['/api/login', '/api/health'];
+      if (publicPaths.some(path => req.url.startsWith(path))) {
+        return next();
+      }
+      
+      // Protect API routes
+      if (req.url.startsWith('/api/')) {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+          return res.status(401).json({ error: 'Authentication required' });
+        }
+        
+        try {
+          // Verify JWT and attach user to request
+          req.user = verifyJWT(token);
+          next();
+        } catch (error) {
+          return res.status(401).json({ error: 'Invalid token' });
+        }
+      } else {
+        next();
+      }
+    },
+    
+    // Request logging
+    (req, res, next) => {
+      console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
       next();
     }
   ],
   
-  // ... rest of config
+  api: [
+    // Public endpoint - no auth required
+    {
+      path: '/api/login',
+      method: 'POST',
+      handler: (ctx, database) => {
+        // Login logic here
+        return ctx.respond.json({ token: 'jwt-token' });
+      }
+    },
+    
+    // Protected endpoint - requires auth middleware
+    {
+      path: '/api/profile',
+      method: 'GET', 
+      handler: (ctx, database) => {
+        // Access user from middleware: ctx.req.raw.req.user
+        return ctx.respond.json({ 
+          user: ctx.req.raw.req.user,
+          message: 'Protected data'
+        });
+      }
+    }
+  ]
 };
+```
+
+**Testing Auth Middleware:**
+```bash
+# Public endpoint (works)
+curl -X POST http://localhost:3000/api/login
+
+# Protected endpoint without token (401 error)
+curl http://localhost:3000/api/profile
+
+# Protected endpoint with token (works)
+curl -H "Authorization: Bearer jwt-token" http://localhost:3000/api/profile
 ```
 
 ### Server Hooks

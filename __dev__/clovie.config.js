@@ -35,6 +35,37 @@ export default {
   port: 3000,
   mode: 'development',
   type: 'server',
+
+  // Middleware configuration for testing
+  middleware: [
+    // Custom logging middleware
+    (req, res, next) => {
+      const timestamp = new Date().toISOString();
+      console.log(`🔥 MIDDLEWARE: ${timestamp} ${req.method} ${req.url}`);
+      next();
+    },
+    
+    // Custom header middleware
+    (req, res, next) => {
+      res.setHeader('X-Powered-By', 'Clovie-Middleware');
+      res.setHeader('X-Test-Mode', 'true');
+      next();
+    },
+    
+    // Simple auth middleware for protected endpoints
+    (req, res, next) => {
+      if (req.url.startsWith('/api/protected')) {
+        const auth = req.headers.authorization;
+        if (!auth || !auth.startsWith('Bearer ')) {
+          res.statusCode = 401;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Unauthorized - missing Bearer token' }));
+          return;
+        }
+      }
+      next();
+    }
+  ],
   hooks: {
     preHandler: (ctx, route) => {
       if (!route.meta.auth) {
@@ -83,10 +114,25 @@ export default {
         return context.respond.json({
           name: 'Clovie',
           version: '1.0.0',
+          middleware: 'Express middleware applied successfully!',
+          timestamp: new Date().toISOString()
         });
       },
       params: []
-    },{
+    },
+    {
+      method: 'GET',
+      path: '/api/protected/secret',
+      handler: async (context) => {
+        return context.respond.json({
+          secret: 'This is protected data',
+          message: 'Auth middleware worked! You provided a valid Bearer token.',
+          timestamp: new Date().toISOString()
+        });
+      },
+      params: []
+    },
+    {
       method: 'POST',
       path: '/api/post/create',
       handler: async (context, database) => {

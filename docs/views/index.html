@@ -33,6 +33,8 @@
       <li><a href="#database" class="link-pageContents js--navLink reset" data-content="Database (Server Mode)">Database (Server Mode)</a></li>
       <li><a href="#api-routes" class="link-pageContents js--navLink reset" data-content="API Routes">API Routes</a></li>
       <li><a href="#system-routes" class="link-pageContents js--navLink reset" data-content="System Routes">System Routes</a></li>
+      <li><a href="#server-adapters" class="link-pageContents js--navLink reset" data-content="Server Adapters">Server Adapters</a></li>
+      <li><a href="#middleware" class="link-pageContents js--navLink reset" data-content="Middleware">Middleware</a></li>
       <li><a href="#async-data" class="link-pageContents js--navLink reset" data-content="Async Data Loading">Async Data Loading</a></li>
       <li><a href="#routes" class="link-pageContents js--navLink reset" data-content="Dynamic Routes">Dynamic Routes</a></li>
       <li><a href="#route-pagination" class="link-pageContents js--navLink reset" data-content="Route Pagination">Route Pagination</a></li>
@@ -56,7 +58,7 @@
   <main class="main padding--all-md js--scrollPosition">
     <section id="overview" class="margin--top-md margin--top-xl">
       <h2>Overview</h2>
-      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full Express server applications.</p>
+      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full-featured server applications using vanilla Node.js HTTP (Express adapter available).</p>
       
       <h3 class="margin--top-md">Service Architecture</h3>
       <p>All functionality is provided by services extending <code>ServiceProvider</code>:</p>
@@ -65,7 +67,7 @@
         <li><strong>Compile</strong> - Template compilation, asset bundling, and live reload injection</li>
         <li><strong>Run</strong> - Build orchestration and command execution</li>
         <li><strong>Route</strong> - Dynamic routing, SSR caching, and route handlers</li>
-        <li><strong>Server</strong> - HTTP/Express server management (conditionally loaded)</li>
+        <li><strong>Server</strong> - HTTP server management with adapter pattern (conditionally loaded)</li>
         <li><strong>Cache</strong> - Build caching and incremental builds</li>
         <li><strong>Configurator</strong> - Configuration loading and validation</li>
         <li><strong>LiveReload</strong> - File watching and browser refresh (development only)</li>
@@ -74,7 +76,7 @@
 
       <h3 class="margin--top-md">Two Operating Modes</h3>
       <p><strong>Static Mode</strong> (<code>type: 'static'</code>): Traditional static site generation</p>
-      <p><strong>Server Mode</strong> (<code>type: 'server'</code>): Full Express applications with SSR</p>
+      <p><strong>Server Mode</strong> (<code>type: 'server'</code>): Full web applications with SSR using Node.js HTTP server (Express adapter available)</p>
     </section>
 
     <section  class="margin--top-md margin--top-xl">
@@ -82,9 +84,10 @@
       <ul>
         <li><strong>Template Engine Agnostic:</strong> Handlebars, Nunjucks, Pug, Mustache, or custom.</li>
         <li><strong>Asset Processing:</strong> JavaScript bundling with esbuild, SCSS compilation, static asset copying.</li>
-        <li><strong>Development Server:</strong> Live reload with Express and file watching.</li>
+        <li><strong>Development Server:</strong> Live reload with file watching and hot module replacement.</li>
         <li><strong>Dynamic Routing:</strong> Powerful route system for both static and server-side page generation.</li>
-        <li><strong>Server-Side Rendering:</strong> Full Express applications with dynamic routes and API endpoints.</li>
+        <li><strong>Server-Side Rendering:</strong> Native Node.js HTTP server with dynamic routes and API endpoints.</li>
+        <li><strong>Middleware Support:</strong> Express middleware with auto-adapter selection for authentication, CORS, and more.</li>
         <li><strong>Database Integration:</strong> Document-oriented database with Write-Ahead Logging for server applications.</li>
         <li><strong>API Routes:</strong> Create RESTful APIs with collection-based data storage and automatic persistence.</li>
         <li><strong>Port Management:</strong> Integrated utilities for managing development server ports.</li>
@@ -102,7 +105,7 @@
           </h4>
             </div>
               <div class="codeBlock-code padding--all-md reset">
-                <code># Create a new project (default template)</code>
+                <code># Create a new static site (default)</code>
                 <br>
                 <code class="codeBlock-code-copy js--copyCode">npx clovie create my-site</code>
                 <br>
@@ -112,19 +115,16 @@
                 <code class="codeBlock-code-copy js--copyCode">clovie create my-site</code>
                 <br>
                 <br>
-                <code># Use a specific template</code>
+                <code># Create a server application</code>
                 <br>
-                <code class="codeBlock-code-copy js--copyCode">clovie create my-site --template static</code>
-                <br>
-                <code class="codeBlock-code-copy js--copyCode">clovie create my-blog --template server</code>
+                <code class="codeBlock-code-copy js--copyCode">clovie create my-app --template server</code>
               </div>
         </div>
     
       <div class="commentBlock margin--top-md padding--all-md pattern-slash-grid">
         <p><strong>Available Templates:</strong></p>
         <ul>
-          <li><code>default</code> - Basic static site with minimal setup</li>
-          <li><code>static</code> - Full-featured static site with navigation and multiple pages</li>
+          <li><code>static</code> - Static site with SEO, responsive design (default)</li>
           <li><code>server</code> - Full-stack server application with API routes, database, and SSR</li>
         </ul>
       </div>
@@ -317,10 +317,8 @@
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
           <h4 class="codeBlock-header-title">Server Mode Configuration</h4>
         </div>
-<pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import express from 'express';
-
-export default {
-  type: 'server',  // Server-side application
+<pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
+  type: 'server',  // Server-side application (uses Node.js HTTP server)
   port: 3000,
   host: '0.0.0.0',
   
@@ -334,10 +332,23 @@ export default {
     version: '1.0.0'
   },
   
-  // Express middleware (runs before all routes)
+  // Express middleware (auto-selects Express adapter)
   middleware: [
     express.json(),
-    express.urlencoded({ extended: true })
+    express.urlencoded({ extended: true }),
+    
+    // Authentication middleware for protected routes
+    (req, res, next) => {
+      if (req.url.startsWith('/api/protected/')) {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+          return res.status(401).json({ error: 'Authentication required' });
+        }
+        // Verify token and attach user to request
+        req.user = verifyJWT(token);
+      }
+      next();
+    }
   ],
   
   // Server lifecycle hooks
@@ -589,6 +600,338 @@ comments.set([postId, 'comment1'], {
           <li><code>GET /api/info</code> - Server information and route count</li>
         </ul>
       </div>
+
+      <h3 id="server-adapters" class="margin--top-md">Server Adapters</h3>
+      <p>Clovie uses a vanilla Node.js HTTP server by default. You can optionally use Express for advanced middleware features.</p>
+      
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Default HTTP Server</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
+  type: 'server',
+  // Uses Node.js http.createServer by default
+  // No dependencies required - fast and lightweight
+  
+  api: [{
+    path: '/api/hello',
+    method: 'GET',
+    handler: async (ctx, database) => {
+      return ctx.respond.json({ message: 'Hello!' });
+    }
+  }]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Using Express Adapter</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import express from 'express';
+import { ExpressAdapter } from 'clovie/adapters';
+
+export default {
+  type: 'server',
+  
+  // Use Express adapter for advanced middleware
+  adapter: 'express',  // or new ExpressAdapter()
+  
+  // Express middleware
+  middleware: [
+    express.json(),
+    express.urlencoded({ extended: true }),
+    express.static('public')
+  ],
+  
+  api: [{
+    path: '/api/hello',
+    method: 'POST',
+    handler: async (ctx, database) => {
+      // ctx.body parsed by Express middleware
+      const { name } = ctx.body;
+      return ctx.respond.json({ message: `Hello ${name}!` });
+    }
+  }]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="commentBlock margin--top-md padding--all-md">
+        <p><strong>When to use Express adapter:</strong></p>
+        <ul>
+          <li>Need Express-specific middleware (sessions, compression, etc.)</li>
+          <li>Integrating with existing Express ecosystem</li>
+          <li>Using third-party Express middleware</li>
+        </ul>
+        <p class="margin--top-sm"><strong>Default HTTP adapter is recommended for:</strong></p>
+        <ul>
+          <li>Maximum performance (no framework overhead)</li>
+          <li>Minimal dependencies</li>
+          <li>Most common use cases (JSON APIs, SSR)</li>
+        </ul>
+        <p class="margin--top-sm"><strong>Note:</strong> Install Express if using the Express adapter: <code>npm install express</code></p>
+      </div>
+
+      <h3 id="middleware" class="margin--top-md">Middleware</h3>
+      <p>Clovie supports Express middleware for server applications. When you configure middleware, Clovie automatically uses the Express adapter for full compatibility with the Express middleware ecosystem.</p>
+      
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Basic Middleware Setup</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import express from 'express';
+import cors from 'cors';
+
+export default {
+  type: 'server',
+  
+  middleware: [
+    express.json({ limit: '10mb' }),           // Parse JSON bodies
+    express.urlencoded({ extended: true }),    // Parse form data
+    cors({ origin: 'https://myapp.com' }),     // CORS configuration
+    express.static('public')                   // Serve static files
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="commentBlock margin--top-md padding--all-md">
+        <p><strong>Auto-Adapter Selection:</strong> Clovie automatically switches to the Express adapter when middleware is configured. If no middleware is present, it uses the faster HTTP adapter.</p>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Authentication Middleware (Most Common Pattern)</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
+  type: 'server',
+  
+  middleware: [
+    // Basic request logging
+    (req, res, next) => {
+      console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+      next();
+    },
+    
+    // Selective authentication - only protect certain routes
+    (req, res, next) => {
+      // Public routes that don't need authentication
+      const publicPaths = [
+        '/api/login',
+        '/api/register',
+        '/api/health',
+        '/api/docs'
+      ];
+      
+      // Skip auth for public routes
+      if (publicPaths.some(path => req.url.startsWith(path))) {
+        return next();
+      }
+      
+      // Protect all /api/protected/* routes
+      if (req.url.startsWith('/api/protected/')) {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!token) {
+          return res.status(401).json({ 
+            error: 'Authentication required',
+            message: 'Please provide a Bearer token'
+          });
+        }
+        
+        try {
+          // In a real app, verify JWT token here
+          const user = verifyJWT(token);
+          req.user = user; // Attach user info to request
+          next();
+        } catch (error) {
+          return res.status(401).json({ 
+            error: 'Invalid token',
+            message: 'Token verification failed'
+          });
+        }
+      } else {
+        // All other routes pass through
+        next();
+      }
+    }
+  ],
+  
+  api: [
+    // Public endpoint - no auth needed
+    {
+      method: 'GET',
+      path: '/api/login',
+      handler: (ctx) => ctx.respond.json({ message: 'Login endpoint' })
+    },
+    
+    // Protected endpoint - requires Bearer token
+    {
+      method: 'GET', 
+      path: '/api/protected/profile',
+      handler: (ctx) => {
+        // ctx.req.user is available thanks to auth middleware
+        return ctx.respond.json({ 
+          user: ctx.req.raw.req.user,
+          message: 'This is protected data'
+        });
+      }
+    }
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Simple API Key Authentication</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
+  type: 'server',
+  
+  middleware: [
+    (req, res, next) => {
+      // Only protect API routes
+      if (!req.url.startsWith('/api/')) {
+        return next();
+      }
+      
+      const apiKey = req.headers['x-api-key'];
+      const validKeys = process.env.API_KEYS?.split(',') || [];
+      
+      if (!apiKey || !validKeys.includes(apiKey)) {
+        return res.status(401).json({
+          error: 'Invalid API key',
+          message: 'Provide a valid X-API-Key header'
+        });
+      }
+      
+      next();
+    }
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Session-Based Authentication</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}import session from 'express-session';
+
+export default {
+  type: 'server',
+  
+  middleware: [
+    // Session middleware
+    session({
+      secret: process.env.SESSION_SECRET || 'your-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      }
+    }),
+    
+    // Auth middleware using sessions
+    (req, res, next) => {
+      // Protect admin routes
+      if (req.url.startsWith('/admin/')) {
+        if (!req.session.user || req.session.user.role !== 'admin') {
+          return res.status(403).json({
+            error: 'Access denied',
+            message: 'Admin access required'
+          });
+        }
+      }
+      
+      next();
+    }
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Testing Your Auth Middleware</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code># Test public endpoint (should work)
+curl http://localhost:3000/api/health
+
+# Test protected endpoint without token (should return 401)
+curl http://localhost:3000/api/protected/profile
+
+# Test protected endpoint with token (should work)
+curl -H "Authorization: Bearer your-token" http://localhost:3000/api/protected/profile
+
+# Test with API key
+curl -H "X-API-Key: your-key" http://localhost:3000/api/data</code></pre>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Middleware Execution Order</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
+  middleware: [
+    cors(),                    // 1. CORS (must be first)
+    express.json(),           // 2. Body parsing
+    requestLogger,            // 3. Logging
+    rateLimiter,             // 4. Rate limiting
+    authenticateUser,        // 5. Authentication (after parsing, before business logic)
+    authorizeUser           // 6. Authorization (after auth)
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
+
+      <div class="commentBlock margin--top-md padding--all-md">
+        <p><strong>Middleware executes in array order.</strong> This is critical for auth flows - ensure CORS and body parsing happen before authentication.</p>
+      </div>
+
+      <div class="codeBlock margin--top-md">
+        <div class="codeBlock-header padding--all-md pattern-dot-grid">
+          <h4 class="codeBlock-header-title">Common Middleware Patterns</h4>
+        </div>
+        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}// Error handling middleware
+const errorHandler = (err, req, res, next) => {
+  console.error('Middleware error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+};
+
+// Request timeout middleware  
+const timeout = (ms) => (req, res, next) => {
+  const timer = setTimeout(() => {
+    res.status(408).json({ error: 'Request timeout' });
+  }, ms);
+  
+  res.on('finish', () => clearTimeout(timer));
+  next();
+};
+
+// Custom headers middleware
+const securityHeaders = (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+};
+
+export default {
+  type: 'server',
+  middleware: [
+    timeout(30000),           // 30 second timeout
+    securityHeaders,          // Security headers
+    express.json(),
+    // ... your auth middleware
+    errorHandler             // Error handling (should be last)
+  ]
+};{% endraw %}
+</code></pre>
+      </div>
       
       <div class="codeBlock margin--top-md">
         <div class="codeBlock-header padding--all-md pattern-dot-grid">
@@ -631,9 +974,10 @@ comments.set([postId, 'comment1'], {
     name: 'Blog Posts',
     path: '/posts/:slug',
     template: 'post.html',
-    repeat: (state) => state.get(['posts']),  // Array of items to create pages for
-    data: (state, post) => ({
-      ...post,
+    repeat: (data) => data.posts,  // Array of items to create pages for
+    data: (globalData, post, key) => ({
+      ...globalData,
+      post,
       excerpt: post.content.substring(0, 100) + '...',
       date: new Date().toISOString()
     })
@@ -643,6 +987,12 @@ comments.set([postId, 'comment1'], {
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
         <p><strong>Static Mode Routes:</strong> Generate HTML files at build time using the <code>repeat</code> function to create multiple pages from data.</p>
+        <p><strong>Data Function Signature:</strong> <code>(globalData, item, key)</code></p>
+        <ul>
+          <li><code>globalData</code> - The data object from your config</li>
+          <li><code>item</code> - Current item from the repeat array</li>
+          <li><code>key</code> - Index or key of the current item</li>
+        </ul>
         <p><strong>Output:</strong></p>
         <ul>
           <li><code>posts/first-post.html</code></li>
@@ -680,12 +1030,17 @@ comments.set([postId, 'comment1'], {
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
         <p><strong>Server Mode Routes:</strong> Rendered on each request with access to database and request context. Results are cached for performance.</p>
-        <p><strong>Key Differences:</strong></p>
+        <p><strong>Data Function Signature:</strong> <code>(ctx, database)</code></p>
+        <ul>
+          <li><code>ctx</code> - Request context (params, query, body, req)</li>
+          <li><code>database</code> - Collection-based database instance</li>
+        </ul>
+        <p><strong>Key Differences from Static Mode:</strong></p>
         <ul>
           <li>No <code>repeat</code> function - routes match dynamically</li>
-          <li><code>data</code> receives <code>(ctx, database)</code> instead of <code>(state, item)</code></li>
           <li>Access to request parameters, query strings, and database</li>
           <li>Rendered on-demand with intelligent caching</li>
+          <li>Must return data via <code>ctx.respond</code> methods</li>
         </ul>
       </div>
       <div class="codeBlock margin--top-md">
@@ -698,13 +1053,16 @@ comments.set([postId, 'comment1'], {
     name: 'Products',
     path: '/products/:slug',
     template: 'product.html',
-    repeat: (state) => state.get(['products']),
-    data: (state, product) => ({
-      ...product,
-      price: `$${product.price.toFixed(2)}`,
-      slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-      inStock: product.quantity > 0,
-      relatedProducts: state.get(['products']).filter(p => 
+    repeat: (data) => data.products,
+    data: (globalData, product, key) => ({
+      ...globalData,
+      product: {
+        ...product,
+        price: `$${product.price.toFixed(2)}`,
+        slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+        inStock: product.quantity > 0
+      },
+      relatedProducts: globalData.products.filter(p => 
         p.category === product.category && p.id !== product.id
       )
     })
@@ -723,8 +1081,9 @@ comments.set([postId, 'comment1'], {
     path: '/blog/:page?',
     template: 'blog.html',
     paginate: 5,  // 5 posts per page
-    repeat: (state) => state.get(['posts']),
-    data: (state, posts, pageInfo) => ({
+    repeat: (data) => data.posts,
+    data: (globalData, posts, pageInfo) => ({
+      ...globalData,
       posts,
       pagination: pageInfo,
       title: `Blog - Page ${pageInfo.current}`
@@ -748,13 +1107,13 @@ comments.set([postId, 'comment1'], {
         <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;title&gt;{{title}} - {{../title}}&lt;/title&gt;
+  &lt;title&gt;{{ post.title }} - {{ title }}&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;article&gt;
-    &lt;h1&gt;{{title}}&lt;/h1&gt;
-    &lt;p&gt;{{excerpt}}&lt;/p&gt;
-    &lt;div&gt;{{content}}&lt;/div&gt;
+    &lt;h1&gt;{{ post.title }}&lt;/h1&gt;
+    &lt;p&gt;{{ post.excerpt }}&lt;/p&gt;
+    &lt;div&gt;{{ post.content }}&lt;/div&gt;
   &lt;/article&gt;
 &lt;/body&gt;
 &lt;/html&gt;{% endraw %}

@@ -279,11 +279,23 @@ export default {
   // Database configuration (optional)
   dbPath: './data/app.db',
   
-  // Express middleware
+  // Express middleware (auto-selects Express adapter)
   middleware: [
     express.json(),
     express.urlencoded({ extended: true }),
-    // Add CORS, authentication, etc.
+    
+    // Authentication middleware for protected routes
+    (req, res, next) => {
+      if (req.url.startsWith('/api/protected/')) {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+          return res.status(401).json({ error: 'Authentication required' });
+        }
+        // Verify token and attach user to request
+        req.user = verifyJWT(token);
+      }
+      next();
+    }
   ],
   
   // API endpoints
@@ -332,6 +344,62 @@ export default {
 ```
 
 ## 🚀 Advanced Features
+
+### 🔐 Middleware & Authentication
+
+Clovie supports Express middleware for server applications. When you configure middleware, Clovie automatically uses the Express adapter for full compatibility.
+
+**Common Authentication Pattern:**
+```javascript
+export default {
+  type: 'server',
+  
+  middleware: [
+    // Request logging
+    (req, res, next) => {
+      console.log(`${req.method} ${req.url}`);
+      next();
+    },
+    
+    // Selective authentication
+    (req, res, next) => {
+      // Public routes
+      const publicPaths = ['/api/login', '/api/health'];
+      if (publicPaths.some(path => req.url.startsWith(path))) {
+        return next();
+      }
+      
+      // Protect /api/protected/* routes
+      if (req.url.startsWith('/api/protected/')) {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+          return res.status(401).json({ error: 'Token required' });
+        }
+        try {
+          req.user = verifyJWT(token);
+          next();
+        } catch (error) {
+          res.status(401).json({ error: 'Invalid token' });
+        }
+      } else {
+        next();
+      }
+    }
+  ]
+};
+```
+
+**Test Authentication:**
+```bash
+# Public endpoint
+curl http://localhost:3000/api/health
+
+# Protected endpoint (fails)
+curl http://localhost:3000/api/protected/data
+
+# Protected endpoint (works)  
+curl -H "Authorization: Bearer your-token" http://localhost:3000/api/protected/data
+```
 
 ### 📊 Database Integration (Server Mode)
 

@@ -46,9 +46,9 @@ Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but ro
 
 ### Advanced Topics
 - **[API Development](./CONFIGURATION.md#api-endpoints)** - Building REST APIs with Clovie
+- **[Middleware](./CONFIGURATION.md#middleware)** - Express middleware configuration and authentication patterns
 - **[Database Integration](./CONFIGURATION.md#database-integration)** - SQLite database support
 - **[Dynamic Routing](./CONFIGURATION.md#routes--dynamic-pages)** - Data-driven page generation
-- **[Middleware](./CONFIGURATION.md#middleware)** - Express middleware configuration
 - **[Performance](../README.md#performance-features)** - Optimization and best practices
 
 ## 🏃 Quick Examples

@@ -16,7 +16,7 @@ export default defineConfig({
     // Add timeout for longer running tests
     testTimeout: 10000,
     // Enable file watching for development
-    watch: true
+    watch: false
   },
   // Add path mapping similar to Jest
   resolve: {

@@ -335,4 +335,285 @@ describe('Server', () => {
       await clovie.server.stop();
     });
   });
+
+  describe('Middleware', () => {
+    it('should execute middleware and add custom header', async () => {
+      // Create a new server instance
+      const middlewareClovie = Engine.create().install(Server);
+      
+      // Set up middleware by directly configuring the adapter
+      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
+      const adapter = ExpressAdapter.create();
+      middlewareClovie.server.useAdapter(adapter);
+      
+      middlewareClovie.server.add('GET', '/middleware-test', (ctx) => {
+        return ctx.respond.json({ message: 'success' });
+      });
+
+      // Start server with middleware configuration
+      const server = await middlewareClovie.server.listen({ 
+        port: 0,
+        adapter: 'express',
+        middleware: [
+          (req, res, next) => {
+            res.setHeader('X-Middleware-Test', 'working');
+            next();
+          }
+        ]
+      });
+
+      // Make request
+      const response = await new Promise((resolve, reject) => {
+        const port = server.address().port;
+        const req = http.request({
+          method: 'GET',
+          path: '/middleware-test',
+          port,
+          hostname: 'localhost'
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              headers: res.headers,
+              body: data
+            });
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.headers['x-middleware-test']).toBe('working');
+      
+      const data = JSON.parse(response.body);
+      expect(data.message).toBe('success');
+      
+      await middlewareClovie.server.stop();
+    });
+
+    it('should execute multiple middleware in correct order', async () => {
+      const middlewareClovie = Engine.create().install(Server);
+      
+      // Set up middleware chain
+      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
+      const adapter = ExpressAdapter.create();
+      middlewareClovie.server.useAdapter(adapter);
+      
+      middlewareClovie.server.add('GET', '/order-test', (ctx) => {
+        return ctx.respond.json({ message: 'handler executed' });
+      });
+
+      const server = await middlewareClovie.server.listen({ 
+        port: 0,
+        adapter: 'express',
+        middleware: [
+          (req, res, next) => {
+            res.setHeader('X-Order', '1');
+            next();
+          },
+          (req, res, next) => {
+            const current = res.getHeader('X-Order') || '';
+            res.setHeader('X-Order', current + ',2');
+            next();
+          },
+          (req, res, next) => {
+            const current = res.getHeader('X-Order') || '';
+            res.setHeader('X-Order', current + ',3');
+            next();
+          }
+        ]
+      });
+
+      const response = await new Promise((resolve, reject) => {
+        const port = server.address().port;
+        const req = http.request({
+          method: 'GET',
+          path: '/order-test',
+          port,
+          hostname: 'localhost'
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              headers: res.headers,
+              body: data
+            });
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.headers['x-order']).toBe('1,2,3');
+      
+      const data = JSON.parse(response.body);
+      expect(data.message).toBe('handler executed');
+      
+      await middlewareClovie.server.stop();
+    });
+
+    it('should handle auth middleware that blocks requests', async () => {
+      const middlewareClovie = Engine.create().install(Server);
+      
+      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
+      const adapter = ExpressAdapter.create();
+      middlewareClovie.server.useAdapter(adapter);
+      
+      middlewareClovie.server.add('GET', '/protected', (ctx) => {
+        return ctx.respond.json({ secret: 'protected data' });
+      });
+
+      middlewareClovie.server.add('GET', '/public', (ctx) => {
+        return ctx.respond.json({ message: 'public data' });
+      });
+
+      const server = await middlewareClovie.server.listen({ 
+        port: 0,
+        adapter: 'express',
+        middleware: [
+          (req, res, next) => {
+            if (req.url.startsWith('/protected')) {
+              const auth = req.headers.authorization;
+              if (!auth || !auth.startsWith('Bearer ')) {
+                res.statusCode = 401;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Unauthorized' }));
+                return; // Don't call next()
+              }
+            }
+            next();
+          }
+        ]
+      });
+
+      // Test 1: Unauthorized request should be blocked
+      const unauthorizedResponse = await new Promise((resolve, reject) => {
+        const port = server.address().port;
+        const req = http.request({
+          method: 'GET',
+          path: '/protected',
+          port,
+          hostname: 'localhost'
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              body: data
+            });
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(unauthorizedResponse.statusCode).toBe(401);
+      const unauthorizedData = JSON.parse(unauthorizedResponse.body);
+      expect(unauthorizedData.error).toBe('Unauthorized');
+
+      // Test 2: Authorized request should succeed
+      const authorizedResponse = await new Promise((resolve, reject) => {
+        const port = server.address().port;
+        const req = http.request({
+          method: 'GET',
+          path: '/protected',
+          port,
+          hostname: 'localhost',
+          headers: {
+            'Authorization': 'Bearer valid-token'
+          }
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              body: data
+            });
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(authorizedResponse.statusCode).toBe(200);
+      const authorizedData = JSON.parse(authorizedResponse.body);
+      expect(authorizedData.secret).toBe('protected data');
+
+      // Test 3: Public endpoint should always work
+      const publicResponse = await new Promise((resolve, reject) => {
+        const port = server.address().port;
+        const req = http.request({
+          method: 'GET',
+          path: '/public',
+          port,
+          hostname: 'localhost'
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            resolve({
+              statusCode: res.statusCode,
+              body: data
+            });
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(publicResponse.statusCode).toBe(200);
+      const publicData = JSON.parse(publicResponse.body);
+      expect(publicData.message).toBe('public data');
+      
+      await middlewareClovie.server.stop();
+    });
+
+    it('should validate middleware configuration', async () => {
+      const middlewareClovie = Engine.create().install(Server);
+      
+      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
+      const adapter = ExpressAdapter.create();
+      middlewareClovie.server.useAdapter(adapter);
+
+      // Test 1: Non-array middleware should be rejected
+      await expect(async () => {
+        await middlewareClovie.server.listen({ 
+          port: 0,
+          adapter: 'express',
+          middleware: "not an array" // Invalid
+        });
+      }).rejects.toThrow('opts.middleware must be an array');
+
+      // Test 2: Non-function items in middleware array should be rejected  
+      await expect(async () => {
+        await middlewareClovie.server.listen({ 
+          port: 0,
+          adapter: 'express',
+          middleware: [
+            (req, res, next) => next(), // Valid function
+            "not a function", // Invalid
+            (req, res, next) => next()  // Valid function
+          ]
+        });
+      }).rejects.toThrow('Failed to apply middleware[1]');
+    });
+  });
 });
