@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.24",
+  "version": "0.1.28",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -101,8 +101,8 @@
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-    "@brickworks/database-ext": "^1.0.3",
-    "@brickworks/engine": "1.1.18",
+    "@brickworks/database-ext": "^1.0.4",
+    "@brickworks/engine": "1.1.19",
     "babelify": "^10.0.0",
     "type-detect": "^4.0.8",
     "@rollup/plugin-commonjs": "^28.0.6",

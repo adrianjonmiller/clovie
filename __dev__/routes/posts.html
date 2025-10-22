@@ -7,9 +7,12 @@
 </head>
 <body>
     <h1>All posts</h1>
+    {{ site.title }}
+    {{ site.description }}
+    {{ site.author }}
     <ul>
-        {% for post in posts %}
-            <li><a href="/posts/{{ post.slug }}">{{ post.title }}</a></li>
+        {% for key, post in posts %}
+            <li><a href="/posts/{{ key }}">{{ post.title }}</a></li>
         {% endfor %}
     </ul>
 </body>

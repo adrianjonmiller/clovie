@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -35,7 +34,7 @@ export default {
   watch: true,
   port: 3000,
   mode: 'development',
-  type: 'static',
+  type: 'server',
   hooks: {
     preHandler: (ctx, route) => {
       if (!route.meta.auth) {
@@ -51,9 +50,11 @@ export default {
     {
       path: '/posts',
       template: path.join(__dirname, './routes/posts.html'), // Use existing template
-      data: (data) => {
+      data: async (ctx, database) => {
+        const posts = database.collection('posts').get();
+        console.log('posts', posts);
         return {
-          posts: data.posts
+          posts: posts
         }
       },
     },{

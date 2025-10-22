@@ -6,6 +6,16 @@
     <title>{{ title }}</title>
 </head>
 <body>
+    {% if title %}
+        <h1>{{ title }}</h1>
+    {% else %}
+        <h1>Post</h1>
+    {% endif %}
+    {% if body %}
+        <p>{{ body }}</p>
+    {% else %}
+        <p>No body</p>
+    {% endif %}
     <h1>{{ title }}</h1>
     <p>{{ body }}</p>
 </body>
