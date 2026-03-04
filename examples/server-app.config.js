@@ -21,9 +21,6 @@ export default {
     ]
   },
   
-  // Database configuration
-  dbPath: './data/tasks.db',
-  
   // Express middleware stack
   middleware: [
     // CORS configuration
@@ -357,8 +354,7 @@ This server configuration demonstrates:
 4. **Server-rendered routes** - Dashboard and detail pages
 5. **State management** - Using Clovie's built-in state system
 6. **Error handling** - Proper HTTP status codes and error responses
-7. **Database ready** - Uses state for demo, easily switched to SQLite
-8. **Production features** - Environment-based configuration
+7. **Production features** - Environment-based configuration
 
 API Endpoints:
 - GET /api/health - Health check

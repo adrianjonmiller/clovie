@@ -35,19 +35,9 @@ function updateVersion(type = 'patch') {
   return getPackageInfo().version;
 }
 
-function build() {
-  console.log('\n🔨 Building project...');
-  run('npm run build');
-}
-
 function runTests() {
   console.log('\n🧪 Running tests...');
   run('npm test');
-}
-
-function checkSize() {
-  console.log('\n📏 Checking bundle size...');
-  run('npm run size-check');
 }
 
 function dryRun() {
@@ -97,8 +87,7 @@ function main() {
 
   switch (command) {
     case 'build':
-      build();
-      checkSize();
+      console.log('No build step needed — shipping raw source.');
       break;
 
     case 'test':
@@ -110,10 +99,8 @@ function main() {
       break;
 
     case 'dry-run':
-      build();
       runTests();
       buildDocs();
-      checkSize();
       dryRun();
       showPublishInfo();
       break;
@@ -122,10 +109,8 @@ function main() {
     case 'minor':
     case 'major':
       const newVersion = updateVersion(command);
-      build();
       runTests();
       buildDocs();
-      checkSize();
       dryRun();
       showPublishInfo();
       console.log(`\n✅ Ready to publish version ${newVersion}`);
@@ -133,10 +118,8 @@ function main() {
       break;
 
     case 'beta':
-      build();
       runTests();
       buildDocs();
-      checkSize();
       publish('beta');
       break;
 

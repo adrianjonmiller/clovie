@@ -27,9 +27,6 @@ export default {
     ]
   },
 
-  dbPath: path.join(__dirname, 'db'),
-  walPath: path.join(__dirname, 'db'),
-  
   // Development settings
   watch: true,
   port: 3000,
@@ -80,17 +77,18 @@ export default {
   routes: [
     {
       path: '/posts',
-      template: path.join(__dirname, './routes/posts.html'), // Use existing template
-      data: async (ctx, database) => {
-        const posts = database.collection('posts').get();
-        console.log('posts', posts);
+      template: path.join(__dirname, './routes/posts.html'),
+      data: async (context) => {
         return {
-          posts: posts
+          posts: [
+            { title: 'Post 1', body: 'Post 1 body', slug: 'post-1' },
+            { title: 'Post 2', body: 'Post 2 body', slug: 'post-2' },
+          ]
         }
       },
     },{
       path: '/posts/:slug',
-      template: path.join(__dirname, './routes/post.html'), // Use existing template
+      template: path.join(__dirname, './routes/post.html'),
       repeat: (data) => {
         return data.posts
       },
@@ -135,15 +133,17 @@ export default {
     {
       method: 'POST',
       path: '/api/post/create',
-      handler: async (context, database) => {
-        const posts = database.collection('posts');
-        const id = posts.add({
-          title: 'This is a post',
-          body: 'Here is my post'
-        })
-        return context.respond.json({id});
+      handler: async (context) => {
+        return context.respond.json({ message: 'Post created' });
       },
       params: []
+    }
+  ],
+
+  apps: [
+    {
+      name: 'vite-demo',
+      config: path.join(__dirname, 'apps/vite/vite.config.js'),
     }
   ]
 };

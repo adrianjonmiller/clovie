@@ -30,7 +30,6 @@
       <li><a href="#minimal-config" class="link-pageContents js--navLink reset" data-content="Minimal Configuration">Minimal Configuration</a></li>
       <li><a href="#full-config" class="link-pageContents js--navLink reset" data-content="Full Configuration">Full Configuration</a></li>
       <li><a href="#advanced" class="link-pageContents js--navLink reset" data-content="Advanced Features">Advanced Features</a></li>
-      <li><a href="#database" class="link-pageContents js--navLink reset" data-content="Database (Server Mode)">Database (Server Mode)</a></li>
       <li><a href="#api-routes" class="link-pageContents js--navLink reset" data-content="API Routes">API Routes</a></li>
       <li><a href="#system-routes" class="link-pageContents js--navLink reset" data-content="System Routes">System Routes</a></li>
       <li><a href="#server-adapters" class="link-pageContents js--navLink reset" data-content="Server Adapters">Server Adapters</a></li>
@@ -58,7 +57,7 @@
   <main class="main padding--all-md js--scrollPosition">
     <section id="overview" class="margin--top-md margin--top-xl">
       <h2>Overview</h2>
-      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>brickworks/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full-featured server applications using vanilla Node.js HTTP (Express adapter available).</p>
+      <p>Clovie is a modern yet minimalist static site generator and web framework built on the <strong>Jucie/engine</strong> pattern. It emphasizes sensible defaults, modularity, and speed through a service-oriented architecture. Supports both static site generation and full-featured server applications using vanilla Node.js HTTP (Express adapter available).</p>
       
       <h3 class="margin--top-md">Service Architecture</h3>
       <p>All functionality is provided by services extending <code>ServiceProvider</code>:</p>
@@ -322,10 +321,6 @@
   port: 3000,
   host: '0.0.0.0',
   
-  // Database configuration (auto-enabled in server mode)
-  dbPath: './data',      // Directory for database files
-  walPath: './data',     // Directory for WAL files
-  
   // Global data available to all routes
   data: {
     title: 'My App',
@@ -399,49 +394,6 @@
 
     <section class="margin--top-md margin--top-xl">
       <h2 id="advanced">Advanced Features</h2>
-
-      <h3 id="database" class="margin--top-md">Database (Server Mode)</h3>
-      <p>Clovie automatically provides a document-oriented database with Write-Ahead Logging (WAL) in server mode. Built on <code>@brickworks/database-ext</code>, it provides collections, automatic checkpointing, and crash recovery.</p>
-      
-      <div class="codeBlock margin--top-md">
-        <div class="codeBlock-header padding--all-md pattern-dot-grid">
-          <h4 class="codeBlock-header-title">Database Configuration</h4>
-        </div>
-        <pre class="codeBlock-code padding--all-md reset"><code>{% raw %}export default {
-  type: 'server',
-  
-  // Database configuration (automatically created if they don't exist)
-  dbPath: './data',          // Directory for database files
-  walPath: './data',         // Directory for WAL files
-  
-  api: [{
-    path: '/api/users',
-    method: 'GET',
-    handler: async (ctx, database) => {
-      // Database is automatically provided
-      const users = database.collection('users');
-      
-      // Get all user IDs and fetch their data
-      const allUsers = users.keys().map(id => users.get([id]));
-      
-      return ctx.respond.json({ users: allUsers });
-    }
-  }]
-};{% endraw %}
-</code></pre>
-      </div>
-      
-      <div class="commentBlock margin--top-md padding--all-md">
-        <p><strong>Database Features:</strong></p>
-        <ul>
-          <li>📁 <strong>Collection-based</strong> - Organize data into named collections</li>
-          <li>⚡ <strong>Write-Ahead Logging</strong> - Fast writes with crash recovery</li>
-          <li>🔄 <strong>Automatic checkpointing</strong> - Periodic state snapshots</li>
-          <li>💾 <strong>JSON persistence</strong> - Human-readable file format</li>
-          <li>🎯 <strong>Auto-generated IDs</strong> - Unique document identifiers</li>
-          <li>🔍 <strong>Query capabilities</strong> - Find documents by field values</li>
-        </ul>
-      </div>
 
       <h3 id="api-routes" class="margin--top-md">API Routes (Server Mode)</h3>
       <p>API routes return JSON data and are perfect for building REST APIs. They're separate from template routes and don't render HTML.</p>
@@ -1012,16 +964,11 @@ export default {
     name: 'User Profile',
     path: '/user/:id',
     template: './views/profile.html',
-    data: async (ctx, database) => {
-      // Server-side: rendered on each request
-      // ctx contains req, params, query
-      const userId = ctx.params.id;
-      const users = database.collection('users');
-      const user = users.get([userId]);
-      
+    data: async ({ context }) => {
+      const userId = context.params.id;
       return {
-        user: user || { name: 'Unknown User' },
-        title: `Profile - ${user?.name || 'Unknown'}`
+        userId,
+        title: `Profile - ${userId}`
       };
     }
   }]
@@ -1029,17 +976,17 @@ export default {
 </code></pre>
       </div>
       <div class="commentBlock margin--top-md padding--all-md">
-        <p><strong>Server Mode Routes:</strong> Rendered on each request with access to database and request context. Results are cached for performance.</p>
-        <p><strong>Data Function Signature:</strong> <code>(ctx, database)</code></p>
+        <p><strong>Server Mode Routes:</strong> Rendered on each request. The <code>setup</code> function receives <code>{ context, rerender }</code> and returns template data.</p>
+        <p><strong>Setup Function Signature:</strong> <code>async ({ context, rerender })</code></p>
         <ul>
-          <li><code>ctx</code> - Request context (params, query, body, req)</li>
-          <li><code>database</code> - Collection-based database instance</li>
+          <li><code>context</code> - Request context (params, query, body, req)</li>
+          <li><code>rerender</code> - Call to manually invalidate the cached render</li>
         </ul>
         <p><strong>Key Differences from Static Mode:</strong></p>
         <ul>
           <li>No <code>repeat</code> function - routes match dynamically</li>
-          <li>Access to request parameters, query strings, and database</li>
-          <li>Rendered on-demand with intelligent caching</li>
+          <li>Access to request parameters and query strings</li>
+          <li>Rendered on-demand</li>
           <li>Must return data via <code>ctx.respond</code> methods</li>
         </ul>
       </div>

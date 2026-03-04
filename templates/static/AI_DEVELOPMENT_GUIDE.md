@@ -4,7 +4,7 @@
 
 ## What is Clovie?
 
-Clovie is a Node.js-based static site generator and full-stack web framework that bridges static sites and web applications. It uses a service-oriented architecture built on `@brickworks/engine`.
+Clovie is a Node.js-based static site generator and full-stack web framework that bridges static sites and web applications. It uses a service-oriented architecture built on `@jucie.io/engine`.
 
 ## Project Structure
 
@@ -123,55 +123,17 @@ block content
     article= post.title
 ```
 
-## Database Operations (Server Mode)
-
-Clovie uses a document-oriented database with SQL-like syntax:
-
-```javascript
-// Get a collection
-const users = database.collection('users');
-
-// Add document (auto-generates ID)
-const userId = users.add({
-  name: 'Alice',
-  email: 'alice@example.com'
-});
-
-// Get by ID
-const user = users.get([userId]);
-
-// Update document
-users.update([userId], user => ({
-  ...user,
-  lastSeen: new Date().toISOString()
-}));
-
-// Query documents
-const admin = users.findWhere('role', '===', 'admin');
-const allAdmins = users.findAllWhere('role', '===', 'admin');
-
-// Remove document
-users.remove([userId]);
-```
-
 ## API Endpoints (Server Mode)
 
-API endpoints receive `ctx` (context) and `database` parameters:
+API endpoints receive a `ctx` (context) parameter:
 
 ```javascript
 {
   path: '/api/posts/:id',
   method: 'GET',
-  handler: async (ctx, database) => {
-    const postId = ctx.params.id;
-    const posts = database.collection('posts');
-    const post = posts.get([postId]);
-    
-    if (!post) {
-      return ctx.respond.json({ error: 'Post not found' }, 404);
-    }
-    
-    return ctx.respond.json({ post });
+  handler: async (ctx) => {
+    const { id } = ctx.params;
+    return ctx.respond.json({ id });
   }
 }
 ```
@@ -244,7 +206,7 @@ routes: [
 {
   path: '/api/posts',
   method: 'POST',
-  handler: async (ctx, database) => {
+  handler: async (ctx) => {
     const { title, content } = ctx.body;
     
     if (!title || title.trim().length < 3) {
@@ -254,17 +216,7 @@ routes: [
       );
     }
     
-    const posts = database.collection('posts');
-    const postId = posts.add({
-      title: title.trim(),
-      content,
-      createdAt: new Date().toISOString()
-    });
-    
-    return ctx.respond.json({
-      success: true,
-      post: { id: postId, ...posts.get([postId]) }
-    });
+    return ctx.respond.json({ success: true, title: title.trim(), content }, 201);
   }
 }
 ```
@@ -272,21 +224,13 @@ routes: [
 ### 4. Server-Side Rendering with Data
 ```javascript
 {
-  name: 'Blog Post',
-  path: '/posts/:slug',
-  template: 'post.html',
-  data: async (ctx, database) => {
-    const posts = database.collection('posts');
-    const post = posts.findWhere('slug', '===', ctx.params.slug);
-    
-    if (!post) {
-      return { post: null, error: 'Post not found' };
-    }
-    
-    return {
-      post,
-      title: `${post.title} - My Blog`
-    };
+  name: 'News Feed',
+  path: '/news',
+  template: 'news.html',
+  data: async ({ context }) => {
+    const response = await fetch('https://api.example.com/news');
+    const articles = await response.json();
+    return { articles, title: 'Latest News' };
   }
 }
 ```
@@ -320,11 +264,12 @@ return ctx.respond.json({ error: 'Invalid input' }, 400);
 
 ### Template Errors
 ```javascript
-// Handle missing data gracefully
-const user = database.collection('users').get([userId]) || {
-  name: 'Unknown User',
-  email: 'unknown@example.com'
-};
+// Handle missing data gracefully in templates
+{% if user %}
+  <h1>{{ user.name }}</h1>
+{% else %}
+  <h1>Unknown User</h1>
+{% endif %}
 ```
 
 ## Best Practices
@@ -341,7 +286,6 @@ const user = database.collection('users').get([userId]) || {
 ### Common Issues
 - **Port already in use**: `clovie kill --port 3000`
 - **Template not found**: Check file paths in config
-- **Database errors**: Ensure `data/` directory exists and is writable
 - **Build failures**: Check console output for detailed errors
 
 ### Debug Mode
@@ -351,7 +295,6 @@ Add `console.log()` statements in handlers and data functions to debug issues.
 
 - **No client-side routing** - Uses traditional server-side rendering
 - **No build-time JavaScript** - Server handles all dynamic content
-- **Simple state management** - Uses database collections instead of complex state
 - **Template agnostic** - Choose your preferred template engine
 - **Dual mode** - Same codebase can be static or server-rendered
 

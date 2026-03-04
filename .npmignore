@@ -1,14 +1,13 @@
-# Source files (only publish built dist/)
-lib/
-src/
-
 # Development files
 __tests__/
+__dev__/
 test_temp/
-scripts/
-rollup.config.js
+.ignore/
 vitest.config.js
 BUILD_GUIDE.md
+
+# Build artifacts (not needed, shipping raw source)
+dist/
 
 # Documentation source (publish built docs only)
 docs/

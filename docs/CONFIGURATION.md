@@ -13,7 +13,6 @@ Complete reference for `clovie.config.js` configuration options.
 - [Routes & Dynamic Pages](#routes--dynamic-pages)
 - [API Endpoints](#api-endpoints)
 - [Middleware](#middleware)
-- [Database Integration](#database-integration)
 - [Build Options](#build-options)
 - [Development Settings](#development-settings)
 
@@ -63,9 +62,6 @@ export default {
   routes: [],
   api: [],
   middleware: [],
-  
-  // Database (server mode)
-  dbPath: './data/app.db',
   
   // Build options
   minify: false,
@@ -206,31 +202,6 @@ export default {
 };
 ```
 
-### Server with Database
-
-```javascript
-export default {
-  type: 'server',
-  port: 3000,
-  
-  // SQLite database
-  dbPath: './data/app.db',
-  
-  data: {
-    app: { name: 'My App' }
-  },
-  
-  api: [{
-    path: '/api/posts',
-    method: 'GET',
-    action: async (state, event) => {
-      const posts = await state.db.query('SELECT * FROM posts ORDER BY created_at DESC');
-      return { posts };
-    }
-  }]
-};
-```
-
 ## File Paths & Structure
 
 ### Path Configuration
@@ -246,9 +217,6 @@ export default {
   
   // Output
   outputDir: './build',          // Build output directory
-  
-  // Database (server mode)
-  dbPath: './data/app.db'        // SQLite database path
 };
 ```
 
@@ -999,136 +967,6 @@ export default {
 };
 ```
 
-## Database Integration
-
-Clovie includes built-in SQLite database support for server applications.
-
-### Basic Database Setup
-
-```javascript
-export default {
-  type: 'server',
-  
-  // Database configuration
-  dbPath: './data/app.db',        // SQLite file path
-  walPath: './data/app.db-wal',   // Write-ahead log path (optional)
-  
-  api: [{
-    path: '/api/posts',
-    method: 'GET',
-    action: async (state, event) => {
-      // Database available as state.db
-      const posts = await state.db.query('SELECT * FROM posts ORDER BY created_at DESC LIMIT ?', [10]);
-      return { posts };
-    }
-  }]
-};
-```
-
-### Database Operations
-
-```javascript
-api: [
-  // Query with parameters
-  {
-    path: '/api/posts/:id',
-    method: 'GET',
-    action: async (state, event) => {
-      const post = await state.db.query(
-        'SELECT * FROM posts WHERE id = ?', 
-        [event.params.id]
-      );
-      return post[0] ? { post: post[0] } : { error: 'Post not found', status: 404 };
-    }
-  },
-  
-  // Insert data
-  {
-    path: '/api/posts',
-    method: 'POST',
-    action: async (state, event) => {
-      const { title, content, author } = event.body;
-      
-      const result = await state.db.query(
-        'INSERT INTO posts (title, content, author, created_at) VALUES (?, ?, ?, ?)',
-        [title, content, author, new Date().toISOString()]
-      );
-      
-      return { success: true, id: result.lastInsertRowid };
-    }
-  },
-  
-  // Update data
-  {
-    path: '/api/posts/:id',
-    method: 'PUT',
-    action: async (state, event) => {
-      const { title, content } = event.body;
-      
-      const result = await state.db.query(
-        'UPDATE posts SET title = ?, content = ?, updated_at = ? WHERE id = ?',
-        [title, content, new Date().toISOString(), event.params.id]
-      );
-      
-      return { success: true, changes: result.changes };
-    }
-  },
-  
-  // Delete data
-  {
-    path: '/api/posts/:id',
-    method: 'DELETE',
-    action: async (state, event) => {
-      const result = await state.db.query(
-        'DELETE FROM posts WHERE id = ?',
-        [event.params.id]
-      );
-      
-      return { success: true, changes: result.changes };
-    }
-  }
-]
-```
-
-### Database Initialization
-
-```javascript
-export default {
-  type: 'server',
-  dbPath: './data/app.db',
-  
-  // Initialize database schema
-  api: [{
-    path: '/api/init-db',
-    method: 'POST',
-    action: async (state, event) => {
-      // Create tables
-      await state.db.query(`
-        CREATE TABLE IF NOT EXISTS posts (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          title TEXT NOT NULL,
-          content TEXT,
-          author TEXT,
-          created_at TEXT,
-          updated_at TEXT
-        )
-      `);
-      
-      await state.db.query(`
-        CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL,
-          email TEXT UNIQUE,
-          created_at TEXT
-        )
-      `);
-      
-      return { success: true, message: 'Database initialized' };
-    }
-  }]
-};
-```
-
 ## Build Options
 
 Configuration options for optimizing builds and output.
@@ -1222,15 +1060,13 @@ export default {
   ...(isDev && {
     // Development settings
     liveReload: true,
-    verbose: true,
-    dbPath: './data/dev.db'
+    verbose: true
   }),
   
   ...(!isDev && {
     // Production settings
     minify: true,
-    compression: true,
-    dbPath: process.env.DATABASE_PATH || './data/production.db'
+    compression: true
   }),
   
   data: {
@@ -1240,6 +1076,157 @@ export default {
   }
 };
 ```
+
+## Apps Integration
+
+Clovie can orchestrate and serve external app builds (Vite, Webpack, Rollup, esbuild) alongside your project. Declare apps in your configuration and Clovie will build them during `clovie build` / `clovie serve`, watch them in `clovie dev`, and mount their dev middleware or static output on the HTTP server automatically via kernel-level handlers (no Express-specific middleware required).
+
+### Configuration Structure
+
+```javascript
+export default {
+  type: 'server',
+  // ...other config
+
+  apps: [
+    {
+      name: 'studio',           // Identifier (used for logs and mount path)
+      source: './apps/studio',  // Directory containing the app
+      buildTool: 'vite',        // Optional: vite | webpack | rollup | esbuild (auto-detected if omitted)
+      config: './apps/studio/vite.config.js', // Optional explicit config path
+      outputPath: './dist/studio',            // Optional build output directory
+
+      buildOptions: {
+        watch: true,            // Enable watch mode during clovie dev
+        build: {                // Additional tool-specific build options (passed to Vite, etc.)
+          outDir: './dist/studio'
+        }
+      },
+
+      dev: {
+        mountPath: '/studio',   // Where to mount dev middleware/static assets
+        server: {               // Additional Vite dev server options (middleware mode is set automatically)
+          hmr: true
+        },
+        index: './apps/studio/index.html' // Custom index file for HTML responses
+      }
+    }
+  ]
+};
+```
+
+### Vite Example
+
+```javascript
+export default {
+  type: 'server',
+  apps: [
+    {
+      name: 'admin',
+      source: './apps/admin',
+      buildTool: 'vite',
+      config: './apps/admin/vite.config.ts',
+      buildOptions: {
+        watch: true,
+        build: { outDir: './apps/admin/dist' }
+      },
+      dev: {
+        mountPath: '/admin'
+      }
+    }
+  ]
+};
+```
+
+During development `clovie dev` will start Vite in middleware mode and mount it at `/admin`. In production `clovie serve` serves the built assets from `/admin` using the generated bundle.
+
+### Webpack Example
+
+```javascript
+export default {
+  type: 'server',
+  apps: [
+    {
+      name: 'dashboard',
+      source: './apps/dashboard',
+      buildTool: 'webpack',
+      config: './apps/dashboard/webpack.config.js',
+      buildOptions: {
+        watch: true,
+        devMiddleware: {
+          publicPath: '/dashboard/'
+        }
+      },
+      dev: {
+        mountPath: '/dashboard'
+      }
+    }
+  ]
+};
+```
+
+Clovie will use webpack’s programmatic API for builds and attach `webpack-dev-middleware` at `/dashboard` during development.
+
+### Rollup Example
+
+```javascript
+export default {
+  type: 'server',
+  apps: [
+    {
+      name: 'docs',
+      source: './apps/docs',
+      buildTool: 'rollup',
+      config: './apps/docs/rollup.config.js',
+      outputPath: './apps/docs/dist',
+      buildOptions: {
+        watch: true
+      },
+      dev: {
+        mountPath: '/docs'
+      }
+    }
+  ]
+};
+```
+
+Rollup projects are watched via `rollup.watch()`. During development the generated files are served from the output directory, so configure your rollup bundle to write to disk (default).
+
+### esbuild Example
+
+```javascript
+export default {
+  type: 'server',
+  apps: [
+    {
+      name: 'viewer',
+      source: './apps/viewer',
+      buildTool: 'esbuild',
+      entryPoints: ['./apps/viewer/src/main.tsx'],
+      outputPath: './apps/viewer/dist',
+      buildOptions: {
+        watch: true,
+        esbuild: {
+          bundle: true,
+          target: 'es2020'
+        }
+      },
+      dev: {
+        mountPath: '/viewer'
+      }
+    }
+  ]
+};
+```
+
+If you provide an esbuild config module via `config`, Clovie will merge the exported options.
+
+### Behavior Summary
+
+- **Auto-detected build tools:** If `buildTool` is omitted Clovie inspects `package.json` scripts and config files inside the app directory.
+- **Builds:** `clovie build` and `clovie serve` run `apps.build()` before starting the server, producing bundles in the configured `outputPath`.
+- **Dev mode:** `clovie dev` runs tool-specific watchers and mounts dev middleware (Vite/webpack) or serves the watched output (Rollup/esbuild) at `dev.mountPath`.
+- **Cleanup:** Dev servers and watchers are closed automatically when Clovie shuts down.
 
 ---
 

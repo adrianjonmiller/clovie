@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import http from 'node:http';
-import { Engine } from '@brickworks/engine';
+import { Engine } from '@jucie.io/engine';
 import { Server } from '../lib/Server/Server.js';
 
 describe('Server', () => {

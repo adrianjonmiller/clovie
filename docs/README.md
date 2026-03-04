@@ -6,7 +6,7 @@ Welcome to the official documentation for Clovie - a powerful Node.js framework 
 
 ## 🚀 What is Clovie?
 
-Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow. It combines the best of static site generation with full-stack web application capabilities, all through a service-oriented architecture built on @brickworks/engine.
+Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow. It combines the best of static site generation with full-stack web application capabilities, all through a service-oriented architecture built on @jucie.io/engine.
 
 ### Key Features
 
@@ -16,7 +16,6 @@ Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but ro
 - **🎨 Template Agnostic**: Handlebars, Nunjucks, Pug, Mustache, or custom engines
 - **📦 Asset Pipeline**: SCSS compilation, JavaScript bundling with esbuild
 - **🔄 Live Reload**: WebSocket-based live reload during development
-- **🗄️ Database Ready**: SQLite integration for server mode applications
 - **🛣️ Dynamic Routing**: Data-driven page generation and API endpoints
 
 ## 📚 Documentation Overview
@@ -47,7 +46,7 @@ Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but ro
 ### Advanced Topics
 - **[API Development](./CONFIGURATION.md#api-endpoints)** - Building REST APIs with Clovie
 - **[Middleware](./CONFIGURATION.md#middleware)** - Express middleware configuration and authentication patterns
-- **[Database Integration](./CONFIGURATION.md#database-integration)** - SQLite database support
+- **[Apps Integration](./CONFIGURATION.md#apps-integration)** - Bundled app orchestration (Vite, Webpack, Rollup, esbuild)
 - **[Dynamic Routing](./CONFIGURATION.md#routes--dynamic-pages)** - Data-driven page generation
 - **[Performance](../README.md#performance-features)** - Optimization and best practices
 
@@ -92,7 +91,7 @@ export default {
 
 ## 🛠️ Architecture
 
-Clovie uses a **service-oriented architecture** where all functionality is provided by services that extend `ServiceProvider` from @brickworks/engine:
+Clovie uses a **service-oriented architecture** where all functionality is provided by services that extend `ServiceProvider` from @jucie.io/engine:
 
 - **🗂️ File Service** - File operations with intelligent watching
 - **⚙️ Compile Service** - Asset compilation with progress tracking
@@ -115,7 +114,7 @@ Perfect for:
 ### Server Applications (type: 'server')
 Perfect for:
 - **Web Applications** - Dashboard, admin panels, user interfaces
-- **REST APIs** - Backend services with database integration
+- **REST APIs** - Backend services
 - **Full-Stack Apps** - Combined frontend and backend
 - **Real-time Applications** - WebSocket support for live features
 

@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.29",
+  "version": "0.1.36",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -30,39 +30,32 @@
   "bugs": {
     "url": "https://github.com/adrianjonmiller/clovie/issues"
   },
-  "main": "./dist/cjs/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/createClovie.js",
+  "module": "./lib/createClovie.js",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./lib/createClovie.js"
     },
+    "./server": "./lib/Server/Server.js",
     "./cli": "./bin/cli.js"
   },
   "bin": {
     "clovie": "bin/cli.js"
   },
   "files": [
-    "dist/",
+    "lib/**/*",
     "bin/**/*",
     "config/**/*",
-    "scripts/**/*",
     "templates/**/*",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run clean && rollup -c && npm run build:types",
-    "build:types": "node scripts/build-types.js",
-    "clean": "rm -rf dist",
     "dev": "node ./bin/cli.js watch --config ./__dev__/clovie.config.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
-    "size-check": "npm run build && du -sh dist/*",
     "kill:port": "node ./bin/kill-port.js",
     "kill:3000": "node ./bin/kill-port.js 3000",
     "kill:common": "node ./bin/kill-port.js --common",
@@ -70,8 +63,7 @@
     "docs:build": "cd docs && npm install && npm run build",
     "docs:dev": "cd docs && npm install && npm run dev",
     "docs:serve": "cd docs && npm install && npm run serve",
-    "prepublishOnly": "npm run build && npm test",
-    "publish:build": "node scripts/publish.js build",
+    "prepublishOnly": "npm test",
     "publish:test": "node scripts/publish.js test",
     "publish:docs": "node scripts/publish.js docs",
     "publish:dry-run": "node scripts/publish.js dry-run",
@@ -83,6 +75,8 @@
     "publish:info": "node scripts/publish.js info"
   },
   "dependencies": {
+    "@jucie.io/engine": "^1.1.67",
+    "@jucie.io/reactive": "^1.0.26",
     "chalk": "^5.6.2",
     "chokidar": "^3.5.3",
     "cli-progress": "^3.12.0",
@@ -101,16 +95,14 @@
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.7",
-    "@brickworks/database-ext": "^1.0.4",
-    "@brickworks/engine": "1.1.19",
-    "babelify": "^10.0.0",
-    "type-detect": "^4.0.8",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "babelify": "^10.0.0",
     "rollup": "^4.52.2",
     "rollup-plugin-cleanup": "^3.2.1",
+    "type-detect": "^4.0.8",
     "vitest": "^1.0.4"
   },
   "engines": {

@@ -2,7 +2,7 @@
 
 > *"The Hollow Knight of Web Dev"* - Simple but deep, easy to start but room to grow.
 
-A powerful Node.js-based **static site generator** and **full-stack web framework** that bridges the gap between simple static sites and complex web applications. Built on the **@brickworks/engine** service architecture for maximum flexibility and maintainability.
+A powerful Node.js-based **static site generator** and **full-stack web framework** that bridges the gap between simple static sites and complex web applications. Built on the **@jucie.io/engine** service architecture for maximum flexibility and maintainability.
 
 ## 🚀 Quick Start
 
@@ -24,13 +24,13 @@ npm run dev
 - **🎨 Template Agnostic**: Handlebars, Nunjucks, Pug, Mustache, or custom engines
 - **📦 Asset Pipeline**: SCSS compilation, JavaScript bundling with esbuild
 - **🔄 Live Reload**: WebSocket-based live reload during development
-- **🗄️ Database Ready**: SQLite integration for server mode applications
 - **🛣️ Dynamic Routing**: Data-driven page generation and API endpoints
+- **🧩 App Orchestration**: Build and serve external Vite/Webpack/Rollup/esbuild apps via kernel handlers
 - **🔧 Service Architecture**: Modular, extensible service-oriented design
 
 ## 🏗️ Architecture Overview
 
-Clovie uses a **service-oriented architecture** built on `@brickworks/engine`. All functionality is provided by services that extend `ServiceProvider`, orchestrated through dependency injection with reactive state management.
+Clovie uses a **service-oriented architecture** built on `@jucie.io/engine`. All functionality is provided by services that extend `ServiceProvider`, orchestrated through dependency injection with reactive state management.
 
 ### Core Services
 
@@ -276,9 +276,6 @@ export default {
     }
   },
   
-  // Database configuration (optional)
-  dbPath: './data/app.db',
-  
   // Express middleware (auto-selects Express adapter)
   middleware: [
     express.json(),
@@ -401,27 +398,36 @@ curl http://localhost:3000/api/protected/data
 curl -H "Authorization: Bearer your-token" http://localhost:3000/api/protected/data
 ```
 
-### 📊 Database Integration (Server Mode)
+### 🧩 App Orchestration
 
-Clovie includes built-in SQLite database support for server applications:
+Clovie can manage multiple frontend apps alongside your core project using kernel-level handlers, so no Express-specific middleware is required. Define apps in `clovie.config.js`, and Clovie will:
+
+- Detect the build tool (Vite, Webpack, Rollup, esbuild) or use the specified `buildTool`
+- Run builds during `clovie build` and `clovie serve`
+- Launch tool-specific dev middleware during `clovie dev`
+- Mount bundles or dev servers at configurable mount paths (e.g., `/admin`, `/studio`)
 
 ```javascript
 export default {
   type: 'server',
-  dbPath: './data/app.db', // SQLite database path
-  
-  // Database is available in API actions and routes
-  api: [{
-    path: '/api/posts',
-    method: 'GET',
-    action: async (state, event) => {
-      // Access database through state.db
-      const posts = await state.db.query('SELECT * FROM posts ORDER BY created_at DESC');
-      return { posts };
+  apps: [
+    {
+      name: 'studio',
+      source: './apps/studio',
+      buildTool: 'vite',
+      buildOptions: {
+        watch: true,
+        build: { outDir: './apps/studio/dist' }
+      },
+      dev: {
+        mountPath: '/studio'
+      }
     }
-  }]
+  ]
 };
 ```
+
+See [Apps Integration](docs/CONFIGURATION.md#apps-integration) for full examples covering Webpack, Rollup, and esbuild setups.
 
 ### 🔄 Async Data Loading
 
@@ -596,7 +602,7 @@ my-site/
 - Validate input data in API actions
 - Use middleware for authentication and request parsing
 - Handle errors gracefully in API endpoints
-- Implement proper database migrations and seeding
+- Implement proper data migrations and seeding
 
 ### 🔧 Configuration Tips
 
@@ -682,11 +688,6 @@ clovie kill --check         # Check port status
 - Verify the `views` directory path in your config
 - Check that template files have correct extensions
 - Ensure partial files are in the `partials` directory
-
-**Database Connection Issues (Server Mode)**
-- Check that `dbPath` in config points to a writable directory
-- Ensure SQLite is properly installed 
-- Verify database initialization in your API actions
 
 **Live Reload Not Working**
 - Check that you're in development mode (`npm run dev`)

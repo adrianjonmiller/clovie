@@ -13,8 +13,7 @@ const packageJson = JSON.parse(readFileSync(path.join(__dirname, '../package.jso
 const CLOVIE_VERSION = packageJson.version;
 
 // Local - import from compiled dist for published package
-// import { createClovie } from "../lib/createClovie.js";
-import { createClovie } from "../dist/index.js";
+import { createClovie } from "../lib/createClovie.js";
 import { killPort, checkPorts, killCommonPorts } from "../scripts/killPort.js";
 
 // Check for kill command first (before any argument parsing)
@@ -361,16 +360,6 @@ function setupGracefulShutdown(clovie) {
     }, 5000); // 5 second timeout
     
     try {
-      // Close database if it exists and is initialized
-      const database = clovie.database;
-      if (database && database.isInitialized && database.isInitialized()) {
-        console.log('💾 Closing database...');
-        if (typeof database.checkpoint === 'function') {
-          await database.checkpoint();
-          console.log('✅ Database written successfully');
-        }
-      }
-      
       // Stop server if it's running
       const server = clovie.server;
       if (server && server.isRunning && server.isRunning()) {
