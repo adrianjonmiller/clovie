@@ -32,6 +32,19 @@ export default {
   watch: false,
   port: 3000,
   open: false,
+
+  // Extensibility — install custom engine services
+  // services: [MyService, AnotherService.configure({...})],
+
+  // Extensibility — custom wiring after services are installed
+  // setup(engine) {},
+
+  // Lifecycle — runs right before server.listen()
+  // beforeListen(opts) {},
+
+  // Lifecycle — runs right after server starts (attach WebSocket upgrades, etc.)
+  // afterListen(httpServer, opts) {},
+
   routes: [
     {
       name: 'Products',

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import http from 'node:http';
 import { Engine } from '@jucie.io/engine';
-import { Server } from '../lib/Server/Server.js';
+import { Server } from '@jucie.io/engine-server';
 
 describe('Server', () => {
   let clovie;
@@ -341,11 +341,6 @@ describe('Server', () => {
       // Create a new server instance
       const middlewareClovie = Engine.create().install(Server);
       
-      // Set up middleware by directly configuring the adapter
-      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
-      const adapter = ExpressAdapter.create();
-      middlewareClovie.server.useAdapter(adapter);
-      
       middlewareClovie.server.add('GET', '/middleware-test', (ctx) => {
         return ctx.respond.json({ message: 'success' });
       });
@@ -398,11 +393,6 @@ describe('Server', () => {
 
     it('should execute multiple middleware in correct order', async () => {
       const middlewareClovie = Engine.create().install(Server);
-      
-      // Set up middleware chain
-      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
-      const adapter = ExpressAdapter.create();
-      middlewareClovie.server.useAdapter(adapter);
       
       middlewareClovie.server.add('GET', '/order-test', (ctx) => {
         return ctx.respond.json({ message: 'handler executed' });
@@ -464,10 +454,6 @@ describe('Server', () => {
 
     it('should handle auth middleware that blocks requests', async () => {
       const middlewareClovie = Engine.create().install(Server);
-      
-      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
-      const adapter = ExpressAdapter.create();
-      middlewareClovie.server.useAdapter(adapter);
       
       middlewareClovie.server.add('GET', '/protected', (ctx) => {
         return ctx.respond.json({ secret: 'protected data' });
@@ -588,10 +574,6 @@ describe('Server', () => {
 
     it('should validate middleware configuration', async () => {
       const middlewareClovie = Engine.create().install(Server);
-      
-      const { ExpressAdapter } = await import('../lib/Server/adapters/ExpressAdapter.js');
-      const adapter = ExpressAdapter.create();
-      middlewareClovie.server.useAdapter(adapter);
 
       // Test 1: Non-array middleware should be rejected
       await expect(async () => {

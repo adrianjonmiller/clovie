@@ -37,7 +37,7 @@
     ".": {
       "import": "./lib/createClovie.js"
     },
-    "./server": "./lib/Server/Server.js",
+    "./server": "./lib/Server/main.js",
     "./cli": "./bin/cli.js"
   },
   "bin": {
@@ -76,6 +76,8 @@
   },
   "dependencies": {
     "@jucie.io/engine": "^1.1.67",
+    "@jucie.io/engine-esbuild": "^1.0.2",
+    "@jucie.io/engine-server": "^1.0.18",
     "@jucie.io/reactive": "^1.0.26",
     "chalk": "^5.6.2",
     "chokidar": "^3.5.3",
