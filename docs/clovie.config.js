@@ -1,6 +1,3 @@
-import Handlebars from 'handlebars';
-import * as sass from 'sass';
-import * as esbuild from 'esbuild';
 import path from 'path';
 import url from 'url';
 

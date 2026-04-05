@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.36",
+  "version": "0.1.38",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -35,7 +35,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./lib/createClovie.js"
+      "import": "./lib/main.js",
+      "require": "./lib/main.js"
     },
     "./server": "./lib/Server/main.js",
     "./cli": "./bin/cli.js"
@@ -75,9 +76,9 @@
     "publish:info": "node scripts/publish.js info"
   },
   "dependencies": {
-    "@jucie.io/engine": "^1.1.67",
+    "@jucie.io/engine": "^1.1.68",
     "@jucie.io/engine-esbuild": "^1.0.2",
-    "@jucie.io/engine-server": "^1.0.18",
+    "@jucie.io/engine-server": "^1.0.23",
     "@jucie.io/reactive": "^1.0.26",
     "chalk": "^5.6.2",
     "chokidar": "^3.5.3",
