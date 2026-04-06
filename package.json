@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.38",
+  "version": "0.1.41",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -78,7 +78,7 @@
   "dependencies": {
     "@jucie.io/engine": "^1.1.68",
     "@jucie.io/engine-esbuild": "^1.0.2",
-    "@jucie.io/engine-server": "^1.0.23",
+    "@jucie.io/engine-server": "^1.0.26",
     "@jucie.io/reactive": "^1.0.26",
     "chalk": "^5.6.2",
     "chokidar": "^3.5.3",
