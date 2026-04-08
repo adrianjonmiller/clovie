@@ -33,6 +33,10 @@ export default {
   mode: 'development',
   type: 'server',
 
+  beforeListen(useContext, opts) {
+    console.log('beforeListen', useContext('esbuild'));
+  },
+
   // Middleware configuration for testing
   middleware: [
     // Custom logging middleware

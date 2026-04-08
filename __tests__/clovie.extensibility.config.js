@@ -31,11 +31,14 @@ export default {
     globalThis.__test_setup_called = true;
     globalThis.__test_setup_engine = engine;
   },
-  beforeListen(opts) {
+  beforeListen(useContext, opts) {
     globalThis.__test_before_listen_called = true;
+    globalThis.__test_before_listen_context = useContext;
+    globalThis.__test_before_listen_opts = opts;
   },
-  afterListen(httpServer, opts) {
+  afterListen(useContext, opts, httpServer) {
     globalThis.__test_after_listen_called = true;
+    globalThis.__test_after_listen_context = useContext;
     globalThis.__test_http_server = httpServer;
   },
 };

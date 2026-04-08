@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.41",
+  "version": "0.1.44",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -47,6 +47,7 @@
   "files": [
     "lib/**/*",
     "bin/**/*",
+    "scripts/**/*",
     "config/**/*",
     "templates/**/*",
     "README.md",
@@ -73,13 +74,14 @@
     "publish:major": "node scripts/publish.js major",
     "publish:beta": "node scripts/publish.js beta",
     "publish:do": "node scripts/publish.js do",
-    "publish:info": "node scripts/publish.js info"
+    "publish:info": "node scripts/publish.js info",
+    "update:jucie.io": "npx npm-check-updates '@jucie.io/*' --target latest -u && npm install"
   },
   "dependencies": {
     "@jucie.io/engine": "^1.1.68",
-    "@jucie.io/engine-esbuild": "^1.0.2",
+    "@jucie.io/engine-esbuild": "^1.0.7",
     "@jucie.io/engine-server": "^1.0.26",
-    "@jucie.io/reactive": "^1.0.26",
+    "@jucie.io/reactive": "^1.0.30",
     "chalk": "^5.6.2",
     "chokidar": "^3.5.3",
     "cli-progress": "^3.12.0",

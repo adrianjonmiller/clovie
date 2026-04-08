@@ -95,7 +95,7 @@ describe('Extensibility Hooks', () => {
       await opts.beforeListen(opts);
     }
 
-    await clovie.server.listen({ ...opts, port: 19876 });
+    await clovie.server.listen({ ...opts, port: 19876 }); 
 
     if (typeof opts.afterListen === 'function') {
       await opts.afterListen(clovie.server.getHttpServer(), opts);
