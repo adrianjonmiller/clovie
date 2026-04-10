@@ -13,7 +13,7 @@ const config: Config = {
 
   // Production default matches GitHub Pages project sites. For local dev, `npm start` sets DOCUSAURUS_BASE_URL=/.
   url: 'https://adrianjonmiller.github.io',
-  baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/clovie/',
+  baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/',
 
   organizationName: 'adrianjonmiller',
   projectName: 'clovie',
