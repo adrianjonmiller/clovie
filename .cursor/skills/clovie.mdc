@@ -1,0 +1,77 @@
+---
+description: Build and extend Clovie (static/server) projects — config, factories, APIs, routes, hooks, middleware.
+globs: clovie.config.js,**/clovie.config.*,lib/**/*.js,templates/**/*
+---
+
+# Working with Clovie
+
+Clovie is a Node.js static site generator and server framework driven by `clovie.config.js` and `@jucie.io/engine` services.
+
+## Mental model
+
+- **`type: 'static'`** — build outputs HTML under `outputDir`; dev server is for preview and live reload.
+- **`type: 'server'`** — HTTP server registers **factories** in order: `hooks` → `middleware` → `api` → generated routes from `views` + `routes`.
+- **Factories** — `api`, `routes` (SSR), `middleware`, and `hooks` accept plain objects/arrays **or** `define*` factory functions from `clovie` (re-exported from `@jucie.io/engine-server`). Factories receive `(useContext, opts)` so handlers can depend on engine context when needed.
+
+## Imports
+
+```javascript
+import {
+  defineApi,       // alias for defineRoutes; use for semantic clarity on api: []
+  defineRoutes,
+  defineMiddleware,
+  defineHooks,
+} from 'clovie';
+```
+
+`defineApi` and `defineRoutes` are the same function — use whichever reads clearer in your config.
+
+## API routes (`opts.api`)
+
+- Items are **engine-server route definitions**: at minimum `method`, `path`, and **`handler`** `(ctx) => ...` using `ctx.respond.json()` / `.html()` / `.text()` / `.file()`.
+- **Prefer factories** when routes need `useContext` (logging, DB, services) or you want to split APIs across modules.
+
+```javascript
+import { defineRoutes } from 'clovie';
+
+const adminApi = defineRoutes('admin', (useContext, opts) => {
+  const [log] = useContext('log');
+  return [
+    {
+      method: 'GET',
+      path: '/ping',
+      handler: (ctx) => ctx.respond.json({ ok: true }),
+    },
+  ];
+});
+
+export default {
+  type: 'server',
+  api: [
+    { method: 'GET', path: '/api/health', handler: (ctx) => ctx.respond.json({ status: 'up' }) },
+    adminApi,
+  ],
+};
+```
+
+You can mix **raw route objects** and **factories** in the same `api` array; Clovie normalizes them before `server.use(...)`.
+
+## SSR routes (`opts.routes`)
+
+Same factory pattern applies to `routes` merged with auto-generated view routes: use `defineRoutes` when data or handlers need context.
+
+## Middleware and hooks
+
+- **`middleware`**: `defineMiddleware(name, (useContext, opts) => [fn, ...])` or raw Express-style functions when using the Express adapter.
+- **`hooks`**: `defineHooks(name, (useContext, opts) => ({ onRequest, preHandler, ... }))`.
+
+## Docs and CLI
+
+- Full options: repository `docs/CONFIGURATION.md`.
+- Bundled agent skill path: run `clovie skills path` from an install that includes the `clovie` package.
+
+## Common mistakes
+
+- Using a nonexistent **`action`** field on API routes — use **`handler`** and `ctx.respond.*`.
+- Forgetting **`type: 'server'`** when using `api` / server routes.
+- Assuming factories run at import time — they are invoked with `(useContext, opts)` when the server registers routes.

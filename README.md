@@ -4,6 +4,17 @@
 
 A powerful Node.js-based **static site generator** and **full-stack web framework** that bridges the gap between simple static sites and complex web applications. Built on the **@jucie.io/engine** service architecture for maximum flexibility and maintainability.
 
+## 📚 Documentation site
+
+The docs website uses **Docusaurus** in [`website/`](website/). From the repo root:
+
+```bash
+npm run website:dev    # http://localhost:3000
+npm run website:build  # output in website/build/
+```
+
+Authoritative markdown for the long-form guide remains [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md); keep [`website/docs/configuration.md`](website/docs/configuration.md) in sync (or add a copy script). The older Clovie-built docs under [`docs/`](docs/) (`clovie.config.js`, `views/`) are optional legacy.
+
 ## 🚀 Quick Start
 
 ```bash
@@ -31,6 +42,14 @@ npm run dev
 ## 🏗️ Architecture Overview
 
 Clovie uses a **service-oriented architecture** built on `@jucie.io/engine`. All functionality is provided by services that extend `ServiceProvider`, orchestrated through dependency injection with reactive state management.
+
+### Route factories (`api`, `routes`, `middleware`, `hooks`)
+
+In **server** mode, HTTP behavior is registered through **factory definitions** from `@jucie.io/engine-server` (import `defineRoutes`, `defineApi`, `defineMiddleware`, and `defineHooks` from `clovie`). You can pass plain route objects or factories; factories receive `(useContext, opts)` so APIs and SSR routes can resolve engine services when the server starts. Registration order is **hooks → middleware → `api` → view and config routes**. See [docs/CONFIGURATION.md](docs/CONFIGURATION.md#factories-for-api-routes-middleware-and-hooks).
+
+### Cursor / AI agents
+
+The npm package ships a Cursor skill at `.cursor/skills/clovie.mdc`. After installing Clovie, run **`clovie skills path`** to print its absolute path, **`clovie skills show`** to dump the file for pasting into a project, or copy that file into your repo’s `.cursor/skills/` so assistants load it automatically.
 
 ### Core Services
 

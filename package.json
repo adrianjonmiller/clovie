@@ -50,6 +50,7 @@
     "scripts/**/*",
     "config/**/*",
     "templates/**/*",
+    ".cursor/skills/**/*",
     "README.md",
     "LICENSE"
   ],
@@ -62,9 +63,13 @@
     "kill:3000": "node ./bin/kill-port.js 3000",
     "kill:common": "node ./bin/kill-port.js --common",
     "kill:check": "node ./bin/kill-port.js --check",
-    "docs:build": "cd docs && npm install && npm run build",
-    "docs:dev": "cd docs && npm install && npm run dev",
-    "docs:serve": "cd docs && npm install && npm run serve",
+    "public:build": " npm run -w @clovie/public build",
+    "public:dev": "npm run -w @clovie/public dev",
+    "public:serve": "npm run -w @clovie/public serve",
+    "docs:dev": "npm run -w @clovie/docs dev",
+    "docs:build": "npm run -w @clovie/docs build",
+    "docs:serve": "npm run -w @clovie/docs serve",
+    "docs:start": "npm run -w @clovie/docs start",
     "prepublishOnly": "npm test",
     "publish:test": "node scripts/publish.js test",
     "publish:docs": "node scripts/publish.js docs",
@@ -110,6 +115,9 @@
     "type-detect": "^4.0.8",
     "vitest": "^1.0.4"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": ">=18.0.0"
   }

@@ -90,15 +90,16 @@ describe('Extensibility Hooks', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
+    const useContext = () => {};
 
     if (typeof opts.beforeListen === 'function') {
-      await opts.beforeListen(opts);
+      await opts.beforeListen(useContext, opts);
     }
 
-    await clovie.server.listen({ ...opts, port: 19876 }); 
+    await clovie.server.listen({ ...opts, port: 19876, open: false });
 
     if (typeof opts.afterListen === 'function') {
-      await opts.afterListen(clovie.server.getHttpServer(), opts);
+      await opts.afterListen(useContext, opts, clovie.server.getHttpServer());
     }
 
     expect(globalThis.__test_before_listen_called).toBe(true);

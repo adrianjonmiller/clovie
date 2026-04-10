@@ -1,10 +1,19 @@
 # AI Development Guide for Clovie Server Projects
 
-> **For AI Assistants**: This document explains how to work with Clovie server applications. Read this to understand the project structure, configuration, and development patterns.
+> **For AI Assistants**: This document explains how to work with Clovie server applications. Read this to understand the project structure, configuration, and development patterns. For Cursor, you can also install `clovie` and run **`clovie skills show`** to paste the bundled project skill, or copy `node_modules/clovie/.cursor/skills/clovie.mdc` into `.cursor/skills/`.
 
 ## What is Clovie Server Mode?
 
 Clovie Server Mode creates full-stack web applications with Express-like functionality, API endpoints, and server-side rendering. It's built on a service-oriented architecture using `@jucie.io/engine`.
+
+## Factories (`api`, `routes`, `middleware`, `hooks`)
+
+Prefer **`defineRoutes`** / **`defineApi`** (same function), **`defineMiddleware`**, and **`defineHooks`** from `clovie` when:
+
+- Handlers need **`useContext`** (e.g. `log`, file service) at registration time.
+- You split APIs across files and export small factory modules.
+
+`api` and `routes` accept **plain objects**, **arrays**, **one factory**, or **arrays mixing factories and raw routes**; the engine normalizes them before `server.use(...)`. Registration order: **hooks → middleware → api → SSR routes (views + `routes`)**. See the upstream [CONFIGURATION.md](https://github.com/adrianjonmiller/clovie/blob/main/docs/CONFIGURATION.md) section *Factories for api, routes, middleware, and hooks*.
 
 ## Project Structure
 

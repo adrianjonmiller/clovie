@@ -2,11 +2,21 @@
 
 > **Vintage web dev tooling with modern quality of life**
 
+The **published documentation site** is built with [Docusaurus](https://docusaurus.io/) in [`website/`](../website/). Run `npm run website:dev` from the repo root. This folder still contains the markdown source **`CONFIGURATION.md`** (copied into `website/docs/configuration.md` when updating the site) and a **legacy** Clovie static build (`clovie.config.js`, `views/`).
+
 Welcome to the official documentation for Clovie - a powerful Node.js framework that bridges the gap between simple static sites and complex web applications.
 
 ## 🚀 What is Clovie?
 
 Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow. It combines the best of static site generation with full-stack web application capabilities, all through a service-oriented architecture built on @jucie.io/engine.
+
+### Factories and server HTTP layers
+
+Server projects should treat **`api`**, **`routes`**, **`middleware`**, and **`hooks`** as factory-aware configuration: use **`defineRoutes`** / **`defineApi`** (same function), **`defineMiddleware`**, and **`defineHooks`** from `clovie` when handlers need `useContext` or when splitting endpoints across modules. Plain objects and arrays still work; Clovie normalizes mixed arrays before registering routes. Full detail: [Configuration guide — Factories](./CONFIGURATION.md#factories-for-api-routes-middleware-and-hooks) and [API Endpoints](./CONFIGURATION.md#api-endpoints).
+
+### AI assistants (Cursor and others)
+
+The published `clovie` package includes **`.cursor/skills/clovie.mdc`**. Use **`clovie skills`** for usage, **`clovie skills path`** to locate the file inside `node_modules`, or **`clovie skills show`** to print it for copying into your project’s `.cursor/skills/`.
 
 ### Key Features
 

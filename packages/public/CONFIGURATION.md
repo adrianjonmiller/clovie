@@ -11,6 +11,7 @@ Complete reference for `clovie.config.js` configuration options.
 - [Data & State Management](#data--state-management)
 - [Template Engines](#template-engines)
 - [Routes & Dynamic Pages](#routes--dynamic-pages)
+- [Factories for api, routes, middleware, and hooks](#factories-for-api-routes-middleware-and-hooks)
 - [API Endpoints](#api-endpoints)
 - [Middleware](#middleware)
 - [Build Options](#build-options)
@@ -294,24 +295,18 @@ export default {
 
 ### Server State Management
 
-In server mode, state is available in API actions and route data functions:
+In server mode, reactive **state** is available on the request context in API **`handler`** functions and in route **`data`** functions:
 
 ```javascript
 api: [{
   path: '/api/users',
   method: 'POST',
-  action: async (state, event) => {
-    // Get current data
-    const users = state.get('users') || [];
-    
-    // Add new user
-    const newUser = { id: Date.now(), ...event.body };
+  handler: async (ctx) => {
+    const users = ctx.state.get('users') || [];
+    const newUser = { id: Date.now(), ...(ctx.body || {}) };
     users.push(newUser);
-    
-    // Save back to state
-    state.set('users', users);
-    
-    return { success: true, user: newUser };
+    ctx.state.set('users', users);
+    return ctx.respond.json({ success: true, user: newUser }, 201);
   }
 }]
 ```
@@ -499,195 +494,214 @@ export default {
 };
 ```
 
+## Factories for api, routes, middleware, and hooks
+
+Clovie registers server HTTP layers through **factory definitions** from `@jucie.io/engine-server` (re-exported from the `clovie` package). At runtime the `Run` service builds one ordered list and calls `server.use(...)` with:
+
+1. **`hooks`** — `defineHooks(name, (useContext, opts) => hookObject)`
+2. **`middleware`** — `defineMiddleware(name, (useContext, opts) => middlewareFns)` or plain Express-style functions
+3. **`api`** — `defineRoutes` / `defineApi` (same function) plus raw route objects
+4. **Generated routes** — `views/` and your **`routes`** array (also normalized through `defineRoutes`)
+
+### Why factories matter
+
+- **`useContext`** — resolve engine services (`log`, `file`, etc.) when the server starts, not at module top level.
+- **Composition** — export `defineRoutes('billing', ...)` from `api/billing.js` and spread factories into `api: [...]`.
+- **Mixed config** — `api` (and other keys) accept **raw objects**, **arrays of routes**, **single factories**, or **arrays mixing both**; `normalizeToFactories` batches raw items and preserves real factories.
+
+### Imports
+
+```javascript
+import {
+  defineApi,          // alias of defineRoutes — useful for api: []
+  defineRoutes,
+  defineMiddleware,
+  defineHooks,
+} from 'clovie';
+```
+
+### Example: API split across modules
+
+```javascript
+import { defineRoutes } from 'clovie';
+
+export const catalogApi = defineRoutes('catalog', (useContext, opts) => [
+  {
+    method: 'GET',
+    path: '/items',
+    handler: (ctx) => ctx.respond.json({ items: [] }),
+  },
+]);
+
+export default {
+  type: 'server',
+  api: [
+    catalogApi,
+    {
+      method: 'GET',
+      path: '/api/health',
+      handler: (ctx) => ctx.respond.json({ ok: true }),
+    },
+  ],
+};
+```
+
+Use the same pattern for **`routes`** when SSR handlers need `useContext`, and for **`middleware`** / **`hooks`** with `defineMiddleware` / `defineHooks`.
+
 ## API Endpoints
 
-Server mode supports REST API endpoints with full Express.js functionality.
+Server mode registers REST-style endpoints as **engine-server routes** with a **`handler`** function. When Express middleware is configured, Clovie uses the Express adapter; otherwise it uses the faster native HTTP stack.
 
-### API Endpoint Structure
+### API route shape
 
 ```javascript
 {
-  path: '/api/users/:id',         // URL pattern
-  method: 'GET',                  // HTTP method
-  action: async (state, event) => ({}) // Handler function
+  path: '/api/users/:id',       // URL pattern (leading segments often include /api/…)
+  method: 'GET',               // HTTP verb
+  handler: async (ctx) => {    // Returns a response descriptor via ctx.respond.*
+    return ctx.respond.json({ id: ctx.params.id });
+  }
 }
 ```
 
-### API Handler Context
+### Handler context (`ctx`)
 
-The `action` function receives:
-- **`state`**: State management object with `get()` and `set()` methods
-- **`event`**: Request context object
+Typical fields (see also `lib/types/kernel.js`):
 
-Event object contains:
-```javascript
-{
-  params: {},    // URL parameters (/users/:id -> { id: '123' })
-  query: {},     // Query parameters (?search=term -> { search: 'term' })
-  body: {},      // Request body (JSON)
-  headers: {},   // Request headers
-  method: '',    // HTTP method
-  url: ''        // Full request URL
-}
-```
+- **`ctx.req`** — method, url, headers
+- **`ctx.params`**, **`ctx.query`**, **`ctx.body`** — parsed request pieces
+- **`ctx.state`** — reactive state (`get` / `set` where provided by the engine)
+- **`ctx.respond.json(data, status)`**, **`.html()`**, **`.text()`**, **`.file()`** — structured responses
 
-### Complete API Examples
+### Complete API examples (handlers + state)
 
 ```javascript
 export default {
   type: 'server',
-  
+
   api: [
-    // Get all users with filtering
     {
       path: '/api/users',
       method: 'GET',
-      action: async (state, event) => {
-        let users = state.get('users') || [];
-        
-        // Filter by query parameters
-        if (event.query.search) {
-          users = users.filter(u => 
-            u.name.toLowerCase().includes(event.query.search.toLowerCase())
-          );
+      handler: async (ctx) => {
+        let users = ctx.state.get('users') || [];
+
+        if (ctx.query.search) {
+          const q = String(ctx.query.search).toLowerCase();
+          users = users.filter((u) => u.name.toLowerCase().includes(q));
         }
-        
-        // Pagination
-        const page = parseInt(event.query.page) || 1;
-        const limit = parseInt(event.query.limit) || 10;
+
+        const page = parseInt(ctx.query.page, 10) || 1;
+        const limit = parseInt(ctx.query.limit, 10) || 10;
         const start = (page - 1) * limit;
-        const paginatedUsers = users.slice(start, start + limit);
-        
-        return {
-          users: paginatedUsers,
+        const slice = users.slice(start, start + limit);
+
+        return ctx.respond.json({
+          users: slice,
           pagination: {
             page,
             limit,
             total: users.length,
-            totalPages: Math.ceil(users.length / limit)
-          }
-        };
-      }
+            totalPages: Math.ceil(users.length / limit),
+          },
+        });
+      },
     },
-    
-    // Create new user with validation
+
     {
       path: '/api/users',
       method: 'POST',
-      action: async (state, event) => {
-        const { name, email, age } = event.body;
-        
-        // Validation
+      handler: async (ctx) => {
+        const { name, email, age } = ctx.body || {};
         const errors = [];
         if (!name || name.length < 2) errors.push('Name must be at least 2 characters');
         if (!email || !email.includes('@')) errors.push('Valid email required');
-        if (age && (age < 13 || age > 120)) errors.push('Age must be between 13 and 120');
-        
-        if (errors.length > 0) {
-          return { error: 'Validation failed', errors, status: 400 };
+        if (age != null && (age < 13 || age > 120)) errors.push('Age must be between 13 and 120');
+
+        if (errors.length) {
+          return ctx.respond.json({ error: 'Validation failed', errors }, 400);
         }
-        
-        // Check for duplicate email
-        const users = state.get('users') || [];
-        if (users.find(u => u.email === email)) {
-          return { error: 'Email already exists', status: 409 };
+
+        const users = ctx.state.get('users') || [];
+        if (users.find((u) => u.email === email)) {
+          return ctx.respond.json({ error: 'Email already exists' }, 409);
         }
-        
-        // Create user
+
         const newUser = {
           id: Date.now(),
           name,
           email,
-          age: age || null,
+          age: age ?? null,
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
-        
         users.push(newUser);
-        state.set('users', users);
-        
-        return { success: true, user: newUser, status: 201 };
-      }
+        ctx.state.set('users', users);
+
+        return ctx.respond.json({ success: true, user: newUser }, 201);
+      },
     },
-    
-    // Update user
+
     {
       path: '/api/users/:id',
       method: 'PUT',
-      action: async (state, event) => {
-        const userId = parseInt(event.params.id);
-        const users = state.get('users') || [];
-        const userIndex = users.findIndex(u => u.id === userId);
-        
+      handler: async (ctx) => {
+        const userId = parseInt(ctx.params.id, 10);
+        const users = ctx.state.get('users') || [];
+        const userIndex = users.findIndex((u) => u.id === userId);
         if (userIndex === -1) {
-          return { error: 'User not found', status: 404 };
+          return ctx.respond.json({ error: 'User not found' }, 404);
         }
-        
-        // Update user
         const updatedUser = {
           ...users[userIndex],
-          ...event.body,
-          updatedAt: new Date().toISOString()
+          ...(ctx.body || {}),
+          updatedAt: new Date().toISOString(),
         };
-        
         users[userIndex] = updatedUser;
-        state.set('users', users);
-        
-        return { success: true, user: updatedUser };
-      }
+        ctx.state.set('users', users);
+        return ctx.respond.json({ success: true, user: updatedUser });
+      },
     },
-    
-    // Delete user
+
     {
       path: '/api/users/:id',
       method: 'DELETE',
-      action: async (state, event) => {
-        const userId = parseInt(event.params.id);
-        const users = state.get('users') || [];
-        const userIndex = users.findIndex(u => u.id === userId);
-        
+      handler: async (ctx) => {
+        const userId = parseInt(ctx.params.id, 10);
+        const users = ctx.state.get('users') || [];
+        const userIndex = users.findIndex((u) => u.id === userId);
         if (userIndex === -1) {
-          return { error: 'User not found', status: 404 };
+          return ctx.respond.json({ error: 'User not found' }, 404);
         }
-        
-        const deletedUser = users.splice(userIndex, 1)[0];
-        state.set('users', users);
-        
-        return { success: true, user: deletedUser };
-      }
+        const [deletedUser] = users.splice(userIndex, 1);
+        ctx.state.set('users', users);
+        return ctx.respond.json({ success: true, user: deletedUser });
+      },
     },
-    
-    // File upload endpoint
+
     {
       path: '/api/upload',
       method: 'POST',
-      action: async (state, event) => {
-        // Assumes multer middleware is configured
-        const file = event.file;
-        
+      handler: async (ctx) => {
+        const file = ctx.body?.file;
         if (!file) {
-          return { error: 'No file uploaded', status: 400 };
+          return ctx.respond.json({ error: 'No file uploaded' }, 400);
         }
-        
-        // Process file (save metadata, move to permanent location, etc.)
         const fileRecord = {
           id: Date.now(),
           originalName: file.originalname,
           filename: file.filename,
           size: file.size,
           mimetype: file.mimetype,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
         };
-        
-        // Save file record
-        const files = state.get('files') || [];
+        const files = ctx.state.get('files') || [];
         files.push(fileRecord);
-        state.set('files', files);
-        
-        return { success: true, file: fileRecord };
-      }
-    }
-  ]
+        ctx.state.set('files', files);
+        return ctx.respond.json({ success: true, file: fileRecord });
+      },
+    },
+  ],
 };
 ```
 

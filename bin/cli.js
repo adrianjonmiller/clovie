@@ -15,6 +15,13 @@ const CLOVIE_VERSION = packageJson.version;
 // Local - import from compiled dist for published package
 import { createClovie } from "../lib/createClovie.js";
 import { killPort, checkPorts, killCommonPorts } from "../scripts/killPort.js";
+import { runSkillsCommand } from "../lib/cli/skillsCommand.js";
+
+// Bundled Cursor skill / agent docs (`clovie skills`, `clovie skills path`, …)
+if (process.argv[2] === 'skills') {
+  await runSkillsCommand(process.argv.slice(3));
+  process.exit(typeof process.exitCode === 'number' && process.exitCode !== 0 ? process.exitCode : 0);
+}
 
 // Check for kill command first (before any argument parsing)
 if (process.argv.includes('kill')) {
@@ -335,7 +342,7 @@ async function executeCommand(clovie, command, options) {
       
     default:
       console.error(`❌ Unknown command: ${command}`);
-      console.error('Available commands: build, serve, dev, watch');
+      console.error('Available commands: build, serve, dev, watch, skills');
       process.exit(1);
   }
 }
