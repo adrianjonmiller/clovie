@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
