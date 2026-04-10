@@ -17,7 +17,7 @@ Clovie is the "Hollow Knight of Web Dev" — simple but deep, easy to start but 
 
 ### Factories and server HTTP layers
 
-Server projects should treat **`api`**, **`routes`**, **`middleware`**, and **`hooks`** as factory-aware configuration: use **`defineRoutes`** / **`defineApi`** (same function), **`defineMiddleware`**, and **`defineHooks`** from `clovie` when handlers need `useContext` or when splitting endpoints across modules. Plain objects and arrays still work; Clovie normalizes mixed arrays before registering routes. See [Configuration — Factories](./configuration.md#factories-for-api-routes-middleware-and-hooks) and [API endpoints](./configuration.md#api-endpoints).
+Server projects should treat **`api`**, **`routes`**, **`middleware`**, and **`hooks`** as factory-aware configuration: use **`defineRoutes`** / **`defineApi`** (same function), **`defineMiddleware`**, and **`defineHooks`** from `clovie` when handlers need `useContext` or when splitting endpoints across modules. Plain objects and arrays still work; Clovie normalizes mixed arrays before registering routes. See [Configuration — Factories](./configuration/factories) and [API endpoints](./configuration/api-endpoints).
 
 ### AI assistants (Cursor and others)
 
@@ -35,7 +35,7 @@ The published `clovie` package includes **`.cursor/skills/clovie.mdc`**. Use **`
 
 ## Documentation map
 
-- **[Configuration reference](./configuration.md)** — full `clovie.config.js` guide
+- **[Configuration reference](./configuration)** — full `clovie.config.js` guide
 - **[Main README](https://github.com/adrianjonmiller/clovie/blob/main/README.md)** — repo overview, installation, project structure
 
 ## Quick start
