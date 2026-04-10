@@ -25,9 +25,74 @@
       <pre class="codeBlock-code padding--all-sm"><code>npm create clovie@latest</code></pre>
     </section>
 
+    <section class="features margin--top-xl">
+      <div class="feature margin--top-lg">
+        <h3 class="feature-title">Static or full server</h3>
+        <p>Start with a static site and graduate to a full Express-backed server without switching frameworks. Flip <code>type: 'static'</code> to <code>type: 'server'</code> and your templates, styles, and assets carry over. Add API endpoints, middleware, and server-side rendering when you need them — not before.</p>
+      </div>
+
+      <div class="feature margin--top-lg">
+        <h3 class="feature-title">Zero config, then grow</h3>
+        <p>Drop your views, scripts, and styles into conventional directories and Clovie auto-detects everything. No webpack config, no plugin maze. When you need control, <code>clovie.config.js</code> is a single flat object — readable in one screen.</p>
+      </div>
+
+      <div class="feature margin--top-lg">
+        <h3 class="feature-title">Template agnostic</h3>
+        <p>Bring your own engine — Handlebars, Nunjucks, Pug, Mustache, or a plain function. Pass a string name or a <code>(template, data) => html</code> callback and you're done. No lock-in.</p>
+      </div>
+
+      <div class="feature margin--top-lg">
+        <h3 class="feature-title">Data-driven pages</h3>
+        <p>Generate hundreds of pages from an array or an async API call at build time. Define a route with a <code>repeat</code> function and Clovie outputs one page per item — blog posts, product listings, category archives, whatever the data demands.</p>
+      </div>
+    </section>
+
+    <section class="advantages margin--top-xl">
+      <h2>Why Clovie?</h2>
+      <ul class="advantages-list margin--top-md">
+        <li><strong>Fast builds</strong> — esbuild-powered JS bundling and SCSS compilation with incremental caching.</li>
+        <li><strong>Live reload</strong> — WebSocket-based hot reload in development. No browser extension needed.</li>
+        <li><strong>Composable server layers</strong> — split APIs across modules with <code>defineRoutes</code> / <code>defineApi</code> factories and resolve services via <code>useContext</code>.</li>
+        <li><strong>Asset pipeline included</strong> — SCSS and JavaScript bundling out of the box. Minification, sitemap generation, and image optimization when you're ready to ship.</li>
+        <li><strong>AI-ready</strong> — ships a <code>.cursor/skills/clovie.mdc</code> file so AI coding assistants understand your project out of the box. Run <code>clovie skills</code> to set it up.</li>
+      </ul>
+    </section>
+
     <section class="margin--top-xl">
+      <h2>Get started</h2>
+
+      <div class="margin--top-md">
+        <h4>Static site</h4>
+        <pre class="codeBlock-code padding--all-sm margin--top-sm"><code>npx clovie create my-site
+cd my-site && npm install && npm run dev</code></pre>
+      </div>
+
+      <div class="margin--top-lg">
+        <h4>Full-stack app</h4>
+        <pre class="codeBlock-code padding--all-sm margin--top-sm"><code>npx clovie create my-app --template server
+cd my-app && npm install && npm run dev</code></pre>
+      </div>
+    </section>
+
+    <section class="margin--top-xl">
+      <h2>Minimal config</h2>
+      <p class="margin--top-sm">This is all you need to start a static site:</p>
+      <pre class="codeBlock-code padding--all-sm margin--top-sm"><code>// clovie.config.js
+export default {
+  data: {
+    title: 'My Site'
+  }
+};</code></pre>
+      <p class="margin--top-sm">Clovie auto-detects <code>views/</code>, <code>scripts/</code>, <code>styles/</code>, and <code>assets/</code>. Add keys to the config as your project grows.</p>
+    </section>
+
+    <section class="margin--top-xl margin--bottom-xl">
       <p>
         <a href="https://docs.clovie.dev" class="link-backToTop">Read the docs</a>
+        &nbsp;&nbsp;
+        <a href="https://github.com/adrianjonmiller/clovie" class="link-backToTop">GitHub</a>
+        &nbsp;&nbsp;
+        <a href="https://www.npmjs.com/package/clovie" class="link-backToTop">npm</a>
       </p>
     </section>
 

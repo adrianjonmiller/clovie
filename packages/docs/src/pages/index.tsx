@@ -17,6 +17,10 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className={styles.heroDescription}>
+          A Node.js framework for static sites and full-stack apps. One config
+          file. Zero ceremony.
+        </p>
         <div className={styles.buttons}>
           <Link className="button button--secondary button--lg" to="/docs/">
             Read the docs

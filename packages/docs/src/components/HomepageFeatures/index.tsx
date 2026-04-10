@@ -1,54 +1,86 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
     title: 'Static or full server',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Generate static sites or run a Node HTTP server with APIs, SSR, and optional
-        Express middleware — one config, two modes.
+        Start with a static site and graduate to a full Express-backed server
+        without switching frameworks. Flip <code>type: 'static'</code> to{' '}
+        <code>type: 'server'</code> and your templates, styles, and assets carry
+        over. Add API endpoints, middleware, and SSR when you need them — not
+        before.
       </>
     ),
   },
   {
-    title: 'Factories for APIs & routes',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Zero config, then grow',
     description: (
       <>
-        Compose <code>api</code>, <code>routes</code>, <code>middleware</code>, and{' '}
-        <code>hooks</code> with <code>defineRoutes</code> / <code>defineApi</code> when you
-        need <code>useContext</code> or modular endpoints.
+        Drop your views, scripts, and styles into conventional directories and
+        Clovie auto-detects everything. No webpack config, no plugin maze. When
+        you need control, <code>clovie.config.js</code> is a single flat
+        object — readable in one screen.
       </>
     ),
   },
   {
-    title: 'Sensible defaults',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Template agnostic',
     description: (
       <>
-        Auto-detect views, scripts, styles, and assets; esbuild and SCSS pipeline;
-        live reload in dev. Start from zero config and grow into a full app.
+        Bring your own engine — Handlebars, Nunjucks, Pug, Mustache, or a plain
+        function. Pass a string name or a{' '}
+        <code>(template, data) =&gt; html</code> callback. No lock-in.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+type AdvantageItem = {
+  label: string;
+  detail: string;
+};
+
+const AdvantageList: AdvantageItem[] = [
+  {
+    label: 'Fast builds',
+    detail:
+      'esbuild-powered JS bundling and SCSS compilation with incremental caching',
+  },
+  {
+    label: 'Live reload',
+    detail:
+      'WebSocket-based hot reload in development, no browser extension needed',
+  },
+  {
+    label: 'Data-driven pages',
+    detail:
+      'Generate pages from arrays or async API calls at build time',
+  },
+  {
+    label: 'Composable server layers',
+    detail:
+      'Split APIs across modules with defineRoutes / defineApi factories',
+  },
+  {
+    label: 'AI-ready',
+    detail:
+      'Ships a .cursor/skills/clovie.mdc file so AI assistants understand your project out of the box',
+  },
+];
+
+function Feature({title, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
@@ -59,14 +91,64 @@ function Feature({title, Svg, description}: FeatureItem) {
 
 export default function HomepageFeatures(): ReactNode {
   return (
-    <section className={styles.features}>
-      <div className="container">
-        <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
-          ))}
+    <>
+      <section className={styles.features}>
+        <div className="container">
+          <div className="row">
+            {FeatureList.map((props, idx) => (
+              <Feature key={idx} {...props} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className={styles.advantages}>
+        <div className="container">
+          <Heading as="h2" className="text--center margin-bottom--lg">
+            Why Clovie?
+          </Heading>
+          <ul className={styles.advantageList}>
+            {AdvantageList.map(({label, detail}) => (
+              <li key={label}>
+                <strong>{label}</strong> — {detail}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className={styles.getStarted}>
+        <div className="container">
+          <Heading as="h2" className="text--center margin-bottom--lg">
+            Get started
+          </Heading>
+          <div className={styles.codeColumns}>
+            <div className={styles.codeBlock}>
+              <Heading as="h4">Static site</Heading>
+              <pre>
+                <code>
+                  {`npx clovie create my-site\ncd my-site && npm install && npm run dev`}
+                </code>
+              </pre>
+            </div>
+            <div className={styles.codeBlock}>
+              <Heading as="h4">Full-stack app</Heading>
+              <pre>
+                <code>
+                  {`npx clovie create my-app --template server\ncd my-app && npm install && npm run dev`}
+                </code>
+              </pre>
+            </div>
+          </div>
+          <div className="text--center margin-top--lg">
+            <Link
+              className="button button--primary button--lg"
+              to="/docs/">
+              Read the docs
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

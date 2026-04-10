@@ -5,7 +5,38 @@
   width: 100%;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.advantages {
+  padding: 3rem 0;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.advantageList {
+  max-width: 640px;
+  margin: 0 auto;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.getStarted {
+  padding: 3rem 0 4rem;
+}
+
+.codeColumns {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.codeBlock {
+  flex: 1 1 320px;
+  max-width: 460px;
+}
+
+.codeBlock pre {
+  border-radius: var(--ifm-code-border-radius);
+  padding: 1rem;
 }

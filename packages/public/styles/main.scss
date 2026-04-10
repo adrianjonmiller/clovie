@@ -145,6 +145,44 @@ pre {
   }
 }
 
+.feature {
+  &-title {
+    font-family: "Monorama";
+    letter-spacing: -0.03em;
+  }
+
+  code {
+    background: #f0f0f0;
+    padding: 0.1em 0.3em;
+    font-size: 0.9em;
+  }
+}
+
+.advantages {
+  &-list {
+    padding-left: 1.25rem;
+    list-style: none;
+
+    li {
+      position: relative;
+      padding-left: 0;
+      margin-bottom: 0.5rem;
+
+      &::before {
+        content: "—";
+        position: absolute;
+        left: -1.25rem;
+      }
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 0.1em 0.3em;
+      font-size: 0.9em;
+    }
+  }
+}
+
 .commentBlock {
   border: 1px solid black;
   border-left: 2rem solid black;

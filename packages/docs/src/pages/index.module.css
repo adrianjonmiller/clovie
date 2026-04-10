@@ -16,6 +16,13 @@
   }
 }
 
+.heroDescription {
+  font-size: 1.15rem;
+  opacity: 0.9;
+  max-width: 480px;
+  margin: 0 auto var(--ifm-spacing-vertical);
+}
+
 .buttons {
   display: flex;
   flex-wrap: wrap;
