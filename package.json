@@ -50,6 +50,7 @@
     "scripts/**/*",
     "config/**/*",
     "templates/**/*",
+    ".cursor/skills/**/*",
     "README.md",
     "LICENSE"
   ],

@@ -70,6 +70,20 @@ describe('CLI', () => {
     expect(result.stderr).toContain('Please provide a project name');
   });
 
+  it('should print bundled skill path for `clovie skills path`', async () => {
+    const result = await runCli(['skills', 'path']);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout.trim()).toMatch(/clovie\.mdc$/);
+    expect(result.stdout).toContain('.cursor');
+  });
+
+  it('should include skill content for `clovie skills show`', async () => {
+    const result = await runCli(['skills', 'show']);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('defineRoutes');
+    expect(result.stdout).toContain('Factories');
+  });
+
   it('should show error when project directory already exists', async () => {
     // Create a directory first
     fs.mkdirSync(path.join(process.cwd(), 'existing-project'), { recursive: true });

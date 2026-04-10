@@ -30,6 +30,7 @@
       <li><a href="#minimal-config" class="link-pageContents js--navLink reset" data-content="Minimal Configuration">Minimal Configuration</a></li>
       <li><a href="#full-config" class="link-pageContents js--navLink reset" data-content="Full Configuration">Full Configuration</a></li>
       <li><a href="#advanced" class="link-pageContents js--navLink reset" data-content="Advanced Features">Advanced Features</a></li>
+      <li><a href="#route-factories" class="link-pageContents js--navLink reset" data-content="Route factories">Route factories (api &amp; SSR)</a></li>
       <li><a href="#api-routes" class="link-pageContents js--navLink reset" data-content="API Routes">API Routes</a></li>
       <li><a href="#system-routes" class="link-pageContents js--navLink reset" data-content="System Routes">System Routes</a></li>
       <li><a href="#server-adapters" class="link-pageContents js--navLink reset" data-content="Server Adapters">Server Adapters</a></li>
@@ -394,6 +395,11 @@
 
     <section class="margin--top-md margin--top-xl">
       <h2 id="advanced">Advanced Features</h2>
+
+      <h3 id="route-factories" class="margin--top-md">Route factories (<code>api</code>, <code>routes</code>, middleware, hooks)</h3>
+      <p>In server mode, Clovie registers HTTP layers through <strong>factory definitions</strong> from <code>@jucie.io/engine-server</code> (import <code>defineRoutes</code>, <code>defineApi</code>, <code>defineMiddleware</code>, and <code>defineHooks</code> from <code>clovie</code>). Order of registration: <strong>hooks → middleware → <code>api</code> → view routes and your <code>routes</code> array</strong>.</p>
+      <p>You can pass plain route objects or factories; factories receive <code>(useContext, opts)</code> so handlers can resolve engine services when the server starts. <code>api</code> and <code>routes</code> accept raw arrays, single factories, or <strong>mixed arrays</strong> of both. See the <a href="https://github.com/adrianjonmiller/clovie/blob/main/docs/CONFIGURATION.md#factories-for-api-routes-middleware-and-hooks">configuration guide</a> for full detail.</p>
+      <p>For Cursor and other AI tools, the npm package ships <code>.cursor/skills/clovie.mdc</code>. Run <code class="codeBlock-code-copy js--copyCode">clovie skills path</code> to locate it, or <code class="codeBlock-code-copy js--copyCode">clovie skills show</code> to print it for your project’s <code>.cursor/skills/</code> folder.</p>
 
       <h3 id="api-routes" class="margin--top-md">API Routes (Server Mode)</h3>
       <p>API routes return JSON data and are perfect for building REST APIs. They're separate from template routes and don't render HTML.</p>

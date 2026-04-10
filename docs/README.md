@@ -8,6 +8,14 @@ Welcome to the official documentation for Clovie - a powerful Node.js framework 
 
 Clovie is the "Hollow Knight of Web Dev" - simple but deep, easy to start but room to grow. It combines the best of static site generation with full-stack web application capabilities, all through a service-oriented architecture built on @jucie.io/engine.
 
+### Factories and server HTTP layers
+
+Server projects should treat **`api`**, **`routes`**, **`middleware`**, and **`hooks`** as factory-aware configuration: use **`defineRoutes`** / **`defineApi`** (same function), **`defineMiddleware`**, and **`defineHooks`** from `clovie` when handlers need `useContext` or when splitting endpoints across modules. Plain objects and arrays still work; Clovie normalizes mixed arrays before registering routes. Full detail: [Configuration guide — Factories](./CONFIGURATION.md#factories-for-api-routes-middleware-and-hooks) and [API Endpoints](./CONFIGURATION.md#api-endpoints).
+
+### AI assistants (Cursor and others)
+
+The published `clovie` package includes **`.cursor/skills/clovie.mdc`**. Use **`clovie skills`** for usage, **`clovie skills path`** to locate the file inside `node_modules`, or **`clovie skills show`** to print it for copying into your project’s `.cursor/skills/`.
+
 ### Key Features
 
 - **🎯 Dual Mode**: Static site generation OR full Express server applications
