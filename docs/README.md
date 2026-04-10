@@ -2,6 +2,8 @@
 
 > **Vintage web dev tooling with modern quality of life**
 
+The **published documentation site** is built with [Docusaurus](https://docusaurus.io/) in [`website/`](../website/). Run `npm run website:dev` from the repo root. This folder still contains the markdown source **`CONFIGURATION.md`** (copied into `website/docs/configuration.md` when updating the site) and a **legacy** Clovie static build (`clovie.config.js`, `views/`).
+
 Welcome to the official documentation for Clovie - a powerful Node.js framework that bridges the gap between simple static sites and complex web applications.
 
 ## 🚀 What is Clovie?

@@ -4,6 +4,17 @@
 
 A powerful Node.js-based **static site generator** and **full-stack web framework** that bridges the gap between simple static sites and complex web applications. Built on the **@jucie.io/engine** service architecture for maximum flexibility and maintainability.
 
+## 📚 Documentation site
+
+The docs website uses **Docusaurus** in [`website/`](website/). From the repo root:
+
+```bash
+npm run website:dev    # http://localhost:3000
+npm run website:build  # output in website/build/
+```
+
+Authoritative markdown for the long-form guide remains [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md); keep [`website/docs/configuration.md`](website/docs/configuration.md) in sync (or add a copy script). The older Clovie-built docs under [`docs/`](docs/) (`clovie.config.js`, `views/`) are optional legacy.
+
 ## 🚀 Quick Start
 
 ```bash
