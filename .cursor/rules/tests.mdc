@@ -1,0 +1,54 @@
+---
+description: Testing conventions for the Clovie test suite.
+globs: __tests__/**
+---
+
+# Clovie Tests
+
+Uses Vitest with `globals: true` and `environment: 'node'`.
+
+## File naming
+
+- Test files: `__tests__/*.test.js`
+- Fixture configs: `__tests__/clovie.<area>.config.js` (e.g. `clovie.middleware.config.js`)
+
+Only `*.test.js` files are picked up by the runner. Fixture configs are imported by tests via `optsPath`.
+
+## Integration test pattern
+
+```javascript
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { createClovie } from '../lib/createClovie.js';
+import path from 'path';
+
+const pause = async (ms = 10) => new Promise(resolve => setTimeout(resolve, ms));
+
+describe('Feature', () => {
+  let clovie = null;
+
+  beforeEach(async () => {
+    clovie = await createClovie({
+      optsPath: path.resolve(process.cwd(), '__tests__', 'clovie.config.js'),
+      mode: 'production',
+      open: false,
+    });
+    await pause(50);
+  });
+
+  afterEach(async () => {
+    if (clovie?.server?.isRunning()) {
+      await clovie.server.stop();
+    }
+    clovie = null;
+  });
+});
+```
+
+## Key rules
+
+- Always stop servers in `afterEach` — check `clovie?.server?.isRunning()` before calling `.stop()`.
+- Use `port: 0` for dynamic port allocation in HTTP tests to avoid conflicts.
+- Use the `pause(ms)` helper after `createClovie` to allow async initialization to settle.
+- Use `globalThis.__test_*` flags sparingly for verifying hook/middleware execution order.
+- CLI tests spawn `node bin/cli.js` via `child_process.spawn` with a `runCli` helper; assert on stdout/stderr and exit codes.
+- Test timeout is 10 seconds (`testTimeout: 10000` in vitest config).

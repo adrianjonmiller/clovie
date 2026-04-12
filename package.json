@@ -51,6 +51,7 @@
     "config/**/*",
     "templates/**/*",
     ".cursor/skills/**/*",
+    "AGENTS.md",
     "README.md",
     "LICENSE"
   ],

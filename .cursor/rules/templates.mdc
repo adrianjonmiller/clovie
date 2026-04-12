@@ -1,0 +1,33 @@
+---
+description: Conventions for Clovie project templates used by `clovie create`.
+globs: templates/**
+---
+
+# Clovie Templates
+
+Templates are copied verbatim by `clovie create` from `templates/<type>/` into the new project directory.
+
+## Variants
+
+- **`static/`** — static site generator template. `clovie` listed as `devDependency`.
+- **`server/`** — server application template. `clovie` listed as `dependency` with `"main": "server.js"`.
+
+## Placeholder substitution
+
+Two placeholders are replaced at copy time in all file contents:
+
+- `{{projectName}}` — the project name passed to `clovie create`
+- `{{clovieVersion}}` — current version from the root `package.json`
+
+Never remove or rename these placeholders. When adding new template files, include them where appropriate.
+
+## AI Development Guides
+
+Each template includes an `AI_DEVELOPMENT_GUIDE.md` aimed at agents working in **scaffolded projects** (end users), not at contributors to this repo. Keep these guides focused on Clovie usage patterns, not internals.
+
+## Conventions
+
+- Keep templates minimal and representative of best practices for each mode.
+- Static template: Nunjucks rendering, global `data` + `nav`, commented route examples.
+- Server template: `api` array with sample endpoints, SSR `routes` with async `data`, port 3000.
+- Both templates include: `views/`, `partials/`, `styles/main.scss`, `scripts/`, `README.md`, `.gitignore`.

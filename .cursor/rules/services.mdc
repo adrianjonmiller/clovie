@@ -1,0 +1,69 @@
+---
+description: Conventions for Clovie service providers under lib/services/.
+globs: lib/services/**/*.js
+---
+
+# Clovie Services
+
+Services extend `ServiceProvider` from `@jucie.io/engine`.
+
+## Manifest
+
+Every service must declare `static manifest` with:
+
+- `name` — human-readable label
+- `namespace` — camelCase identifier; becomes the engine accessor (`clovie.<namespace>`)
+- `version` — semver string
+- `dependencies` — array of `ServiceProvider` classes that must be installed first (optional)
+
+```javascript
+static manifest = {
+  name: 'Clovie Compile',
+  namespace: 'compile',
+  version: '1.0.0',
+  dependencies: [FileCache, File]
+};
+```
+
+## Lifecycle
+
+- **`initialize(_, config)`** — optional async setup, runs once during install. Use `config` for values passed via `ServiceClass.configure({ ... })`.
+- **`getters()`** — optional, returns `{ prop: () => value }` for reactive read-only properties on the engine.
+- **`actions(useContext)`** — required, returns a plain object of methods that become the service's public API.
+
+## useContext patterns
+
+Resolve sibling services at action-construction time (preferred):
+
+```javascript
+actions(useContext) {
+  const [file, log] = useContext('file', 'log');
+  return { /* methods using file and log */ };
+}
+```
+
+Whole-context destructuring:
+
+```javascript
+actions(useContext) {
+  const { cache } = useContext();
+  return { /* methods using cache */ };
+}
+```
+
+Late-bound resolution inside async methods for services that might not be installed yet:
+
+```javascript
+async #doWork() {
+  const esBuild = this.useContext('esBuild');
+  if (!esBuild) return;
+  await esBuild.build();
+}
+```
+
+## Conventions
+
+- Use `#private` fields and `#privateMethods` for all internal state and I/O.
+- Guard optional dependencies: check if `useContext('optional')` returns a value before using it.
+- Use `relay?.broadcast(event)` for cross-service event communication.
+- Canonical examples: `Compile.js` (dependencies, late-bound useContext) and `Configurator.js` (initialize, getters, config watching).

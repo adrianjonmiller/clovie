@@ -1,0 +1,43 @@
+---
+description: Conventions for the Clovie CLI entry point.
+globs: bin/**
+---
+
+# Clovie CLI
+
+`bin/cli.js` is the single CLI entry point. ESM module (`#!/usr/bin/env node`).
+
+## Command branching order
+
+Commands are checked in this specific order before `command-line-args` parsing:
+
+1. **`skills`** — delegates to `lib/cli/skillsCommand.js`, then `process.exit`.
+2. **`kill`** — parses `--port`, `--common`, `--check`, `--verbose`; uses `scripts/killPort.js`.
+3. **`create`** — copies `templates/<type>/`, substitutes `{{projectName}}` and `{{clovieVersion}}`.
+4. **Main flow** — `command-line-args` parses `command`, `--config`, `--watch`, `--template`.
+
+New commands should be inserted in this branching chain with care; `skills`, `kill`, and `create` all exit before the main `command-line-args` flow runs.
+
+## Main commands
+
+| Command | Mode | Behavior |
+|---------|------|----------|
+| `build` | production | `clovie.run.build()` then `process.exit(0)` |
+| `serve` | production | `clovie.run.serve()`, stays alive with graceful shutdown |
+| `dev` / `watch` | development | `clovie.run.dev()`, stays alive with graceful shutdown |
+
+## Legacy aliases
+
+- `watch` -> `dev`
+- `server` -> `serve`
+
+## Config resolution
+
+1. Dynamic `import(optsPath)` of the user's config (default: `clovie.config.js` in cwd).
+2. On `ERR_MODULE_NOT_FOUND`, falls back to `config/clovie.config.js` from the package.
+
+## Conventions
+
+- Read `package.json` version via `readFileSync` at startup for `CLOVIE_VERSION`.
+- Graceful shutdown: listen for `SIGINT`, `SIGTERM`, `SIGQUIT` with `process.once`; stop server if running; 5-second force-exit timeout.
+- When adding CLI output, use emoji prefixes consistent with existing commands.
