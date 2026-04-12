@@ -73,7 +73,7 @@ function showPublishInfo() {
 
 function buildDocs() {
   console.log('\n📚 Building documentation (Docusaurus)...');
-  run('npm run website:build');
+  run('npm run docs:build');
 }
 
 function main() {
