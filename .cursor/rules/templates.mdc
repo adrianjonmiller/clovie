@@ -21,9 +21,9 @@ Two placeholders are replaced at copy time in all file contents:
 
 Never remove or rename these placeholders. When adding new template files, include them where appropriate.
 
-## AI Development Guides
+## AGENTS.md
 
-Each template includes an `AI_DEVELOPMENT_GUIDE.md` aimed at agents working in **scaffolded projects** (end users), not at contributors to this repo. Keep these guides focused on Clovie usage patterns, not internals.
+Each template includes an `AGENTS.md` (the cross-tool convention) aimed at agents working in **scaffolded projects** (end users), not at contributors to this repo. Keep these slim — project structure, mode-specific concepts, commands, and a pointer to `node_modules/clovie/AGENTS.md` for the full reference. Do not duplicate API docs that ship with the package.
 
 ## Conventions
 
