@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createClovie } from '../lib/createClovie.js';
 import { transformConfig } from '../lib/utils/transformConfig.js';
-import { normalizeToFactories } from '../lib/utils/normalizeToFactories.js';
+import { normalizeToFactories, normalizeRoutesToFactories } from '../lib/utils/normalizeToFactories.js';
 import { defineRoutes } from '../lib/factories/routes.js';
 import { defineHooks } from '../lib/factories/hooks.js';
 import { defineMiddleware } from '../lib/factories/middleware.js';
@@ -260,6 +260,103 @@ describe('normalizeToFactories', () => {
     const result = normalizeToFactories(mixed, defineRoutes);
     expect(result).toHaveLength(3);
     expect(result[1]).toBe(factory);
+  });
+});
+
+describe('normalizeRoutesToFactories', () => {
+  const mockOpts = { data: {}, renderEngine: { render: (t, d) => t } };
+  const mockServices = {
+    file: { read: () => '<h1>test</h1>' },
+    liveReload: null,
+  };
+
+  it('should return empty array for null/undefined', () => {
+    expect(normalizeRoutesToFactories(null, defineRoutes, mockOpts, mockServices)).toEqual([]);
+    expect(normalizeRoutesToFactories(undefined, defineRoutes, mockOpts, mockServices)).toEqual([]);
+  });
+
+  it('should wrap a single raw route config', () => {
+    const result = normalizeRoutesToFactories(
+      { path: '/test', template: 'test.html', data: () => ({}) },
+      defineRoutes,
+      mockOpts,
+      mockServices,
+    );
+    expect(result).toHaveLength(1);
+  });
+
+  it('should pass through a single factory as-is', () => {
+    const factory = defineRoutes('test', () => [
+      { method: 'GET', path: '/a', handler: () => {} },
+    ]);
+    const result = normalizeRoutesToFactories(factory, defineRoutes, mockOpts, mockServices);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(factory);
+  });
+
+  it('should handle intermixed raw route configs and factories', () => {
+    const factory = defineRoutes('custom', () => [
+      { method: 'GET', path: '/from-factory', handler: () => {} },
+    ]);
+    const mixed = [
+      { path: '/page-a', template: 'a.html', data: () => ({}) },
+      factory,
+      { path: '/page-b', template: 'b.html', data: () => ({}) },
+    ];
+    const result = normalizeRoutesToFactories(mixed, defineRoutes, mockOpts, mockServices);
+    expect(result).toHaveLength(3);
+    expect(result[1]).toBe(factory);
+  });
+
+  it('should batch consecutive raw items into a single factory', () => {
+    const mixed = [
+      { path: '/a', template: 'a.html', data: () => ({}) },
+      { path: '/b', template: 'b.html', data: () => ({}) },
+    ];
+    const result = normalizeRoutesToFactories(mixed, defineRoutes, mockOpts, mockServices);
+    expect(result).toHaveLength(1);
+  });
+});
+
+describe('Route Factory Integration', () => {
+  let clovie = null;
+
+  afterEach(async () => {
+    if (clovie?.server?.isRunning()) {
+      await clovie.server.stop();
+    }
+    clovie = null;
+  });
+
+  it('should serve intermixed raw routes and factory routes', async () => {
+    clovie = await createClovie({
+      optsPath: path.resolve(process.cwd(), '__tests__', 'clovie.routes-factories.config.js'),
+    });
+    await pause(50);
+
+    const opts = clovie.configurator.opts;
+    const services = { file: clovie.file, liveReload: clovie.liveReload };
+
+    const routeFactories = normalizeRoutesToFactories(opts.routes, defineRoutes, opts, services);
+    clovie.server.use(...routeFactories);
+    await clovie.server.listen({ ...opts, port: 0, open: false });
+
+    const address = clovie.server.getHttpServer().address();
+    const base = `http://localhost:${address.port}`;
+
+    const templateRes = await fetch(`${base}/test-page`);
+    expect(templateRes.ok).toBe(true);
+    const html = await templateRes.text();
+    expect(html).toContain('Test Page');
+
+    const factoryRes = await fetch(`${base}/from-route-factory`);
+    expect(factoryRes.ok).toBe(true);
+    expect((await factoryRes.json()).source).toBe('route-factory');
+
+    const anotherRes = await fetch(`${base}/another-page`);
+    expect(anotherRes.ok).toBe(true);
+    const anotherHtml = await anotherRes.text();
+    expect(anotherHtml).toContain('Another Page');
   });
 });
 
