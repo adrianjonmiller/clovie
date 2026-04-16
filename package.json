@@ -57,6 +57,7 @@
   ],
   "scripts": {
     "dev": "node ./bin/cli.js watch --config ./__dev__/clovie.config.js",
+    "build:dev": "node ./bin/cli.js build --config ./__dev__/clovie.config.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
