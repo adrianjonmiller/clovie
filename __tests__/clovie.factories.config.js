@@ -1,7 +1,7 @@
-import { defineRoutes } from '../lib/factories/routes.js';
+import { defineApi } from '../lib/factories/api.js';
 import { defineHooks } from '../lib/factories/hooks.js';
 
-const factoryApis = defineRoutes('api', (useContext, opts) => [
+const factoryApis = defineApi('api', (useContext, opts) => [
   {
     method: 'GET',
     path: '/from-factory',
@@ -9,7 +9,7 @@ const factoryApis = defineRoutes('api', (useContext, opts) => [
   },
 ]);
 
-const extraApis = defineRoutes('api', (useContext, opts) => [
+const extraApis = defineApi('api', (useContext, opts) => [
   {
     method: 'GET',
     path: '/from-extra-factory',

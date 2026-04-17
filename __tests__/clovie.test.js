@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createClovie } from '../lib/createClovie.js';
 import { transformConfig } from '../lib/utils/transformConfig.js';
-import { normalizeToFactories, normalizeRoutesToFactories } from '../lib/utils/normalizeToFactories.js';
-import { defineRoutes } from '../lib/factories/routes.js';
+import { normalizeToFactories } from '../lib/utils/normalizeToFactories.js';
+import { resolveRoutes } from '../lib/utils/viewsToRoutes.js';
+import { defineRoutes as defineServerRoutes } from '@jucie.io/engine-server';
 import { defineHooks } from '../lib/factories/hooks.js';
 import { defineMiddleware } from '../lib/factories/middleware.js';
 import path from 'path';
@@ -132,7 +133,20 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
-    const factories = normalizeToFactories(opts.api, defineRoutes);
+
+    // Verify defineApi factories were resolved into plain route objects
+    expect(Array.isArray(opts.api)).toBe(true);
+    expect(opts.api.length).toBe(3);
+    expect(opts.api.every(r => typeof r === 'object' && typeof r.handler === 'function')).toBe(true);
+
+    // Verify factory name was prepended to paths
+    const paths = opts.api.map(r => r.path);
+    expect(paths).toContain('/api/raw');
+    expect(paths).toContain('/api/from-factory');
+    expect(paths).toContain('/api/from-extra-factory');
+
+    // Verify they work when registered with the server
+    const factories = normalizeToFactories(opts.api, defineServerRoutes);
     clovie.server.use(...factories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
 
@@ -159,12 +173,16 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
-    const { defineApi } = await import('../lib/factories/api.js');
-    const singleFactory = defineApi('api', () => [
-      { method: 'GET', path: '/single', handler: (ctx) => ctx.respond.json({ source: 'single' }) },
-    ]);
 
-    const factories = normalizeToFactories(singleFactory, defineRoutes);
+    // Verify all api entries are resolved plain objects (none are functions)
+    expect(opts.api.every(r => typeof r !== 'function')).toBe(true);
+
+    // Register additional plain routes alongside resolved opts
+    const singleRoutes = [
+      { method: 'GET', path: '/api/single', handler: (ctx) => ctx.respond.json({ source: 'single' }) },
+    ];
+
+    const factories = normalizeToFactories([...opts.api, ...singleRoutes], defineServerRoutes);
     clovie.server.use(...factories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
 
@@ -182,7 +200,7 @@ describe('Factory Resolution', () => {
 
     const opts = clovie.configurator.opts;
     const hookFactories = normalizeToFactories(opts.hooks, defineHooks);
-    const apiFactories = normalizeToFactories(opts.api, defineRoutes);
+    const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
     clovie.server.use(...hookFactories, ...apiFactories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
 
@@ -206,7 +224,7 @@ describe('Factory Resolution', () => {
     const hookFactories = normalizeToFactories({
       onRequest: () => { globalThis.__test_raw_hook_called = true; },
     }, defineHooks);
-    const apiFactories = normalizeToFactories(opts.api, defineRoutes);
+    const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
     clovie.server.use(...hookFactories, ...apiFactories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
 
@@ -220,8 +238,8 @@ describe('Factory Resolution', () => {
 
 describe('normalizeToFactories', () => {
   it('should return empty array for null/undefined', () => {
-    expect(normalizeToFactories(null, defineRoutes)).toEqual([]);
-    expect(normalizeToFactories(undefined, defineRoutes)).toEqual([]);
+    expect(normalizeToFactories(null, defineServerRoutes)).toEqual([]);
+    expect(normalizeToFactories(undefined, defineServerRoutes)).toEqual([]);
   });
 
   it('should wrap a raw object with the factory function', () => {
@@ -235,21 +253,21 @@ describe('normalizeToFactories', () => {
       { method: 'GET', path: '/a', handler: () => {} },
       { method: 'GET', path: '/b', handler: () => {} },
     ];
-    const result = normalizeToFactories(rawRoutes, defineRoutes);
+    const result = normalizeToFactories(rawRoutes, defineServerRoutes);
     expect(result).toHaveLength(1);
   });
 
   it('should pass through a single factory as-is', () => {
-    const factory = defineRoutes('test', () => [
+    const factory = defineServerRoutes('test', () => [
       { method: 'GET', path: '/a', handler: () => {} },
     ]);
-    const result = normalizeToFactories(factory, defineRoutes);
+    const result = normalizeToFactories(factory, defineServerRoutes);
     expect(result).toHaveLength(1);
     expect(result[0]).toBe(factory);
   });
 
   it('should handle intermixed raw items and factories', () => {
-    const factory = defineRoutes('test', () => [
+    const factory = defineServerRoutes('test', () => [
       { method: 'GET', path: '/b', handler: () => {} },
     ]);
     const mixed = [
@@ -257,64 +275,76 @@ describe('normalizeToFactories', () => {
       factory,
       { method: 'GET', path: '/c', handler: () => {} },
     ];
-    const result = normalizeToFactories(mixed, defineRoutes);
+    const result = normalizeToFactories(mixed, defineServerRoutes);
     expect(result).toHaveLength(3);
     expect(result[1]).toBe(factory);
   });
 });
 
-describe('normalizeRoutesToFactories', () => {
-  const mockOpts = { data: {}, renderEngine: { render: (t, d) => t } };
-  const mockServices = {
-    file: { read: () => '<h1>test</h1>' },
-    liveReload: null,
-  };
-
+describe('resolveRoutes', () => {
   it('should return empty array for null/undefined', () => {
-    expect(normalizeRoutesToFactories(null, defineRoutes, mockOpts, mockServices)).toEqual([]);
-    expect(normalizeRoutesToFactories(undefined, defineRoutes, mockOpts, mockServices)).toEqual([]);
+    expect(resolveRoutes(null)).toEqual([]);
+    expect(resolveRoutes(undefined)).toEqual([]);
   });
 
-  it('should wrap a single raw route config', () => {
-    const result = normalizeRoutesToFactories(
-      { path: '/test', template: 'test.html', data: () => ({}) },
-      defineRoutes,
-      mockOpts,
-      mockServices,
-    );
-    expect(result).toHaveLength(1);
-  });
-
-  it('should pass through a single factory as-is', () => {
-    const factory = defineRoutes('test', () => [
-      { method: 'GET', path: '/a', handler: () => {} },
-    ]);
-    const result = normalizeRoutesToFactories(factory, defineRoutes, mockOpts, mockServices);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(factory);
-  });
-
-  it('should handle intermixed raw route configs and factories', () => {
-    const factory = defineRoutes('custom', () => [
-      { method: 'GET', path: '/from-factory', handler: () => {} },
-    ]);
-    const mixed = [
-      { path: '/page-a', template: 'a.html', data: () => ({}) },
-      factory,
-      { path: '/page-b', template: 'b.html', data: () => ({}) },
-    ];
-    const result = normalizeRoutesToFactories(mixed, defineRoutes, mockOpts, mockServices);
-    expect(result).toHaveLength(3);
-    expect(result[1]).toBe(factory);
-  });
-
-  it('should batch consecutive raw items into a single factory', () => {
-    const mixed = [
+  it('should pass through plain route configs as-is', () => {
+    const routes = [
       { path: '/a', template: 'a.html', data: () => ({}) },
       { path: '/b', template: 'b.html', data: () => ({}) },
     ];
-    const result = normalizeRoutesToFactories(mixed, defineRoutes, mockOpts, mockServices);
+    const result = resolveRoutes(routes);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(routes[0]);
+    expect(result[1]).toBe(routes[1]);
+  });
+
+  it('should call functions and flatten their return values', () => {
+    const routes = [
+      () => [
+        { path: '/a', template: 'a.html' },
+        { path: '/b', template: 'b.html' },
+      ],
+    ];
+    const result = resolveRoutes(routes);
+    expect(result).toHaveLength(2);
+    expect(result[0].path).toBe('/a');
+    expect(result[1].path).toBe('/b');
+  });
+
+  it('should handle a function returning a single object', () => {
+    const routes = [
+      () => ({ path: '/single', template: 'single.html' }),
+    ];
+    const result = resolveRoutes(routes);
     expect(result).toHaveLength(1);
+    expect(result[0].path).toBe('/single');
+  });
+
+  it('should handle intermixed plain configs and functions', () => {
+    const routes = [
+      { path: '/raw-a', template: 'a.html' },
+      () => [{ path: '/fn-b', template: 'b.html' }],
+      { path: '/raw-c', template: 'c.html' },
+    ];
+    const result = resolveRoutes(routes);
+    expect(result).toHaveLength(3);
+    expect(result.map(r => r.path)).toEqual(['/raw-a', '/fn-b', '/raw-c']);
+  });
+
+  it('should pass useContext to route functions', () => {
+    let receivedContext = null;
+    const mockUseContext = (name) => ({ name });
+    const routes = [
+      (useContext) => {
+        receivedContext = useContext;
+        return [{ path: '/ctx', template: 'ctx.html' }];
+      },
+    ];
+    const result = resolveRoutes(routes, mockUseContext);
+    expect(receivedContext).toBe(mockUseContext);
+    expect(receivedContext('server')).toEqual({ name: 'server' });
+    expect(result).toHaveLength(1);
+    expect(result[0].path).toBe('/ctx');
   });
 });
 
@@ -328,7 +358,7 @@ describe('Route Factory Integration', () => {
     clovie = null;
   });
 
-  it('should serve intermixed raw routes and factory routes', async () => {
+  it('should serve intermixed raw routes and function routes', async () => {
     clovie = await createClovie({
       optsPath: path.resolve(process.cwd(), '__tests__', 'clovie.routes-factories.config.js'),
     });
@@ -337,7 +367,9 @@ describe('Route Factory Integration', () => {
     const opts = clovie.configurator.opts;
     const services = { file: clovie.file, liveReload: clovie.liveReload };
 
-    const routeFactories = normalizeRoutesToFactories(opts.routes, defineRoutes, opts, services);
+    const { pagesToRoutes } = await import('../lib/utils/viewsToRoutes.js');
+    const pageRoutes = pagesToRoutes(resolveRoutes(opts.routes), opts, services);
+    const routeFactories = normalizeToFactories(pageRoutes, defineServerRoutes);
     clovie.server.use(...routeFactories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
 
@@ -349,9 +381,10 @@ describe('Route Factory Integration', () => {
     const html = await templateRes.text();
     expect(html).toContain('Test Page');
 
-    const factoryRes = await fetch(`${base}/from-route-factory`);
+    const factoryRes = await fetch(`${base}/from-factory`);
     expect(factoryRes.ok).toBe(true);
-    expect((await factoryRes.json()).source).toBe('route-factory');
+    const factoryHtml = await factoryRes.text();
+    expect(factoryHtml).toContain('Factory Page');
 
     const anotherRes = await fetch(`${base}/another-page`);
     expect(anotherRes.ok).toBe(true);
@@ -429,7 +462,7 @@ describe('Middleware', () => {
       await pause(50);
 
       const opts = clovie.configurator.opts;
-      const apiFactories = normalizeToFactories(opts.api, defineRoutes);
+      const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
       clovie.server.use(...apiFactories);
       await clovie.server.listen({ ...opts, port: 0 });
 
@@ -447,7 +480,7 @@ describe('Middleware', () => {
       await pause(50);
 
       const opts = clovie.configurator.opts;
-      const apiFactories = normalizeToFactories(opts.api, defineRoutes);
+      const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
       clovie.server.use(...apiFactories);
       await clovie.server.listen({ ...opts, port: 0 });
 
@@ -465,7 +498,7 @@ describe('Middleware', () => {
 
       const opts = clovie.configurator.opts;
       const mwFactories = normalizeToFactories(opts.middleware, defineMiddleware);
-      const apiFactories = normalizeToFactories(opts.api, defineRoutes);
+      const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
       clovie.server.use(...mwFactories, ...apiFactories);
       await clovie.server.listen({ ...opts, middleware: undefined, port: 0 });
 

@@ -1,16 +1,7 @@
-import { defineRoutes } from '../lib/factories/routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const factoryRoute = defineRoutes(() => [
-  {
-    method: 'GET',
-    path: '/from-route-factory',
-    handler: (ctx) => ctx.respond.json({ source: 'route-factory' }),
-  },
-]);
 
 export default {
   views: null,
@@ -30,7 +21,13 @@ export default {
       template: path.join(__dirname, 'routes/test-page.html'),
       data: () => ({ title: 'Test Page' }),
     },
-    factoryRoute,
+    () => [
+      {
+        path: '/from-factory',
+        template: path.join(__dirname, 'routes/test-page.html'),
+        data: () => ({ title: 'Factory Page' }),
+      },
+    ],
     {
       path: '/another-page',
       template: path.join(__dirname, 'routes/test-page.html'),
