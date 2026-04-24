@@ -55,7 +55,7 @@ Late-bound resolution inside async methods for services that might not be instal
 
 ```javascript
 async #doWork() {
-  const esBuild = this.useContext('esBuild');
+  const esBuild = this.inject('esBuild');
   if (!esBuild) return;
   await esBuild.build();
 }

@@ -133,19 +133,18 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
+    opts.api = resolveRoutes(opts.api);
+    opts.routes = resolveRoutes(opts.routes);
 
-    // Verify defineApi factories were resolved into plain route objects
     expect(Array.isArray(opts.api)).toBe(true);
     expect(opts.api.length).toBe(3);
     expect(opts.api.every(r => typeof r === 'object' && typeof r.handler === 'function')).toBe(true);
 
-    // Verify factory name was prepended to paths
     const paths = opts.api.map(r => r.path);
     expect(paths).toContain('/api/raw');
     expect(paths).toContain('/api/from-factory');
     expect(paths).toContain('/api/from-extra-factory');
 
-    // Verify they work when registered with the server
     const factories = normalizeToFactories(opts.api, defineServerRoutes);
     clovie.server.use(...factories);
     await clovie.server.listen({ ...opts, port: 0, open: false });
@@ -173,11 +172,10 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
+    opts.api = resolveRoutes(opts.api);
 
-    // Verify all api entries are resolved plain objects (none are functions)
     expect(opts.api.every(r => typeof r !== 'function')).toBe(true);
 
-    // Register additional plain routes alongside resolved opts
     const singleRoutes = [
       { method: 'GET', path: '/api/single', handler: (ctx) => ctx.respond.json({ source: 'single' }) },
     ];
@@ -199,6 +197,7 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
+    opts.api = resolveRoutes(opts.api);
     const hookFactories = normalizeToFactories(opts.hooks, defineHooks);
     const apiFactories = normalizeToFactories(opts.api, defineServerRoutes);
     clovie.server.use(...hookFactories, ...apiFactories);
@@ -219,6 +218,7 @@ describe('Factory Resolution', () => {
     await pause(50);
 
     const opts = clovie.configurator.opts;
+    opts.api = resolveRoutes(opts.api);
     globalThis.__test_raw_hook_called = false;
 
     const hookFactories = normalizeToFactories({

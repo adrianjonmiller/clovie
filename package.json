@@ -1,6 +1,6 @@
 {
   "name": "clovie",
-  "version": "0.2.3",
+  "version": "0.2.7",
   "description": "Vintage web dev tooling with modern quality of life",
   "keywords": [
     "static-site-generator",
@@ -85,7 +85,7 @@
     "update:jucie.io": "npx npm-check-updates '@jucie.io/*' --target latest -u && npm install"
   },
   "dependencies": {
-    "@jucie.io/engine": "^1.1.68",
+    "@jucie.io/engine": "^1.1.70",
     "@jucie.io/engine-esbuild": "^1.0.10",
     "@jucie.io/engine-server": "^1.0.26",
     "@jucie.io/reactive": "^1.0.30",

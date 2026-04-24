@@ -152,7 +152,7 @@ export class MyService extends ServiceProvider {
 **`useContext` idioms:**
 - Positional: `const [file, log] = useContext('file', 'log');` — resolves at action-construction time.
 - Whole context: `const { cache } = useContext();` — returns the full context object.
-- Late-bound: `this.useContext('server')` inside async methods for services that may not be installed yet.
+- Late-bound: `this.inject('server')` inside async methods for services that may not be installed yet.
 
 Use `#private` fields for internal state.
 
